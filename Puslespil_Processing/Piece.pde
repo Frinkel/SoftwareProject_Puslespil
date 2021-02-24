@@ -1,0 +1,124 @@
+class Piece {
+  // Some variables
+  float center_x;
+  float center_y;
+  float[] vertices;
+  PShape shape;
+  
+  boolean overPiece = false;
+  boolean pieceLocked = false;
+  
+  float xOffset;
+  float yOffset;
+  
+  PApplet context;
+  
+  // A constructor
+  Piece(PApplet P5, int cx, int cy, float[] v){
+    this.center_x = cx;
+    this.center_y = cy;
+    this.vertices = v;
+    
+    this.context = P5;
+    
+    init();
+  }
+  
+  
+  
+  void init(){
+    shape = createShape();
+    shape.setStroke(color(0,0,0));
+    shape.setFill(0);
+    
+    shape.beginShape();
+    shape.strokeWeight(0);
+        for (int i = 0; i < vertices.length; i+=2) {
+          shape.vertex(center_x + vertices[i], center_y + vertices[i+1]);
+          //println("x: " + vertices[i] + ", y: " + vertices[i+1]);
+        }
+    shape.endShape();
+  }
+  
+  void updateVertices(){
+    int count = 0;
+    for(int i = 0; i < shape.getVertexCount(); i++){
+      
+      println(shape.getVertex(i));
+      PVector vec = shape.getVertex(i);
+      shape.setVertex(i, center_x + vertices[count], center_y + vertices[count+1]);
+      count += 2;
+    }
+  }
+  
+  PShape getShape() {
+    return shape;
+  }
+
+  // Display the shape!
+  void display() {
+    // Test if the cursor is over the box 
+    //println((shape.getWidth()-center_x) + " " + (shape.getHeight()-center_y));
+    if (mouseX > center_x-(shape.getWidth()-center_x) && mouseX < center_x+(shape.getWidth()-center_x) && 
+        mouseY > center_y-(shape.getHeight()-center_y) && mouseY < center_y+(shape.getHeight()-center_y)) {
+      overPiece = true;  
+      if(!pieceLocked) { 
+         //stroke(255); 
+         shape.setFill(153);
+         //fill(color(255,255,255));
+         //println("inside");
+         xOffset = mouseX-center_x;
+         yOffset = mouseY-center_y;
+         
+      } 
+    } else {
+      overPiece = false;
+      //println("not inside");
+      fill(color(255,0,0));
+      shape.setFill(0);
+    }
+    
+    /*
+    if(context.mousePressed && overPiece) {
+      pieceLocked = true;
+      //println("pressed");
+      fill(255, 255, 255);
+      shape.setFill(255);
+      
+      center_x = mouseX - xOffset; 
+      center_y = mouseY - yOffset;
+      //init();
+      init();
+      //shape.translate(center_x, center_y);
+    } else {
+      pieceLocked = false;
+      //println("not pressed");
+    }
+    */
+    
+    //if(context.mouseReleased() && overPiece) {
+        
+    //}
+    /*
+    if (mouseX > bx-boxSize && mouseX < bx+boxSize && 
+        mouseY > by-boxSize && mouseY < by+boxSize) {
+      overBox = true;  
+      if(!locked) { 
+        stroke(255); 
+        fill(153);
+      } 
+    } else {
+      stroke(153);
+      fill(153);
+      overBox = false;
+    }
+    */
+    //println((shape.getWidth()-center_x) + " " + (shape.getHeight()-center_y));
+    
+    
+    shape(shape);
+    ellipse(center_x,center_y,10,10);
+  }
+  
+  
+}
