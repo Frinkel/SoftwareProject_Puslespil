@@ -11,19 +11,19 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
 public class PieceReader {
-	double multiplier = 1;
+	double multiplier = 100;
 	
 	public PieceReader() {
 
 	}
 
-	public void pieceReader() {
+	public Object[] pieceReader() {
 		JSONParser parser = new JSONParser();
 		Object obj = null;
 		JSONObject jsonObject = null;
 		
 		try {
-			obj = parser.parse(new FileReader("assets\\Puzzle-2r-2c-1558-rot.json"));
+			obj = parser.parse(new FileReader("assets\\Puzzle-15r-20c-8696-sol.json"));
 			jsonObject = (JSONObject) obj;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
@@ -45,7 +45,8 @@ public class PieceReader {
 			}
 			System.out.println("");	
 		}
-
+		
+		return pieces;
 	}
 
 	public void readForm(Object obj, Point2D.Float[] pointarray) {

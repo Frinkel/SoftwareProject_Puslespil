@@ -34,7 +34,7 @@ public class View extends PApplet {
 	// method used only for setting the size of the window
 	public void settings() {
 		// Create the view object
-		size(800, 800);
+		size(displayHeight*3>>2, displayHeight*3>>2);
 	}
 	
 	// identical use to draw in Processing IDE
@@ -65,6 +65,8 @@ public class View extends PApplet {
 	for(Piece piece : pieceList){
 		if(piece.isMouseOver()) {
 			System.out.println("piece clicked");
+			piece.updateCenterCoords(new Point2D.Float((float) -10, (float) 0));
+			piece.getShape().translate(-10, 0);
 		}
 		
 		/*

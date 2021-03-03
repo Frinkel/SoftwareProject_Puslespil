@@ -33,7 +33,7 @@ public class Piece {
 	
 	private void init() {
 		// Create the polygon shape
-		shape = pA.createShape();
+		shape = pA.createShape(PShape.PATH);
 	    shape.beginShape();
 	    	shape.stroke(0);
 	    	shape.fill(0);
@@ -46,21 +46,20 @@ public class Piece {
 	
 	public void display() {
 		
-		if (pA.mouseX > centerCoords.x-(shape.getWidth()-centerCoords.x) && pA.mouseX < centerCoords.x+(shape.getWidth()-centerCoords.x) && 
-				pA.mouseY > centerCoords.y-(shape.getHeight()-centerCoords.y) && pA.mouseY < centerCoords.y+(shape.getHeight()-centerCoords.y)) {
-			//System.out.println("over a Piece");
-		}
+		//if (shape.contains(pA.mouseX, pA.mouseY)) {
+		//	System.out.println("over a Piece");
+		//}
 		
-		
+		//System.out.println(centerCoords.x + ", " + centerCoords.y);
 	    pA.shape(shape);
 	    pA.ellipse(centerCoords.x,centerCoords.y,10,10);
 	}
 	
-
+	
 	
 	public boolean isMouseOver() {
-		if (pA.mouseX > centerCoords.x-(shape.getWidth()-centerCoords.x) && pA.mouseX < centerCoords.x+(shape.getWidth()-centerCoords.x) && 
-				pA.mouseY > centerCoords.y-(shape.getHeight()-centerCoords.y) && pA.mouseY < centerCoords.y+(shape.getHeight()-centerCoords.y)) {
+		if (shape.contains(pA.mouseX, pA.mouseY)) {
+			
 			return true;
 		} else {
 			return false;
@@ -73,8 +72,8 @@ public class Piece {
 	}
 	
 	public void updateCenterCoords(Point2D.Float _updateCoords) {
-		this.centerCoords = new Point2D.Float(centerCoords.x - _updateCoords.x, centerCoords.y - _updateCoords.y);
+		this.centerCoords = new Point2D.Float(centerCoords.x + _updateCoords.x, centerCoords.y + _updateCoords.y);
 		System.out.println(centerCoords.x + ", " + centerCoords.y);
-		shape.translate(-_updateCoords.x, -_updateCoords.y);
+		//shape.translate(-_updateCoords.x, -_updateCoords.y);
 	}
 }
