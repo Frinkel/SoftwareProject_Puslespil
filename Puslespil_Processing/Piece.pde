@@ -83,6 +83,7 @@ class Piece {
   void display() {
     // Test if the cursor is over the box 
     //println((shape.getWidth()-center_x) + " " + (shape.getHeight()-center_y));
+    /*
     if (mouseX > center_x-(shape.getWidth()-center_x) && mouseX < center_x+(shape.getWidth()-center_x) && 
         mouseY > center_y-(shape.getHeight()-center_y) && mouseY < center_y+(shape.getHeight()-center_y)) {
       overPiece = true;  
@@ -101,44 +102,7 @@ class Piece {
       fill(color(255,0,0));
       shape.setFill(0);
     }
-    
-    /*
-    if(context.mousePressed && overPiece) {
-      pieceLocked = true;
-      //println("pressed");
-      fill(255, 255, 255);
-      shape.setFill(255);
-      
-      center_x = mouseX - xOffset; 
-      center_y = mouseY - yOffset;
-      //init();
-      init();
-      //shape.translate(center_x, center_y);
-    } else {
-      pieceLocked = false;
-      //println("not pressed");
-    }
     */
-    
-    //if(context.mouseReleased() && overPiece) {
-        
-    //}
-    /*
-    if (mouseX > bx-boxSize && mouseX < bx+boxSize && 
-        mouseY > by-boxSize && mouseY < by+boxSize) {
-      overBox = true;  
-      if(!locked) { 
-        stroke(255); 
-        fill(153);
-      } 
-    } else {
-      stroke(153);
-      fill(153);
-      overBox = false;
-    }
-    */
-    //println((shape.getWidth()-center_x) + " " + (shape.getHeight()-center_y));
-    
     shape(shape);
     ellipse(center_x,center_y,10,10);
   }

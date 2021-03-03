@@ -8,7 +8,7 @@ import processing.core.PApplet;
 public class View extends PApplet {
 	
 	public View() {
-		System.out.println("hi");
+		System.out.println("View running..");
 	}
 	
 	// Variables
@@ -27,12 +27,18 @@ public class View extends PApplet {
 	
 	// identical use to draw in Processing IDE
 	public void draw(){
+		background(255);
+		stroke(0);
+		
+		//stroke(255,0,0);
+		//fill(0);
+		
 		// Draw the pieces
-		if(pieceList.size() != 0) {
+		
 			for(Piece piece : pieceList) {
 				piece.display();
 			}
-		}
+		
 	}
 	
 	public void addPieceToList(Piece piece) {
