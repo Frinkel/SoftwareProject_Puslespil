@@ -5,14 +5,15 @@ import processing.core.PApplet;
 
 public class View {
 	// Variables
-	int screenWidth, screenHeight;
+	PApplet Main;
 	
 	// Constructor
-	public View(int scwidth, int scheight) {
-		this.screenWidth = scwidth;
-		this.screenHeight = scheight;
+	public View(PApplet _Main) {
+		
 	}
 	
 	// Functions
-	
+	public void initView(int screenWidth, int screenHeight) {
+		Main.size(screenWidth, screenHeight);
+	}
 }
