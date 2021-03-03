@@ -26,12 +26,12 @@ void setup(){
   float[] v2 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
   Piece p2 = new Piece(this, 500, 500, v2);
   
-  float[] v3 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
-  Piece p3 = new Piece(this, 500, 500, v2);
+  float[] v3 = {0, 0, 100, 0, 100, 100, 0, 100, 0,0};
+  Piece p3 = new Piece(this, 250, 500, v3);
   
   pieceList.add(p1);
-  pieceList.add(p2);
-  pieceList.add(p3);
+  //pieceList.add(p2);
+  //pieceList.add(p3);
   
 }
 
@@ -52,7 +52,7 @@ void draw(){
 void mousePressed() {
   for(Piece p : pieceList){
     if(p.overPiece && helperP == null){
-      println("over");
+      //println("over");
       
       helperP = p;
       
@@ -60,11 +60,13 @@ void mousePressed() {
       xOffset = mouseX-p.center_x;
       yOffset = mouseY-p.center_y;
       helperP.shape.setFill(color(255,0,0));
+      //helperP.shape.rotate(0.1);
     }
   }
 }
+
 void mouseDragged() {
-  println("drag");
+  //println("drag");
   if(helperP != null) {
     helperP.center_x = mouseX - xOffset;
     helperP.center_y = mouseY - yOffset;
@@ -77,5 +79,13 @@ void mouseReleased() {
   if(helperP != null) {
     helperP.pieceLocked = false;
     helperP = null;
+  }
+}
+
+void mouseWheel(MouseEvent event) {
+  // Restrain zoom
+  //println(event.getCount());
+  if(helperP != null) {
+    //helperP.rotate(event.getCount());
   }
 }

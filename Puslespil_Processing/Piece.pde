@@ -5,6 +5,8 @@ class Piece {
   float[] vertices;
   PShape shape;
   
+  int rotationDirection = 0;
+  
   boolean overPiece = false;
   boolean pieceLocked = false;
   
@@ -27,6 +29,7 @@ class Piece {
   
   
   void init(){
+    
     shape = createShape();
     shape.setStroke(color(0,0,0));
     shape.setFill(0);
@@ -43,12 +46,33 @@ class Piece {
   void updateVertices(){
     int count = 0;
     for(int i = 0; i < shape.getVertexCount(); i++){
-      
       println(shape.getVertex(i));
-      PVector vec = shape.getVertex(i);
+      //PVector vec = shape.getVertex(i);
       shape.setVertex(i, center_x + vertices[count], center_y + vertices[count+1]);
       count += 2;
     }
+  }
+  
+  void rotate(int dir) {
+    // xangle = (c.x + cos(body.getAngle()) * move_len) - c.x; 
+    // yangle = (c.y - sin(body.getAngle()) * move_len) - c.y;
+    //shape = createShape();
+    //shape.setStroke(color(0,0,0));
+    //shape.setFill(0);
+    
+    // In degrees
+    rotationDirection += 90 * dir;
+    println(radians((center_x + cos(rotationDirection) * vertices[0])));
+    
+    
+    shape = createShape();
+    shape.beginShape();
+    //shape.strokeWeight(0);
+    for (int i = 0; i < vertices.length; i+=2) {
+      shape.vertex(center_x + cos(radians(rotationDirection)) * vertices[i], 
+                   center_y - sin(radians(rotationDirection)) * vertices[i+1]);
+    } 
+    shape.endShape();
   }
   
   PShape getShape() {
@@ -69,7 +93,7 @@ class Piece {
          //println("inside");
          xOffset = mouseX-center_x;
          yOffset = mouseY-center_y;
-         
+         fill(color(255,255,255));
       } 
     } else {
       overPiece = false;
@@ -114,7 +138,6 @@ class Piece {
     }
     */
     //println((shape.getWidth()-center_x) + " " + (shape.getHeight()-center_y));
-    
     
     shape(shape);
     ellipse(center_x,center_y,10,10);
