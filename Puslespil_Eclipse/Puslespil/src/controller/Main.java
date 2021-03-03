@@ -14,17 +14,10 @@ public class Main{
 		View view = new View();
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
 		
-		
-		Piece p = new Piece(view, 200, 200, 100, 100);
-		Piece p1 = new Piece(view, 100, 100, 100, 100);
-		Piece p2 = new Piece(view, 100, 300, 100, 100);
-		view.addPieceToList(p);
+		float[] v1 = {-100, -100, 100, -100, 100, 100, -100, 100, -50, 0, -100, -100};
+		Piece p1 = new Piece(view, 400, 400, v1);
 		view.addPieceToList(p1);
-		view.addPieceToList(p2);
 		
-		System.out.println();
-		
-		//view.addPieceToList(p);
 		
 	}
 	
