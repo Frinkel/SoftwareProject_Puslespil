@@ -23,7 +23,7 @@ public class PieceReader {
 		JSONObject jsonObject = null;
 		
 		try {
-			obj = parser.parse(new FileReader("C:\\Users\\alexa\\Downloads\\Puzzles_set_1\\Puzzle-2r-2c-1558-rot.json"));
+			obj = parser.parse(new FileReader("assets\\Puzzle-2r-2c-1558-rot.json"));
 			jsonObject = (JSONObject) obj;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
