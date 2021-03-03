@@ -83,7 +83,7 @@ class Piece {
   void display() {
     // Test if the cursor is over the box 
     //println((shape.getWidth()-center_x) + " " + (shape.getHeight()-center_y));
-    /*
+    
     if (mouseX > center_x-(shape.getWidth()-center_x) && mouseX < center_x+(shape.getWidth()-center_x) && 
         mouseY > center_y-(shape.getHeight()-center_y) && mouseY < center_y+(shape.getHeight()-center_y)) {
       overPiece = true;  
@@ -102,7 +102,7 @@ class Piece {
       fill(color(255,0,0));
       shape.setFill(0);
     }
-    */
+    
     shape(shape);
     ellipse(center_x,center_y,10,10);
   }
