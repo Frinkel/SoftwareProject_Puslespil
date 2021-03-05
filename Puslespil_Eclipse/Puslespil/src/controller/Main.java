@@ -22,6 +22,10 @@ public class Main{
 		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
 		view.addPieceToList(p1);
 		
+		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(150, 0), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-100, -100)};
+		Piece p2 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v2);
+		view.addPieceToList(p2);
+		
 		//float[] v2 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
 		//Piece p2 = new Piece(view, 100, 100, v2);
 		//view.addPieceToList(p2);

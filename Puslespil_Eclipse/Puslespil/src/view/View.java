@@ -18,6 +18,8 @@ public class View extends PApplet {
 	
 	Piece currentPiece;
 	
+	float angle = 0;
+	
 	// Zoom and pan
 	float view_scale;
 	float viewX, viewY;
@@ -29,6 +31,8 @@ public class View extends PApplet {
 		view_scale = 1f;
 		viewX = 0;
 		viewY = 0;
+		
+		//smooth();
 	}
 	
 	// method used only for setting the size of the window
@@ -48,14 +52,22 @@ public class View extends PApplet {
 		
 		// Draw the pieces
 		if(!pieceList.isEmpty()) {
+			boolean overOne = false;
+			Piece tempPiece = null;
 			for(Piece piece : pieceList) {
-				piece.display();
 				
-				if(piece.isMouseOver()) {
-					piece.getShape().setFill(color(255,0,0));;
+				if(piece.isMouseOver() && currentPiece == null) {
+					tempPiece = piece;
+					//tempPiece.getShape().setFill(color(255,0,0));
 				} else {
-					piece.getShape().setFill(color(0,0,0));;
+					piece.getShape().setFill(color(0,0,0));
 				}
+				
+				piece.display();
+			}
+			
+			if(tempPiece != null) {
+				tempPiece.getShape().setFill(color(255,0,0));
 			}
 		}
 	}
@@ -64,30 +76,23 @@ public class View extends PApplet {
 	public void mousePressed() {
 	for(Piece piece : pieceList){
 		if(piece.isMouseOver()) {
-			System.out.println("piece clicked");
-			piece.updateCenterCoords(new Point2D.Float((float) -10, (float) 0));
-			piece.getShape().translate(-10, 0);
+			//System.out.println("piece clicked");
+			currentPiece = piece;
+			angle = currentPiece.getAngle();
 		}
-		
-		/*
-	    if(p.overPiece && helperP == null){
-	      //println("over");
-	      
-	      helperP = p;
-	      
-	      helperP.pieceLocked = true;
-	      xOffset = mouseX-p.center_x;
-	      yOffset = mouseY-p.center_y;
-	      helperP.shape.setFill(color(255,0,0));
-	      //helperP.shape.rotate(0.1);
-	    }
-	    */
 	  }
+	}
+	
+	public void mouseReleased() {
+		currentPiece = null;
 	}
 	
 	// Panning feature
 	public void mouseDragged(MouseEvent event) {
 		
+		if(currentPiece != null) {
+			currentPiece.movePiece();
+		}
 		/*
 		float _x = (pmouseX - mouseX);
 		float _y = (pmouseY - mouseY);
@@ -102,8 +107,14 @@ public class View extends PApplet {
 	
 	// Zoom feature
 	public void mouseWheel(MouseEvent event) {
-	  // Restrain zoom
-	  //view_scale = constrain(view_scale += event.getCount()*-0.1,  0.2f, 1.5f);
+		// TEST
+		
+		if(currentPiece != null) {
+			angle += event.getCount()*45;
+			currentPiece.rotatePiece(angle);
+		}
+		// Restrain zoom
+		//view_scale = constrain(view_scale += event.getCount()*-0.1,  0.2f, 1.5f);
 	}
 	
 	
@@ -111,6 +122,4 @@ public class View extends PApplet {
 	public void addPieceToList(Piece piece) {
 		pieceList.add(piece);
 	}
-	
-	
 }
