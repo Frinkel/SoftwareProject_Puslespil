@@ -23,18 +23,24 @@ public class PieceReader {
 		JSONObject jsonObject = null;
 		
 		try {
-			obj = parser.parse(new FileReader("assets\\Puzzle-15r-20c-8696-sol.json"));
+			obj = parser.parse(new FileReader("assets\\Puzzle-3r-3c-3756-sol.json"));
 			jsonObject = (JSONObject) obj;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
+		//the form of the entire puzzle
 		Point2D.Float[] formarray = new Point2D.Float[4];
 		readForm(obj, formarray);
 		for (int i = 0; i < 4; i++) {
 			System.out.println(formarray[i]);
 		}
+		
+		//find the amount of pieces
 		long numberOfPieces = (Long) jsonObject.get("no. of pieces");
 		System.out.println("no of pieces:" + numberOfPieces);
+		
+		
+		//generate the individual pieces
 		Object[] pieces = new Object[(int) numberOfPieces];
 		JSONArray piecesList = (JSONArray) jsonObject.get("pieces");
 		readPieces(piecesList,pieces,(int) numberOfPieces);

@@ -9,22 +9,25 @@ import view.View;
 
 public class Main{
 	// The argument passed to main must match the class name
+	private static int pieceAmount = 7;
+	private static int boardSize = 600;
+	
 	public static void main(String[] args) {
 		//View view = new View();
 		// Set the main
-		//PApplet.main("view.View");
+		//PApplet.main("view.View");s
 		
 		View view = new View();
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
 		
 		
-		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
-		view.addPieceToList(p1);
-		
-		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(150, 0), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-100, -100)};
-		Piece p2 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v2);
-		view.addPieceToList(p2);
+//		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
+//		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
+//		view.addPieceToList(p1);
+//		
+//		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(150, 0), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-100, -100)};
+//		Piece p2 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v2);
+//		view.addPieceToList(p2);
 		
 		//float[] v2 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
 		//Piece p2 = new Piece(view, 100, 100, v2);
@@ -40,6 +43,25 @@ public class Main{
 		Piece p3 = new Piece(view, new Point2D.Float(200.0f, 200.0f), v3);
 		view.addPieceToList(p3);
 		*/
+		
+		Generator g = new Generator(boardSize,pieceAmount);
+		
+		Object[] O3 = g.generate();
+		for(int i = 0; i < pieceAmount; i++) {
+			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+			Point2D.Float center = v[0];
+			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
+			for(int j = 1; j<v.length;j++) {
+				v1[j-1]=v[j];
+			}
+			//Point2D.Float[] v1 = (Point2D.Float[]) O3[i];
+			
+			
+			
+			Piece p = new Piece(view, center, v1);
+			view.addPieceToList(p);
+			
+		}
 		/*
 		PieceReader pR = new PieceReader();
 		Object[] O2 = pR.pieceReader();
@@ -54,6 +76,7 @@ public class Main{
 			view.addPieceToList(p);
 		}
 		*/
+		
 	}
 	
 }
