@@ -9,7 +9,7 @@ import processing.core.PShape;
 public class Piece {
 	
 	PApplet pA;
-	
+	public int col = 0;
 	float xOffset, yOffset;
 	float angle = 0;
 	
@@ -38,7 +38,7 @@ public class Piece {
 		shape = pA.createShape(PShape.PATH);
 	    shape.beginShape();
 	    	shape.stroke(0);
-	    	shape.fill(0);
+	    	//shape.fill(0);
 	    	//shape.strokeWeight(0);
 	        for (int i = 0; i < vertices.length; i++) {
 	          shape.vertex(centerCoords.x + vertices[i].x, centerCoords.y + vertices[i].y);
@@ -53,6 +53,7 @@ public class Piece {
 		//}
 		
 		//System.out.println(centerCoords.x + ", " + centerCoords.y);
+		shape.setFill(col);
 	    pA.shape(shape);
 	    pA.ellipse(centerCoords.x, centerCoords.y,10,10);
 	}
@@ -97,9 +98,4 @@ public class Piece {
 		return this.angle;
 	}
 	
-	public void updateCenterCoords(Point2D.Float _updateCoords) {
-		//this.centerCoords = new Point2D.Float(centerCoords.x + _updateCoords.x, centerCoords.y + _updateCoords.y);
-		//System.out.println(centerCoords.x + ", " + centerCoords.y);
-		//shape.translate(-_updateCoords.x, -_updateCoords.y);
-	}
 }

@@ -51,23 +51,21 @@ public class View extends PApplet {
 		background(255);
 		
 		// Draw the pieces
+		boolean piecelocked = false;
 		if(!pieceList.isEmpty()) {
-			boolean overOne = false;
-			Piece tempPiece = null;
-			for(Piece piece : pieceList) {
-				
-				if(piece.isMouseOver() && currentPiece == null) {
-					tempPiece = piece;
-					//tempPiece.getShape().setFill(color(255,0,0));
+			for(int i = pieceList.size()-1; i >= 0; i--) {
+				if(pieceList.get(i).isMouseOver() && !piecelocked && currentPiece == null) {
+					pieceList.get(i).col = color(255,0,0);
+					piecelocked = true;
 				} else {
-					piece.getShape().setFill(color(0,0,0));
+					pieceList.get(i).col = 0;
 				}
-				
-				piece.display();
 			}
-			
-			if(tempPiece != null) {
-				tempPiece.getShape().setFill(color(255,0,0));
+			if(currentPiece != null) {
+				currentPiece.col = color(255,0,0);
+			}
+			for(Piece piece : pieceList) {
+				piece.display();
 			}
 		}
 	}
