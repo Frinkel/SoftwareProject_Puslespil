@@ -33,13 +33,10 @@ public class Piece {
 	}
 	
 	private void init() {
-		// Create the polygon shape
-		//pA.shapeMode(PShape.CENTER);
 		shape = pA.createShape(PShape.PATH);
 	    shape.beginShape();
+	    	shape.fill(0);
 	    	shape.stroke(0);
-	    	//shape.fill(0);
-	    	//shape.strokeWeight(0);
 	        for (int i = 0; i < vertices.length; i++) {
 	          shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y);
 	        }
@@ -47,12 +44,6 @@ public class Piece {
 	}
 	
 	public void display() {
-		
-		//if (shape.contains(pA.mouseX, pA.mouseY)) {
-		//	System.out.println("over a Piece");
-		//}
-		
-		//System.out.println(centerCoords.x + ", " + centerCoords.y);
 		shape.setFill(col);
 	    pA.shape(shape);
 	    pA.ellipse(origin.x, origin.y,10,10);
@@ -70,7 +61,6 @@ public class Piece {
 	}
 	
 	public void movePiece() {
-		//System.out.println("piece moved");
 		for(int i = 0; i < shape.getVertexCount(); i++) {
 			origin = new Point2D.Float(pA.mouseX, pA.mouseY);
 			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;
@@ -85,7 +75,12 @@ public class Piece {
 			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;
 			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
 			shape.setVertex(i, rotatedX, rotatedY);
-			//vertices[i] = new Point2D.Float(rotatedX, rotatedY);
+			
+			//System.out.println(shape.getVertex(i));
+			
+			//for(int d = 0; i < shape.getVertexCount(); i++) {
+				//System.out.print(shape.getVertex(d).x);
+			//}
 		}
 	}
 	
@@ -96,6 +91,16 @@ public class Piece {
 	
 	public float getAngle() {
 		return this.angle;
+	}
+	
+	public Point2D.Float[] getCurrentVertices() {
+		Point2D.Float[] verticesList = new Point2D.Float[vertices.length];
+		
+		for(int i = 0; i < verticesList.length; i++) {
+			verticesList[i] = new Point2D.Float(shape.getVertex(i).x, shape.getVertex(i).y);
+		}
+		
+		return verticesList;
 	}
 	
 }

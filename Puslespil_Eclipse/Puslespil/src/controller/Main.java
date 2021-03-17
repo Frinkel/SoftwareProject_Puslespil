@@ -21,13 +21,39 @@ public class Main{
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
 		
 		
-//		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-//		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
-//		view.addPieceToList(p1);
-//		
-//		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(150, 0), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-100, -100)};
-//		Piece p2 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v2);
-//		view.addPieceToList(p2);
+		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
+		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
+		p1.rotatePiece(90);
+		view.addPieceToList(p1);
+		
+		Point2D.Float[] v3 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
+		Piece p3 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v3);
+		view.addPieceToList(p3);
+		
+		
+		
+		
+		for(int i = 1; i <= 3; i ++) {
+			boolean notidentical = true;
+			p3.rotatePiece(i*45);			
+			for(Point2D.Float p : p1.getCurrentVertices()) {
+				System.out.print(p.toString());
+			}
+			System.out.println();
+			for(Point2D.Float p : p3.getCurrentVertices()) {
+				System.out.print(p.toString());
+			}
+			
+			for(int j = 0; j < p3.getShape().getVertexCount(); j++) {
+				if(p3.getCurrentVertices()[j] == p1.getCurrentVertices()[j]) {
+					notidentical = false;
+				}
+			}
+			
+			System.out.println(notidentical);
+			
+		}
+		
 		
 		//float[] v2 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
 		//Piece p2 = new Piece(view, 100, 100, v2);
@@ -44,6 +70,8 @@ public class Main{
 		view.addPieceToList(p3);
 		*/
 		
+		
+		/*
 		Generator g = new Generator(boardSize,pieceAmount);
 		
 		Object[] O3 = g.generate();
@@ -62,6 +90,7 @@ public class Main{
 			view.addPieceToList(p);
 			
 		}
+		*/
 		/*
 		PieceReader pR = new PieceReader();
 		Object[] O2 = pR.pieceReader();
