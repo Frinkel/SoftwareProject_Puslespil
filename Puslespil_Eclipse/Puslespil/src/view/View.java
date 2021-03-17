@@ -3,6 +3,7 @@ package view;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import controller.Main;
 import model.Piece;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
@@ -89,7 +90,7 @@ public class View extends PApplet {
 	public void mouseDragged(MouseEvent event) {
 		
 		if(currentPiece != null) {
-			currentPiece.movePiece();
+			currentPiece.movePiece(new Point2D.Float(mouseX, mouseY));
 		}
 		/*
 		float _x = (pmouseX - mouseX);
@@ -119,5 +120,13 @@ public class View extends PApplet {
 	
 	public void addPieceToList(Piece piece) {
 		pieceList.add(piece);
+	}
+	
+	public ArrayList<Piece> getPieceList() {
+		return pieceList;
+	}
+	
+	public Piece getCurrentPiece() {
+		return currentPiece;
 	}
 }

@@ -60,9 +60,9 @@ public class Piece {
 		}
 	}
 	
-	public void movePiece() {
+	public void movePiece(Point2D.Float _move) {
 		for(int i = 0; i < shape.getVertexCount(); i++) {
-			origin = new Point2D.Float(pA.mouseX, pA.mouseY);
+			origin = _move;
 			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;
 			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
 			shape.setVertex(i, rotatedX, rotatedY);
@@ -91,6 +91,10 @@ public class Piece {
 	
 	public float getAngle() {
 		return this.angle;
+	}
+	
+	public Point2D.Float getOrigin() {
+		return this.origin;
 	}
 	
 	public Point2D.Float[] getCurrentVertices() {

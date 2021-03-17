@@ -2,57 +2,26 @@ package controller;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
+import java.util.ArrayList;
 
 import model.Piece;
 import processing.core.PApplet;
 import view.View;
 
-public class Main{
+public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 7;
+	private static int pieceAmount = 4;
 	private static int boardSize = 600;
 	
 	public static void main(String[] args) {
-		//View view = new View();
-		// Set the main
-		//PApplet.main("view.View");s
 		
 		View view = new View();
+		
+		
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
+		boardSize = (int) (view.width/1.25);
+		System.out.println("w " + view.width/2);
 		
-		
-		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
-		p1.rotatePiece(90);
-		view.addPieceToList(p1);
-		
-		Point2D.Float[] v3 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-		Piece p3 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v3);
-		view.addPieceToList(p3);
-		
-		
-		
-		
-		for(int i = 1; i <= 3; i ++) {
-			boolean notidentical = true;
-			p3.rotatePiece(i*45);			
-			for(Point2D.Float p : p1.getCurrentVertices()) {
-				System.out.print(p.toString());
-			}
-			System.out.println();
-			for(Point2D.Float p : p3.getCurrentVertices()) {
-				System.out.print(p.toString());
-			}
-			
-			for(int j = 0; j < p3.getShape().getVertexCount(); j++) {
-				if(p3.getCurrentVertices()[j] == p1.getCurrentVertices()[j]) {
-					notidentical = false;
-				}
-			}
-			
-			System.out.println(notidentical);
-			
-		}
 		
 		
 		//float[] v2 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
@@ -70,27 +39,6 @@ public class Main{
 		view.addPieceToList(p3);
 		*/
 		
-		
-		/*
-		Generator g = new Generator(boardSize,pieceAmount);
-		
-		Object[] O3 = g.generate();
-		for(int i = 0; i < pieceAmount; i++) {
-			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-			Point2D.Float center = v[0];
-			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
-			for(int j = 1; j<v.length;j++) {
-				v1[j-1]=v[j];
-			}
-			//Point2D.Float[] v1 = (Point2D.Float[]) O3[i];
-			
-			
-			
-			Piece p = new Piece(view, center, v1);
-			view.addPieceToList(p);
-			
-		}
-		*/
 		/*
 		PieceReader pR = new PieceReader();
 		Object[] O2 = pR.pieceReader();
@@ -106,6 +54,136 @@ public class Main{
 		}
 		*/
 		
+		
+		/*
+		Generator g = new Generator(boardSize, pieceAmount);
+		
+		Object[] O3 = g.generate();
+		for(int i = 0; i < pieceAmount; i++) {
+			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+			Point2D.Float center = v[0];
+			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
+			for(int j = 1; j<v.length;j++) {
+				v1[j-1]=v[j];
+			}
+			
+			Piece p = new Piece(view, center, v1);
+			view.addPieceToList(p);
+		}
+		*/
+		
+		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
+		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
+		p1.rotatePiece(90);
+		view.addPieceToList(p1);
+		
+		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
+		Piece p2 = new Piece(view, new Point2D.Float(200.0f, 200.0f), v2);
+		view.addPieceToList(p2);
+		
+		Point2D.Float[] v3 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-150, 0), new Point2D.Float(-100, -100)};
+		Piece p3 = new Piece(view, new Point2D.Float(700.0f, 700.0f), v3);
+		view.addPieceToList(p3);
+		
+		
+		
+		//System.out.println(identicalIdentifier(p1,p3));
+		
+		
+		
+		
+		/*
+		PieceReader pR = new PieceReader();
+		Object[] O2 = pR.pieceReader();
+		int j = -1;
+		int a = 0;
+		for(int i = 0; i < 9; i++) {
+			Point2D.Float[] v = (Point2D.Float[]) O2[i];
+			a++;
+			if(i % 11 == 0) {j++; a=0;}
+			
+			Piece p = new Piece(view, new Point2D.Float(0.0f+100*a, 0.0f+100*j), v);
+			view.addPieceToList(p);
+		}
+		*/
+		
+		new Thread(new puzzleButler(view)).start();
+		
+		// Continue running below code
+		Piece currentPiece = view.getCurrentPiece();
+		boolean run = false;
+		while(run) {
+			
+			
+			//Piece currentPiece = view.getCurrentPiece();
+			//System.out.println("piece in hand");
+			//System.out.println(view.getCurrentPiece());
+			currentPiece = view.getCurrentPiece();
+			if(currentPiece != null) {
+				System.out.println("d");
+			} else {
+				System.out.println("e");
+			}
+		}
+		
+		
+		
+		
+		
+		
 	}
 	
+	// Checks whether two pieces are identical
+	public static boolean identicalIdentifier(Piece p1, Piece p2) {
+		float p1StartAngle = p1.getAngle();
+		Point2D.Float p2StartOrigin = p2.getOrigin();
+		
+		// Move piece 2 to be on top of piece 1
+		p2.movePiece(p1.getOrigin());
+		
+		boolean identical = false;
+		for(int i = 0; i <= 8; i ++) {
+			boolean identical2 = true;
+			p1.rotatePiece(i*45);
+			for(int j = 0; j < p1.getShape().getVertexCount(); j++) {
+				if(p1.getCurrentVertices()[j].x == p2.getCurrentVertices()[j].x && p1.getCurrentVertices()[j].y == p2.getCurrentVertices()[j].y) {
+					identical2 &= true;
+				} else {
+					identical2 &= false;
+				}
+			}
+			
+			// If we have a case where all vertices match, then we can exit
+			if(identical2) { p2.movePiece(p2StartOrigin); p1.rotatePiece(p1StartAngle); return true; }
+			identical |= identical2;
+		}
+		
+		// Move piece 2 back to it's original position
+		p2.movePiece(p2StartOrigin);
+		
+		return identical;
+	}
+
+	
+	
 }
+class puzzleButler implements Runnable {
+	View view;
+	public puzzleButler(View _view) {
+		this.view = _view;
+	}
+	
+	public void run() {
+		while(true) {
+			Piece currentPiece = view.getCurrentPiece();
+			
+			if(currentPiece != null) {
+				System.out.println("d");
+			} else {
+				//System.out.println("e");
+			}		
+		}
+	}
+}
+
+
