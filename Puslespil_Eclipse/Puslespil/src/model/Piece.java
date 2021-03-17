@@ -17,17 +17,17 @@ public class Piece {
 	
 	// Vertices 
 	Point2D.Float[] vertices;
-	Point2D.Float centerCoords;
+	Point2D.Float origin;
 	
 	PShape shape;
 	
 	
-	public Piece(PApplet _pA, Point2D.Float _centerCoords, Point2D.Float[] _vertices){
+	public Piece(PApplet _pA, Point2D.Float _origin, Point2D.Float[] _vertices){
 		// Get a reference to the main PApplet class
 		this.pA = _pA;
 		
 		this.vertices = _vertices;
-		this.centerCoords = _centerCoords;
+		this.origin = _origin;
 		
 		init();
 	}
@@ -41,7 +41,7 @@ public class Piece {
 	    	//shape.fill(0);
 	    	//shape.strokeWeight(0);
 	        for (int i = 0; i < vertices.length; i++) {
-	          shape.vertex(centerCoords.x + vertices[i].x, centerCoords.y + vertices[i].y);
+	          shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y);
 	        }
 	    shape.endShape();
 	}
@@ -55,7 +55,7 @@ public class Piece {
 		//System.out.println(centerCoords.x + ", " + centerCoords.y);
 		shape.setFill(col);
 	    pA.shape(shape);
-	    pA.ellipse(centerCoords.x, centerCoords.y,10,10);
+	    pA.ellipse(origin.x, origin.y,10,10);
 	}
 	
 	
@@ -72,9 +72,9 @@ public class Piece {
 	public void movePiece() {
 		//System.out.println("piece moved");
 		for(int i = 0; i < shape.getVertexCount(); i++) {
-			centerCoords = new Point2D.Float(pA.mouseX, pA.mouseY);
-			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((centerCoords.x + vertices[i].x) - centerCoords.x) - PApplet.sin(PApplet.radians(angle)) * ((centerCoords.y + vertices[i].y)-centerCoords.y) + centerCoords.x;;
-			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((centerCoords.x + vertices[i].x) - centerCoords.x) + PApplet.cos(PApplet.radians(angle)) * ((centerCoords.y + vertices[i].y)-centerCoords.y) + centerCoords.y;
+			origin = new Point2D.Float(pA.mouseX, pA.mouseY);
+			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;
+			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
 			shape.setVertex(i, rotatedX, rotatedY);
 		}
 	}
@@ -82,8 +82,8 @@ public class Piece {
 	public void rotatePiece(float _angle) {
 		this.angle = _angle;
 		for(int i = 0; i < shape.getVertexCount(); i++) {
-			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((centerCoords.x + vertices[i].x) - centerCoords.x) - PApplet.sin(PApplet.radians(angle)) * ((centerCoords.y + vertices[i].y)-centerCoords.y) + centerCoords.x;
-			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((centerCoords.x + vertices[i].x) - centerCoords.x) + PApplet.cos(PApplet.radians(angle)) * ((centerCoords.y + vertices[i].y)-centerCoords.y) + centerCoords.y;
+			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;
+			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
 			shape.setVertex(i, rotatedX, rotatedY);
 			//vertices[i] = new Point2D.Float(rotatedX, rotatedY);
 		}
