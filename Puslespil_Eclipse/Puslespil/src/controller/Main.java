@@ -10,7 +10,7 @@ import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 4;
+	private static int pieceAmount = 9;
 	private static int boardSize = 600;
 	
 	public static void main(String[] args) {
@@ -55,7 +55,7 @@ public class Main {
 		*/
 		
 		
-		/*
+		
 		Generator g = new Generator(boardSize, pieceAmount);
 		
 		Object[] O3 = g.generate();
@@ -70,21 +70,27 @@ public class Main {
 			Piece p = new Piece(view, center, v1);
 			view.addPieceToList(p);
 		}
-		*/
 		
+		
+		/*
 		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
 		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
-		p1.rotatePiece(90);
+		//p1.rotatePiece(90);
 		view.addPieceToList(p1);
-		
+		/*
 		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-		Piece p2 = new Piece(view, new Point2D.Float(200.0f, 200.0f), v2);
+		Piece p2 = new Piece(view, new Point2D.Float(500.0f, 500.0f), v1);
 		view.addPieceToList(p2);
 		
+		/*
 		Point2D.Float[] v3 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-150, 0), new Point2D.Float(-100, -100)};
 		Piece p3 = new Piece(view, new Point2D.Float(700.0f, 700.0f), v3);
 		view.addPieceToList(p3);
 		
+		Point2D.Float[] v4 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-150, 0), new Point2D.Float(-100, -100)};
+		Piece p4 = new Piece(view, new Point2D.Float(700.0f, 700.0f), v4);
+		view.addPieceToList(p4);
+		*/
 		
 		
 		//System.out.println(identicalIdentifier(p1,p3));
@@ -107,30 +113,80 @@ public class Main {
 		}
 		*/
 		
-		new Thread(new puzzleButler(view)).start();
+		//new Thread(new puzzleButler(view)).start();
 		
 		// Continue running below code
-		Piece currentPiece = view.getCurrentPiece();
-		boolean run = false;
+		//Piece currentPiece = view.getCurrentPiece();
+		boolean run = true;
 		while(run) {
+			Piece currentPiece = getCurrentPiece(view);
+			pieceSnapping(true, view, currentPiece);
 			
-			
-			//Piece currentPiece = view.getCurrentPiece();
-			//System.out.println("piece in hand");
-			//System.out.println(view.getCurrentPiece());
-			currentPiece = view.getCurrentPiece();
-			if(currentPiece != null) {
-				System.out.println("d");
-			} else {
-				System.out.println("e");
+		}
+	}
+	
+	private static Piece getCurrentPiece(View view) {
+		ArrayList<Piece> pieceList = view.getPieceList();
+		for(Piece piece : pieceList) {
+			if(piece.isCurrentPiece) {
+				return piece;
 			}
 		}
-		
-		
-		
-		
-		
-		
+		return null;
+	}
+	
+	// Regulates piece snapping
+	private static void pieceSnapping(boolean active, View view, Piece currentPiece) {
+		if(currentPiece != null && active) {
+			// Find neighbor pieces
+			ArrayList<Piece> pieceList = view.getPieceList();
+			int columns = (int) Math.floor(Math.sqrt(pieceAmount));
+			int currentIndex = pieceList.indexOf(currentPiece);
+			float angle =  currentPiece.getAngle();
+			int top 	=  currentIndex - (columns); // 2 = columns for 4 pieces er det 2
+			int bottom 	=  currentIndex + (columns); // 2 = columns for 4 pieces er det 2
+			int right 	=  currentIndex       	+ 1;
+			int left 	=  currentIndex	     	- 1;
+			
+			Piece topNeighbor 		= null;
+			Piece bottomNeighbor 	= null;
+			Piece rightNeighbor 	= null;
+			Piece leftNeighbor		= null;
+			
+			if(top >= 0 && top < pieceList.size()) 								{ topNeighbor    = pieceList.get(top);} 
+			if(bottom >= 0 && bottom < pieceList.size()) 						{ bottomNeighbor = pieceList.get(bottom);}
+			if(right >= 0 && right < pieceList.size() && (right)%columns != 0) 	{ rightNeighbor  = pieceList.get(right);}
+			if(left >= 0 && left < pieceList.size() && (left+1)%columns != 0) 	{ leftNeighbor	  = pieceList.get(left);}
+			
+			if(topNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
+						topNeighbor.getShape().contains(
+						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - currentPiece.getShapeWidth()), 
+						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * currentPiece.getShapeWidth())) {
+				Point2D.Float snap = new Point2D.Float(topNeighbor.getOrigin().x, topNeighbor.getOrigin().y + (topNeighbor.getShapeWidth()*2)*PApplet.sin(PApplet.radians(angle + 90)));
+				currentPiece.movePiece(snap);
+			} else if(bottomNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(bottomNeighbor.getAngle()))) &&
+					bottomNeighbor.getShape().contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - currentPiece.getShapeWidth()), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * currentPiece.getShapeWidth())) {
+				//System.out.println("bot collide");
+				Point2D.Float snap = new Point2D.Float(bottomNeighbor.getOrigin().x, bottomNeighbor.getOrigin().y + (bottomNeighbor.getShapeWidth()*2)*PApplet.sin(PApplet.radians(angle + 270)));
+				currentPiece.movePiece(snap);
+			} else if(rightNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
+					rightNeighbor.getShape().contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - currentPiece.getShapeWidth()), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * currentPiece.getShapeWidth())) {
+				//System.out.println("right collide");
+				Point2D.Float snap = new Point2D.Float(rightNeighbor.getOrigin().x - (rightNeighbor.getShapeWidth()*2)*PApplet.cos(PApplet.radians(angle)), rightNeighbor.getOrigin().y);
+				currentPiece.movePiece(snap);
+			} else if(leftNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(leftNeighbor.getAngle()))) &&
+					leftNeighbor.getShape().contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle)) * - currentPiece.getShapeWidth()), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle)) * currentPiece.getShapeWidth())) {
+				//System.out.println("left collide");
+				Point2D.Float snap = new Point2D.Float(leftNeighbor.getOrigin().x + (leftNeighbor.getShapeWidth()*2)*PApplet.cos(PApplet.radians(angle)), leftNeighbor.getOrigin().y);
+				currentPiece.movePiece(snap);
+			}
+		}
 	}
 	
 	// Checks whether two pieces are identical
@@ -162,27 +218,6 @@ public class Main {
 		p2.movePiece(p2StartOrigin);
 		
 		return identical;
-	}
-
-	
-	
-}
-class puzzleButler implements Runnable {
-	View view;
-	public puzzleButler(View _view) {
-		this.view = _view;
-	}
-	
-	public void run() {
-		while(true) {
-			Piece currentPiece = view.getCurrentPiece();
-			
-			if(currentPiece != null) {
-				System.out.println("d");
-			} else {
-				//System.out.println("e");
-			}		
-		}
 	}
 }
 

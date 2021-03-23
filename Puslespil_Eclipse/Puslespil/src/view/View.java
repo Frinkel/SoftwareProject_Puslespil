@@ -73,17 +73,36 @@ public class View extends PApplet {
 	
 	// Mouse press event
 	public void mousePressed() {
-	for(Piece piece : pieceList){
-		if(piece.isMouseOver()) {
-			//System.out.println("piece clicked");
-			currentPiece = piece;
-			angle = currentPiece.getAngle();
+		
+		boolean piecelocked = false;
+		if(!pieceList.isEmpty()) {
+			for(int i = pieceList.size()-1; i >= 0; i--) {
+				if(pieceList.get(i).isMouseOver() && !piecelocked && currentPiece == null) {
+					piecelocked = true;
+					currentPiece = pieceList.get(i);
+					currentPiece.isCurrentPiece = true;
+				}
+			}
 		}
-	  }
+		
+		/*
+		for(Piece piece : pieceList){
+			
+			if(piece.isMouseOver()) {
+				//System.out.println("piece clicked");
+				currentPiece = piece;
+				currentPiece.isCurrentPiece = true;
+				angle = currentPiece.getAngle();
+			}
+		}
+		*/
 	}
 	
 	public void mouseReleased() {
-		currentPiece = null;
+		if(currentPiece != null) {
+			currentPiece.isCurrentPiece = false;
+			currentPiece = null;
+		}
 	}
 	
 	// Panning feature
