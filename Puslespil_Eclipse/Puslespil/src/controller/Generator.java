@@ -106,7 +106,7 @@ public class Generator {
 	public int getPieceAmount() {
 		return pieceAmount;
 	}
-	// pull aleks
+	// pull MARC
 	public Point2D.Float[] generatePiece(int points, float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, float distortionLevel, boolean distortRight, boolean distortBottom){
 		Point2D.Float[] formarray = new Point2D.Float[points+1];
 		//add center of the piece to the point list
