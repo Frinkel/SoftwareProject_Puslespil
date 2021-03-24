@@ -61,23 +61,10 @@ public class Generator {
 		// Define size of each piece
 		float pieceSizeX = leapX;
 		float pieceSizeY = leapY;
-		
-		
-		
+
 		for(int i = 0; i < divideY;i++) {
 			for(int j = 0; j < divideX;j++) {
-				
-				//tilføj center
-				
-				//loop til hjørner
-				
-//				pieceStorage[i][j] = new Piece(new Point2D.Float((float) ((pieceSizeX/2) + leapX*j), (float) ((pieceSizeY/2) + leapY*i)), (float) pieceSizeX/2, (float) pieceSizeY/2);
-//				pieceStorage[i][j].setCorners();
-				
-				//Corner/side pieces have less points because they cant distort that side.
-				
-				
-				pieceStorage[j+(i*divideX)] = generatePiece((pieceSizeX/2) + leapX*j, (pieceSizeY/2) + leapY*i,leapX,leapY, distortionPoints, i, j);
+				pieceStorage[j+(i*divideX)] = generatePiece((pieceSizeX/2) + leapX*j, (pieceSizeY/2) + leapY*i,leapX,leapY, distortionPoints, i, j , pieceStorage);
 			}
 		}
 		return pieceStorage;
@@ -95,21 +82,34 @@ public class Generator {
 	public int getPieceAmount() {
 		return pieceAmount;
 	}
-	// pull MARC
-	public Point2D.Float[] generatePiece(float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, int relativePositionY, int relativePositionX){
+	// Generate a single piece
+	public Point2D.Float[] generatePiece(float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, int relativePositionY, int relativePositionX, Object[] pieceStorage){
 		int points = getNumberOfPoints(relativePositionX, relativePositionY, distortionPoints);
 		Point2D.Float[] formarray = new Point2D.Float[points+1];
 		//add center of the piece to the point list
 		int index = 0;
 		formarray[index] = new Point2D.Float(centerX, centerY);
 		index ++;
+		//add corner coordinate
 		formarray[index] = new Point2D.Float(-sizeX/2,-sizeY/2);
 		index ++;
+		//distort top , if distortion needed eg. we are not oon the border of the puzzle
 		if(relativePositionY != 0) {
-			
+			Point2D.Float[] previousPiece = (Point2D.Float[]) pieceStorage[relativePositionX+((relativePositionY-1)*divideX)];
+			int n = findPointNumberY(relativePositionX,(relativePositionY-1),distortionPoints);
+			//findNumber // skal karl lave
+			for(int i = distortionPoints-1; i >= 0; i--) {
+				Point2D.Float point = previousPiece[n+i];
+				float x = (float) point.getX();
+				float y = (float) point.getY();
+				formarray[index] = new Point2D.Float( x, (y - ((float) (boardSize/divideY))));
+				index++;
+			}
 		}
+		//add corner coordinate
 		formarray[index] = new Point2D.Float(sizeX/2,-sizeY/2);
 		index ++;
+		//distort right side , if distortion needed eg. we are not oon the border of the puzzle
 		if(relativePositionX != (divideX-1)) {
 			Point2D.Float[] distortedList = distortRight(sizeX/2, -sizeY/2);
 			for(int i = 0; i < distortedList.length; i++) {
@@ -117,8 +117,11 @@ public class Generator {
 				index++;
 			}
 		}
+		//add corner coordinate
 		formarray[index] = new Point2D.Float(sizeX/2,sizeY/2);
 		index ++;
+		
+		//distort bottom , if distortion needed eg. we are not oon the border of the puzzle
 		if(relativePositionY != (divideY-1)) {
 			Point2D.Float[] distortedList = distortDown(sizeX/2, sizeY/2);
 			for(int i = 0; i < distortedList.length; i++) {
@@ -126,10 +129,22 @@ public class Generator {
 				index++;
 			}
 		}
+		//add corner coordinate
 		formarray[index] = new Point2D.Float(-sizeX/2,sizeY/2);
 		index ++;
+		
+		//distort left side , if distortion needed eg. we are not oon the border of the puzzle
 		if(relativePositionX != 0) {
-//			getDistortionTop();
+			Point2D.Float[] previousPiece = (Point2D.Float[]) pieceStorage[(relativePositionX-1)+(relativePositionY*divideX)];
+			int n = findPointNumberX((relativePositionX-1),relativePositionY,distortionPoints);
+			for(int i = distortionPoints-1; i >= 0; i--) {
+				Point2D.Float point = previousPiece[n+i];
+				float x = (float) point.getX();
+				float y = (float) point.getY();
+
+				formarray[index] = new Point2D.Float((x - ((float) (boardSize/divideX))), y);
+				index++;
+			}
 		}
 		
 		return formarray;
@@ -144,18 +159,13 @@ public class Generator {
 		for(int i = 0; i < distortionPoints; i++) {
 			randomY = chooseRandom(-posY, randomY);
 			if(i == (distortionPoints-1)) {
-				float d = -posY-randomY;
-				
+				float d = -posY-randomY;		
 				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
-				System.out.println("smallest : "+smallest);
-				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));
-				
+				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));		
 			}else {
 				
-				float d = randomY - posY;
-				
+				float d = randomY - posY;			
 				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
-				System.out.println("smallest : "+smallest);
 				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));
 				
 			}
@@ -192,7 +202,7 @@ public class Generator {
 	}
 
 	private float getSmallest(float d, float f) {
-		if(d > f) {
+		if(Math.abs(d) > Math.abs(f)) {
 			return f;
 		}else {
 			return d;
@@ -201,13 +211,13 @@ public class Generator {
 
 	private int getNumberOfPoints(int relativePositionX, int relativePositionY, int distortionPoints) {
 		int numberOfPoints = 4;
-//		if(relativePositionX != 0) {
-//			numberOfPoints += distortionPoints;
-//		}
-//		if(relativePositionY != 0) {
-//			numberOfPoints += distortionPoints;
-//			
-//		}
+		if(relativePositionX != 0) {
+			numberOfPoints += distortionPoints;
+		}
+		if(relativePositionY != 0) {
+			numberOfPoints += distortionPoints;
+			
+		}
 		if(relativePositionX != (divideX-1)) {
 			
 			numberOfPoints += distortionPoints;
@@ -219,7 +229,20 @@ public class Generator {
 		System.out.println(numberOfPoints);
 		return numberOfPoints;
 	}
-
+	
+	private int findPointNumberY(int x,int y, int distortionPoints) {
+		int n = 4;
+		if(y != 0) {n += distortionPoints;}
+		if(x != (divideX-1)) { n += distortionPoints; }
+		return n;
+	}
+	private int findPointNumberX(int x,int y, int distortionPoints) {
+		int n = 3;
+		if(y != 0) {n += distortionPoints;}
+		return n;
+	}
+	
+	
 	private float chooseRandom(float upper, float lower) {
 		return (float) (Math.random() * (upper - lower)) + lower;
 	}
