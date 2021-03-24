@@ -110,6 +110,9 @@ public class Generator {
 		return null;
 	}
 	
+	public int getColumns() {
+		return divideX;
+	}
 	
 
 }
