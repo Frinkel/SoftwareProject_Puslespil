@@ -21,13 +21,12 @@ public class Generator {
 	private int divideX;
 	private int divideY;
 	private int distortionPoints;
-	private float distortionLevel;
+
 	
-	public Generator(double boardSize, int pieceAmount, int distortionPoints, float distortionLevel) {
+	public Generator(double boardSize, int pieceAmount, int distortionPoints) {
 		this.boardSize = boardSize;
 		this.pieceAmount = pieceAmount;
 		this.distortionPoints = distortionPoints;
-		this.distortionLevel = distortionLevel;
 		
 		// Find greatest factor 
 		for (int i = 1; i * i <= pieceAmount; i++) {
@@ -76,19 +75,9 @@ public class Generator {
 //				pieceStorage[i][j].setCorners();
 				
 				//Corner/side pieces have less points because they cant distort that side.
-				int points = 4 + (2* distortionPoints);
-				boolean distortRight = false;
-				boolean distortBottom = false;
-				if(i != divideY-1) {
-					
-					distortBottom = true;
-				}
-				if(j != divideX-1) {
-					
-					distortRight = true;
-				}
-				System.out.println("points:" + points);
-				pieceStorage[j+(i*divideX)] = generatePiece(points, (pieceSizeX/2) + leapX*j, (pieceSizeY/2) + leapY*i,leapX,leapY, distortionPoints, distortionLevel, distortRight, distortBottom);
+				
+				
+				pieceStorage[j+(i*divideX)] = generatePiece((pieceSizeX/2) + leapX*j, (pieceSizeY/2) + leapY*i,leapX,leapY, distortionPoints, i, j);
 			}
 		}
 		return pieceStorage;
@@ -107,95 +96,132 @@ public class Generator {
 		return pieceAmount;
 	}
 	// pull MARC
-	public Point2D.Float[] generatePiece(int points, float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, float distortionLevel, boolean distortRight, boolean distortBottom){
+	public Point2D.Float[] generatePiece(float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, int relativePositionY, int relativePositionX){
+		int points = getNumberOfPoints(relativePositionX, relativePositionY, distortionPoints);
 		Point2D.Float[] formarray = new Point2D.Float[points+1];
 		//add center of the piece to the point list
-		
-		formarray[0] = new Point2D.Float(centerX, centerY);
-//		System.out.print(centerX + "  " + centerY + "   ");
-		
-		formarray[1] = new Point2D.Float(-sizeX/2,-sizeY/2);
-//		System.out.println(-sizeX/2 +"     "  + -sizeY/2);
-		formarray[2] = new Point2D.Float(-sizeX/2,sizeY/2);
-		formarray[3] = new Point2D.Float(sizeX/2,sizeY/2);
-		formarray[4] = new Point2D.Float(sizeX/2,-sizeY/2);
-		
-		
-		if(distortRight) {
-			Point2D.Float[] formarrayaddRight = distortRight(sizeX, sizeY, distortionPoints, distortionLevel);
-			for(int k = 5; k < formarray.length; k++) {
-				formarray[k] = formarrayaddRight[k-k];
+		int index = 0;
+		formarray[index] = new Point2D.Float(centerX, centerY);
+		index ++;
+		formarray[index] = new Point2D.Float(-sizeX/2,-sizeY/2);
+		index ++;
+		if(relativePositionY != 0) {
+			
+		}
+		formarray[index] = new Point2D.Float(sizeX/2,-sizeY/2);
+		index ++;
+		if(relativePositionX != (divideX-1)) {
+			Point2D.Float[] distortedList = distortRight(sizeX/2, -sizeY/2);
+			for(int i = 0; i < distortedList.length; i++) {
+				formarray[index] = distortedList[i];
+				index++;
 			}
 		}
-		if(distortBottom) {
-			Point2D.Float[] formarrayaddBottom = distortBottom(sizeX, sizeY, distortionPoints, distortionLevel);
-			for(int k = 5+distortionPoints; k < formarray.length; k++) {
-				formarray[k] = formarrayaddBottom[k-k];
+		formarray[index] = new Point2D.Float(sizeX/2,sizeY/2);
+		index ++;
+		if(relativePositionY != (divideY-1)) {
+			Point2D.Float[] distortedList = distortDown(sizeX/2, sizeY/2);
+			for(int i = 0; i < distortedList.length; i++) {
+				formarray[index] = distortedList[i];
+				index++;
 			}
 		}
-		
+		formarray[index] = new Point2D.Float(-sizeX/2,sizeY/2);
+		index ++;
+		if(relativePositionX != 0) {
+//			getDistortionTop();
+		}
 		
 		return formarray;
 	}
 	
-	public Point2D.Float[] distortRight(float sizeX, float sizeY, int distortionPoints, float distortionLevel){
-		
-		Point2D.Float[] formarrayRight = new Point2D.Float[distortionPoints];
-		
-		
-		float[] tempArrayY = new float[distortionPoints];
-		float[] tempArrayX = new float[distortionPoints];
-		
-		for(int i = 0; i < distortionPoints; i++) {
-			tempArrayY[i] = chooseRandom(sizeY);
-		}
-		Arrays.sort(tempArrayY);
-		System.out.println(tempArrayY.toString());
-		for(int i = 0; i < distortionPoints; i++) {
-			float randomRange = (float) (Math.random() * distortionLevel - distortionLevel);
-			float randDistort = ((sizeX/2) + randomRange);
-			tempArrayX[i] = randDistort;
-		}
-		for(int i = 0; i < formarrayRight.length; i++) {
-			formarrayRight[i] = new Point2D.Float(tempArrayX[i], tempArrayY[i]);
-		}
 	
 
-		
-		return formarrayRight;
-	}
-	
-public Point2D.Float[] distortBottom(float sizeX, float sizeY, int distortionPoints, float distortionLevel){
-		
-		Point2D.Float[] formarrayaddBottom = new Point2D.Float[distortionPoints];
-		
-		
-		float[] tempArrayY = new float[distortionPoints];
-		float[] tempArrayX = new float[distortionPoints];
-		
+	private Point2D.Float[] distortRight(float posX, float posY) {
+		Point2D.Float[] distortedList = new Point2D.Float[distortionPoints];
+		float randomY = posY;
+		float randomX = 0;
 		for(int i = 0; i < distortionPoints; i++) {
-			tempArrayX[i] = chooseRandom(sizeX);
-		}
-		Arrays.sort(tempArrayX);
-		System.out.println(tempArrayX.toString());
-		for(int i = 0; i < distortionPoints; i++) {
-			float randomRange = (float) (Math.random() * distortionLevel - distortionLevel);
-			float randDistort =  ((sizeY/2) + randomRange);
-			tempArrayY[i] = randDistort;
-		}
-		for(int i = 0; i < formarrayaddBottom.length; i++) {
-			formarrayaddBottom[i] = new Point2D.Float(tempArrayX[i], tempArrayY[i]);
-		}
+			randomY = chooseRandom(-posY, randomY);
+			if(i == (distortionPoints-1)) {
+				float d = -posY-randomY;
+				
+				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
+				System.out.println("smallest : "+smallest);
+				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));
+				
+			}else {
+				
+				float d = randomY - posY;
+				
+				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
+				System.out.println("smallest : "+smallest);
+				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));
+				
+			}
+			distortedList[i] = new Point2D.Float(randomX, randomY);
 			
+		}
 		
-
+		return distortedList;
+	}
+	
+	private Point2D.Float[] distortDown(float posX, float posY) {
+		Point2D.Float[] distortedList = new Point2D.Float[distortionPoints];
+		float randomX = posX;
+		float randomY = 0;
+	
+		for(int i = 0; i < distortionPoints; i++) {
+			randomX = chooseRandom(randomX, -posX);
+			if(i == (distortionPoints-1)) {
+				float d = randomX - posX;
+				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
+				randomY = chooseRandom(smallest + (float) ((boardSize/divideY)/2), -smallest + (float) ((boardSize/divideY)/2));
+				
+			}else {
+				float d = posX - randomX;
+				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
+				randomY = chooseRandom(smallest + (float) ((boardSize/divideY)/2), -smallest + (float) ((boardSize/divideY)/2));
+				
+			}
+			distortedList[i] = new Point2D.Float(randomX, randomY);
+			
+		}
 		
-		return formarrayaddBottom;
+		return distortedList;
 	}
 
-	private float chooseRandom(float sizeSide) {
-		return (float) (sizeSide * Math.random());
-		
+	private float getSmallest(float d, float f) {
+		if(d > f) {
+			return f;
+		}else {
+			return d;
+		}
+	}
+
+	private int getNumberOfPoints(int relativePositionX, int relativePositionY, int distortionPoints) {
+		int numberOfPoints = 4;
+//		if(relativePositionX != 0) {
+//			numberOfPoints += distortionPoints;
+//		}
+//		if(relativePositionY != 0) {
+//			numberOfPoints += distortionPoints;
+//			
+//		}
+		if(relativePositionX != (divideX-1)) {
+			
+			numberOfPoints += distortionPoints;
+		}
+		if(relativePositionY != (divideY-1)) {
+			numberOfPoints += distortionPoints;
+			
+		}
+		System.out.println(numberOfPoints);
+		return numberOfPoints;
+	}
+
+	private float chooseRandom(float upper, float lower) {
+		return (float) (Math.random() * (upper - lower)) + lower;
 	}
 	
 	public int getColumns() {
