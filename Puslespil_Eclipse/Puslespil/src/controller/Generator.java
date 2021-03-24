@@ -159,14 +159,17 @@ public class Generator {
 		for(int i = 0; i < distortionPoints; i++) {
 			randomY = chooseRandom(-posY, randomY);
 			if(i == (distortionPoints-1)) {
-				float d = -posY-randomY;		
+				float d = -posY-randomY;
+				System.out.println("d " + d);
 				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
-				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));		
+				randomX = chooseRandom(smallest, -smallest);
+				randomX += ((float) (boardSize/divideX)/2);
 			}else {
 				
 				float d = randomY - posY;			
 				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
-				randomX = chooseRandom(smallest + ((float) (boardSize/divideX)/2), -smallest + ((float) (boardSize/divideX)/2));
+				randomX = chooseRandom(smallest, -smallest);
+				randomX += ((float) (boardSize/divideX)/2);
 				
 			}
 			distortedList[i] = new Point2D.Float(randomX, randomY);
@@ -186,13 +189,14 @@ public class Generator {
 			if(i == (distortionPoints-1)) {
 				float d = randomX - posX;
 				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
-				randomY = chooseRandom(smallest + (float) ((boardSize/divideY)/2), -smallest + (float) ((boardSize/divideY)/2));
-				
+				randomY = chooseRandom(smallest, -smallest );
+				randomY += ((float) (boardSize/divideY)/2);				
 			}else {
 				float d = posX - randomX;
 				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
-				randomY = chooseRandom(smallest + (float) ((boardSize/divideY)/2), -smallest + (float) ((boardSize/divideY)/2));
-				
+				randomY = chooseRandom(smallest, -smallest );
+				randomY += ((float) (boardSize/divideY)/2);
+
 			}
 			distortedList[i] = new Point2D.Float(randomX, randomY);
 			
