@@ -12,6 +12,10 @@ public class Piece {
 	public int col = 0;
 	float xOffset, yOffset;
 	float angle = 0;
+	public boolean isCurrentPiece = false;
+	float shapeWidth = 0;
+	float shapeHeight = 0;
+	
 	
 	public boolean overPiece, pieceLocked = false;
 	
@@ -41,12 +45,49 @@ public class Piece {
 	          shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y);
 	        }
 	    shape.endShape();
+	    
+	    shapeWidth = (shape.getWidth() - origin.x);
+	    shapeHeight = (shape.getHeight() - origin.y);
 	}
 	
 	public void display() {
 		shape.setFill(col);
 	    pA.shape(shape);
 	    pA.ellipse(origin.x, origin.y,10,10);
+	    
+	    // TESTING
+	    pA.stroke(255,0,0);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle)) * -200);
+	    pA.stroke(0,255,0);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+90)) * -200);
+	    pA.stroke(0,0,255);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -200);
+	    pA.stroke(255,255,0);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
+	    pA.stroke(0,0,0);
+	    
+	    // GREEN = LEFT
+	    /*
+	    pA.stroke(0,255,0);
+	    pA.line(origin.x - (50 * PApplet.cos(PApplet.radians(angle))), origin.y - (50 * PApplet.sin(PApplet.radians(angle))), (origin.x - (50 * PApplet.cos(PApplet.radians(angle)))) + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , (origin.y-(50 * PApplet.sin(PApplet.radians(angle)))) - PApplet.sin(PApplet.radians(-angle+90)) * -200);
+	    pA.line(origin.x + (50 * PApplet.cos(PApplet.radians(angle))), origin.y + (50 * PApplet.sin(PApplet.radians(angle))), (origin.x + (50 * PApplet.cos(PApplet.radians(angle)))) + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , (origin.y+(50 * PApplet.sin(PApplet.radians(angle)))) - PApplet.sin(PApplet.radians(-angle+90)) * -200);
+	    //System.out.println(shapeWidth);
+	    //pA.line(origin.x - ((shapeWidth - 50) * PApplet.cos(PApplet.radians(-angle))), origin.y + (50 * PApplet.sin(PApplet.radians(angle))), (origin.x - ((shapeWidth - 50) * PApplet.cos(PApplet.radians(angle)))) + (PApplet.cos(PApplet.radians(-angle)) * -100) , (origin.y+(50 * PApplet.sin(PApplet.radians(angle)))) - PApplet.sin(PApplet.radians(-angle)) * -100);
+	    
+	    
+	    
+	    pA.stroke(255,0,0);
+	    float xmult = (float) (PApplet.sin(PApplet.radians(-angle)));
+	    float ymult = (float) (PApplet.cos(PApplet.radians(-angle)));
+	    //System.out.println("a" + -angle +" x:"+xmult + " y:"+ymult);
+	    pA.line(origin.x - (50 * xmult), origin.y - (50 * ymult), (origin.x - 50 * xmult) + (PApplet.cos(PApplet.radians(-angle)) * -200) , (origin.y - 50 * ymult) - PApplet.sin(PApplet.radians(-angle)) * -200);
+	    pA.line(origin.x + (50 * xmult), origin.y + (50 * ymult), (origin.x + 50 * xmult) + (PApplet.cos(PApplet.radians(-angle)) * -200) , (origin.y + 50 * ymult) - PApplet.sin(PApplet.radians(-angle)) * -200);
+	    
+	    //pA.line(origin.x - ((shapeWidth-50) * xmult), origin.y - (50 * ymult), (origin.x - (shapeWidth-50) * xmult) + (PApplet.cos(PApplet.radians(-angle)) * -200) , (origin.y - 50 * ymult) - PApplet.sin(PApplet.radians(-angle)) * -200);
+	    */
+	    
+	    
+	    
 	}
 	
 	
@@ -60,9 +101,9 @@ public class Piece {
 		}
 	}
 	
-	public void movePiece() {
+	public void movePiece(Point2D.Float _move) {
 		for(int i = 0; i < shape.getVertexCount(); i++) {
-			origin = new Point2D.Float(pA.mouseX, pA.mouseY);
+			origin = _move;
 			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;
 			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
 			shape.setVertex(i, rotatedX, rotatedY);
@@ -93,6 +134,10 @@ public class Piece {
 		return this.angle;
 	}
 	
+	public Point2D.Float getOrigin() {
+		return this.origin;
+	}
+	
 	public Point2D.Float[] getCurrentVertices() {
 		Point2D.Float[] verticesList = new Point2D.Float[vertices.length];
 		
@@ -103,4 +148,11 @@ public class Piece {
 		return verticesList;
 	}
 	
+	public float getShapeWidth() {
+		return shapeWidth;
+	}
+	
+	public float getShapeHeight() {
+		return shapeHeight;
+	}
 }

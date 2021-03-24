@@ -198,6 +198,9 @@ public Point2D.Float[] distortBottom(float sizeX, float sizeY, int distortionPoi
 		
 	}
 	
+	public int getColumns() {
+		return divideX;
+	}
 	
 
 }
