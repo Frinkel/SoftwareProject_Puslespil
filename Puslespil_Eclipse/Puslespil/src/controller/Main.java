@@ -126,7 +126,11 @@ public class Main {
 		boolean run = true;
 		while(run) {
 			Piece currentPiece = getCurrentPiece(view);
-			pieceSnapping(true, view, g, currentPiece);
+			
+			if(view.mouseReleased) {
+				System.out.println("realease");
+				pieceSnapping(true, view, g, currentPiece);
+			}
 		}
 	}
 	
@@ -144,9 +148,9 @@ public class Main {
 	// Checks if puzzle is completed
 	private static void completionCheck(View view) {
 		/*
-		 * For each piece, find all neighbor pieces, and check if they are colliding, if all pieces are colliding with their neighbor corrosponding neighbor pieces, the puzzle must be solved.
+		 * For each piece, find all neighbor pieces, and check if they are colliding, if all pieces are colliding with their corrosponding neighbor pieces, the puzzle must be solved.
 		 * *ERROR?* If you disable snapping and stack every piece, then the puzzle is per definition solved?
-		 * *SOVLVE?* check if an edge point, outside the puzzle, is inside the corrosponding neighbor puzzle?
+		 * *SOLVE?* check if an edge point, outside the puzzle, is inside the corrosponding neighbor puzzle?
 		 */
 		
 		boolean isComplete = true;

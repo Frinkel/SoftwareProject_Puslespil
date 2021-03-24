@@ -16,6 +16,7 @@ public class View extends PApplet {
 	
 	// Variables
 	ArrayList<Piece> pieceList = new ArrayList<Piece>();
+	public boolean mouseReleased = false;
 	
 	Piece currentPiece;
 	
@@ -100,8 +101,10 @@ public class View extends PApplet {
 	
 	public void mouseReleased() {
 		if(currentPiece != null) {
+			mouseReleased = true;
 			currentPiece.isCurrentPiece = false;
 			currentPiece = null;
+			mouseReleased = false;
 		}
 	}
 	
