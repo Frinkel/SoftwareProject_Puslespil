@@ -71,13 +71,7 @@ public class Generator {
 		
 	}
 	
-	public String getPieceStorage() {
-		return Arrays.deepToString(pieceStorage);
-	}
 	
-	public double getBoardSize() {
-		return boardSize;
-	}
 	
 	public int getPieceAmount() {
 		return pieceAmount;
@@ -251,9 +245,32 @@ public class Generator {
 		return (float) (Math.random() * (upper - lower)) + lower;
 	}
 	
+	
+	// GETTERS AND SETTERS
 	public int getColumns() {
 		return divideX;
 	}
+	
+	public int getRows() {
+		return divideY;
+	}
+	
+	public double getBoardSize() {
+		return boardSize;
+	}
+	
+	public int getPieceBaseWidth() {
+		return (int) (boardSize/divideX);
+	}
+	
+	public int getPieceBaseHeight() {
+		return (int) (boardSize/divideY);
+	}
+	
+	public String getPieceStorage() {
+		return Arrays.deepToString(pieceStorage);
+	}
+	
 	
 
 }
