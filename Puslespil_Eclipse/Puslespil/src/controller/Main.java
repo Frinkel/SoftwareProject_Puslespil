@@ -10,7 +10,7 @@ import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 8;
+	private static int pieceAmount = 49;
 	private static int boardSize = 600;
 	
 	public static void main(String[] args) {
@@ -56,7 +56,7 @@ public class Main {
 		
 		
 		
-		Generator g = new Generator(boardSize, pieceAmount, 1);
+		Generator g = new Generator(boardSize, pieceAmount, 10);
 		
 		Object[] O3 = g.generate();
 		for(int i = 0; i < pieceAmount; i++) {

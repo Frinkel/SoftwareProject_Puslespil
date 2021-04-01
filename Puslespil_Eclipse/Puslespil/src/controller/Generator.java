@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Arrays;   
 
 import model.Piece;
 
@@ -150,22 +151,33 @@ public class Generator {
 		Point2D.Float[] distortedList = new Point2D.Float[distortionPoints];
 		float randomY = posY;
 		float randomX = 0;
+		
+		float[] randomPoints = chooseRandomPoints(posY, -posY, distortionPoints);
+
 		for(int i = 0; i < distortionPoints; i++) {
-			randomY = chooseRandom(-posY, randomY);
-			if(i == (distortionPoints-1)) {
-				float d = -posY-randomY;
-				System.out.println("d " + d);
-				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
-				randomX = chooseRandom(smallest, -smallest);
-				randomX += ((float) (boardSize/divideX)/2);
-			}else {
-				
-				float d = randomY - posY;			
-				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
-				randomX = chooseRandom(smallest, -smallest);
-				randomX += ((float) (boardSize/divideX)/2);
-				
-			}
+			randomY = randomPoints[i];
+//			if(i == (distortionPoints-1)) {
+//				float d = -posY-randomY;
+//				System.out.println("d " + d);
+//				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
+//				randomX = chooseRandom(smallest, -smallest);
+//				randomX += ((float) (boardSize/divideX)/2);
+//			}else {
+//				
+//				float d = randomY - posY;			
+//				float smallest = getSmallest(d, ((float) (boardSize/divideX)/2));
+//				randomX = chooseRandom(smallest, -smallest);
+//				randomX += ((float) (boardSize/divideX)/2);
+//				
+//			}
+			float d1 = -posY - randomY;
+			float d2 = randomY - posY;
+			
+			float smallest1 = getSmallest(d1, d2);
+			float smallest = getSmallest(smallest1, ((float) (boardSize/divideX)/2));
+			randomX = chooseRandom(smallest, -smallest);
+			randomX += ((float) (boardSize/divideX)/2);
+			
 			distortedList[i] = new Point2D.Float(randomX, randomY);
 			
 		}
@@ -178,20 +190,28 @@ public class Generator {
 		float randomX = posX;
 		float randomY = 0;
 	
+		float[] randomPoints = chooseRandomPoints(posX, -posX, distortionPoints);
+        randomPoints = Reverse(randomPoints);
 		for(int i = 0; i < distortionPoints; i++) {
-			randomX = chooseRandom(randomX, -posX);
-			if(i == (distortionPoints-1)) {
-				float d = randomX - posX;
-				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
-				randomY = chooseRandom(smallest, -smallest );
-				randomY += ((float) (boardSize/divideY)/2);				
-			}else {
-				float d = posX - randomX;
-				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
-				randomY = chooseRandom(smallest, -smallest );
-				randomY += ((float) (boardSize/divideY)/2);
-
-			}
+			randomX = randomPoints[i];
+//			if(i == (distortionPoints-1)) {
+//				float d = randomX - posX;
+//				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
+//				randomY = chooseRandom(smallest, -smallest );
+//				randomY += ((float) (boardSize/divideY)/2);				
+//			}else {
+//				float d = posX - randomX;
+//				float smallest = getSmallest(d, (float) ((boardSize/divideY)/2));
+//				randomY = chooseRandom(smallest, -smallest );
+//				randomY += ((float) (boardSize/divideY)/2);
+//
+//			}
+			float d1 = randomX - posX;
+			float d2 = -posX - randomX;
+			float smallest1 = getSmallest(d1, d2);
+			float smallest = getSmallest(smallest1, ((float) (boardSize/divideY)/2));
+			randomY = chooseRandom(smallest, -smallest );
+			randomY += ((float) (boardSize/divideY)/2);
 			distortedList[i] = new Point2D.Float(randomX, randomY);
 			
 		}
@@ -239,6 +259,28 @@ public class Generator {
 		if(y != 0) {n += distortionPoints;}
 		return n;
 	}
+	
+	
+	private float[] chooseRandomPoints(float upper, float lower, int distortionPoints) {
+		float[] randomPoints = new float[distortionPoints];
+		
+		for(int i = 0; i < distortionPoints; i++) {
+			randomPoints[i] = (float) (Math.random() * (upper - lower)) + lower;
+		}
+		Arrays.sort(randomPoints);
+		System.out.println(Arrays.toString(randomPoints));
+		return randomPoints;
+	}
+	
+	private float[] Reverse(float[] a) {
+		// https://www.tutorialkart.com/java/java-array-reverse/
+        float[] result = new float[a.length];
+        for(int i = 0; i < a.length; i++) {
+            result[a.length-1-i] = a[i];
+        }
+        return result;
+	}
+	
 	
 	
 	private float chooseRandom(float upper, float lower) {
