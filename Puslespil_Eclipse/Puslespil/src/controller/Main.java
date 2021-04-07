@@ -56,7 +56,7 @@ public class Main {
 		
 		
 		
-		Generator g = new Generator(boardSize, pieceAmount, 10);
+		Generator g = new Generator(boardSize, pieceAmount, 1);
 		
 		Object[] O3 = g.generate();
 		for(int i = 0; i < pieceAmount; i++) {
@@ -190,7 +190,7 @@ public class Main {
 			if(topNeighbor != null) {
 				isComplete &= Math.round(PApplet.sin(PApplet.radians(piece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
 								topNeighbor.getShape().contains(
-								piece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - (piece.getShapeHeight() + offset)), 
+								piece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - (piece.getShapeWidth() + offset)), 
 								piece.getOrigin().y - (PApplet.sin(PApplet.radians(angle + 90)) * (piece.getShapeHeight() + offset)));
 			}
 			/*

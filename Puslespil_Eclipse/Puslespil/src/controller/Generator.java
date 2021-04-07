@@ -80,7 +80,7 @@ public class Generator {
 	// Generate a single piece
 	public Point2D.Float[] generatePiece(float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, int relativePositionY, int relativePositionX, Object[] pieceStorage){
 		int points = getNumberOfPoints(relativePositionX, relativePositionY, distortionPoints);
-		Point2D.Float[] formarray = new Point2D.Float[points+1];
+		Point2D.Float[] formarray = new Point2D.Float[points+2];
 		//add center of the piece to the point list
 		int index = 0;
 		formarray[index] = new Point2D.Float(centerX, centerY);
@@ -141,7 +141,7 @@ public class Generator {
 				index++;
 			}
 		}
-		
+		formarray[index] = new Point2D.Float(-sizeX/2,-sizeY/2);
 		return formarray;
 	}
 	
