@@ -23,7 +23,7 @@ public class PieceReader {
 		JSONObject jsonObject = null;
 		
 		try {
-			obj = parser.parse(new FileReader("assets\\Puzzle-3r-3c-3756-sol.json"));
+			obj = parser.parse(new FileReader("assets\\PieceList03.json"));
 			jsonObject = (JSONObject) obj;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
@@ -31,9 +31,6 @@ public class PieceReader {
 		//the form of the entire puzzle
 		Point2D.Float[] formarray = new Point2D.Float[4];
 		readForm(obj, formarray);
-		for (int i = 0; i < 4; i++) {
-			System.out.println(formarray[i]);
-		}
 		
 		//find the amount of pieces
 		long numberOfPieces = (Long) jsonObject.get("no. of pieces");
@@ -45,11 +42,7 @@ public class PieceReader {
 		JSONArray piecesList = (JSONArray) jsonObject.get("pieces");
 		readPieces(piecesList,pieces,(int) numberOfPieces);
 		for (int i = 0; i < pieces.length; i++) {
-			Point2D.Float[] pieceCorners = (Point2D.Float[]) pieces[i];
-			for(int j = 0;j<pieceCorners.length;j++) {
-				System.out.print(pieceCorners[j].toString());
-			}
-			System.out.println("");	
+			Point2D.Float[] pieceCorners = (Point2D.Float[]) pieces[i];	
 		}
 		
 		return pieces;
@@ -76,7 +69,7 @@ public class PieceReader {
 		for(int i= 0;i<piecesList.size();i++) {
 			JSONObject piece = (JSONObject) piecesList.get(i);
 			JSONArray pieceCord = (JSONArray) piece.get("corners");
-			Point2D.Float[] pieceCorners = new Point2D.Float[pieceCord.size()];
+			Point2D.Float[] pieceCorners = new Point2D.Float[pieceCord.size()+1];
 			
 			for (int j = 0; j < pieceCord.size(); j++) {
 				JSONObject corner = (JSONObject) pieceCord.get(j);
@@ -86,6 +79,12 @@ public class PieceReader {
 				Point2D.Float point = new Point2D.Float((float) cornerX,(float) cornerY);
 				pieceCorners[j] = point;
 			}
+			JSONObject corner = (JSONObject) pieceCord.get(0);
+			JSONObject corner1 = (JSONObject) corner.get("coord");
+			double cornerX = (double) corner1.get("x") * multiplier;
+			double cornerY = (double) corner1.get("y") * multiplier;
+			Point2D.Float point = new Point2D.Float((float) cornerX,(float) cornerY);
+			pieceCorners[pieceCord.size()] = point;
 			pieces[i] = pieceCorners;
 		}
 	}

@@ -59,6 +59,10 @@ public class Main {
 		Generator g = new Generator(boardSize, pieceAmount, 5);
 		
 		Object[] O3 = g.generate();
+		PieceCompare pC = new PieceCompare();
+		pC.ultimusMaximusComparitus(O3);
+		
+		/*
 		for(int i = 0; i < pieceAmount; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];
 			Point2D.Float center = v[0];
@@ -70,7 +74,7 @@ public class Main {
 			Piece p = new Piece(view, center, v1);
 			view.addPieceToList(p);
 		}
-		
+		*/
 		
 		
 		ArrayList<Piece> pieceList = view.getPieceList();
@@ -104,12 +108,15 @@ public class Main {
 		
 		
 		
-		/*
+		
 		PieceReader pR = new PieceReader();
 		Object[] O2 = pR.pieceReader();
+		pC.ultimusMaximusComparitus(O2);
+		
+		
 		int j = -1;
 		int a = 0;
-		for(int i = 0; i < 9; i++) {
+		for(int i = 0; i < 8; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) O2[i];
 			a++;
 			if(i % 11 == 0) {j++; a=0;}
@@ -117,7 +124,7 @@ public class Main {
 			Piece p = new Piece(view, new Point2D.Float(0.0f+100*a, 0.0f+100*j), v);
 			view.addPieceToList(p);
 		}
-		*/
+		
 		
 		//new Thread(new puzzleButler(view)).start();
 		
