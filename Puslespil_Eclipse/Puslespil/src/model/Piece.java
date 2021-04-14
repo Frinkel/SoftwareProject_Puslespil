@@ -66,6 +66,8 @@ public class Piece {
 	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
 	    pA.stroke(0,0,0);
 	    
+	    pA.ellipse(origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -300) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -300, 10,10);
+	    
 	    // GREEN = LEFT
 	    /*
 	    pA.stroke(0,255,0);

@@ -82,6 +82,7 @@ public class View extends PApplet {
 					piecelocked = true;
 					currentPiece = pieceList.get(i);
 					currentPiece.isCurrentPiece = true;
+					angle = currentPiece.getAngle();
 				}
 			}
 		}
@@ -105,6 +106,7 @@ public class View extends PApplet {
 			currentPiece.isCurrentPiece = false;
 			currentPiece = null;
 			mouseReleased = false;
+			angle = 0;
 		}
 	}
 	
