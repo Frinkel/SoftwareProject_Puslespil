@@ -13,7 +13,7 @@ public class PieceCompare {
 		
 	}
 	
-	public void ultimusMaximusComparitus(Object[] PieceList) {
+	public void pieceComparator(Object[] PieceList) {
 		float[] circumferences = new float[PieceList.length];
 		ArrayList<Integer> piecesSuspectedOfDuplication = new ArrayList<Integer>();
 		boolean containBool = false;

@@ -45,15 +45,15 @@ public class Generator {
 	public Object[] generate() {
 
 		// Find distance between centers of pieces
-		float leapX = (float) (boardSize/divideX);
-		float leapY = (float) (boardSize/divideY);
+		float pieceLength = (float) (boardSize/divideX);
+		float pieceHeight = (float) (boardSize/divideY);
 		// Define size of each piece
-		float pieceSizeX = leapX;
-		float pieceSizeY = leapY;
+		float pieceSizeX = pieceLength;
+		float pieceSizeY = pieceHeight;
 
 		for(int i = 0; i < divideY;i++) {
 			for(int j = 0; j < divideX;j++) {
-				pieceStorage[j+(i*divideX)] = generatePiece((pieceSizeX/2) + leapX*j, (pieceSizeY/2) + leapY*i,leapX,leapY, distortionPoints, i, j , pieceStorage);
+				pieceStorage[j+(i*divideX)] = generatePiece((pieceSizeX/2) + pieceLength*j, (pieceSizeY/2) + pieceHeight*i,pieceLength,pieceHeight, distortionPoints, i, j , pieceStorage);
 			}
 		}
 		return pieceStorage;

@@ -20,7 +20,7 @@ public class Main {
 		
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
 		//boardSize = (int) (view.width/1.25);
-		System.out.println("w " + view.width/2);
+//		System.out.println("w " + view.width/2);
 		
 		
 		
@@ -60,9 +60,9 @@ public class Main {
 		
 		Object[] O3 = g.generate();
 		PieceCompare pC = new PieceCompare();
-		pC.ultimusMaximusComparitus(O3);
+		pC.pieceComparator(O3);
 		
-		/*
+		
 		for(int i = 0; i < pieceAmount; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];
 			Point2D.Float center = v[0];
@@ -74,7 +74,7 @@ public class Main {
 			Piece p = new Piece(view, center, v1);
 			view.addPieceToList(p);
 		}
-		*/
+		
 		
 		
 		ArrayList<Piece> pieceList = view.getPieceList();
@@ -108,10 +108,10 @@ public class Main {
 		
 		
 		
-		
+		/*
 		PieceReader pR = new PieceReader();
 		Object[] O2 = pR.pieceReader();
-		pC.ultimusMaximusComparitus(O2);
+		pC.pieceComparator(O2);
 		
 		
 		int j = -1;
@@ -124,7 +124,7 @@ public class Main {
 			Piece p = new Piece(view, new Point2D.Float(0.0f+100*a, 0.0f+100*j), v);
 			view.addPieceToList(p);
 		}
-		
+		*/
 		
 		//new Thread(new puzzleButler(view)).start();
 		
