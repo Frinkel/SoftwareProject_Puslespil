@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import model.Piece;
 
+//hello
 public class PieceCompare {
 	public PieceCompare() {
 		
