@@ -11,7 +11,8 @@ import view.View;
 public class Main {
 	// The argument passed to main must match the class name
 	private static int pieceAmount = 4;
-	private static int boardSize = 600;
+	private static int boardSize = 800;
+	private static int distortionPoints = 1;
 	
 	public static void main(String[] args) {
 		
@@ -56,7 +57,7 @@ public class Main {
 		
 		
 		
-		Generator g = new Generator(boardSize, pieceAmount, 5);
+		Generator g = new Generator(boardSize, pieceAmount, distortionPoints);
 		
 		Object[] O3 = g.generate();
 		PieceCompare pC = new PieceCompare();
@@ -78,7 +79,7 @@ public class Main {
 		
 		
 		ArrayList<Piece> pieceList = view.getPieceList();
-		//randomizePuzzle(view, pieceList, 100, view.width-100, true);
+		randomizePuzzle(view, pieceList, 100, view.width-100, true);
 		
 		completionCheck(view, g);
 		
@@ -223,8 +224,8 @@ public class Main {
 			int height 	= generator.getPieceBaseHeight();
 			int currentIndex = pieceList.indexOf(currentPiece);
 			float angle =  currentPiece.getAngle();
-			int top 	=  currentIndex - (columns); // 2 = columns for 4 pieces er det 2
-			int bottom 	=  currentIndex + (columns); // 2 = columns for 4 pieces er det 2
+			int top 	=  currentIndex - (columns);
+			int bottom 	=  currentIndex + (columns);
 			int right 	=  currentIndex       	+ 1;
 			int left 	=  currentIndex	     	- 1;
 
