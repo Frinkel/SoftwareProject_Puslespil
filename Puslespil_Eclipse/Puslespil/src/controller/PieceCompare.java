@@ -1,7 +1,8 @@
 package controller;
 
 import java.awt.geom.Point2D;
-import java.util.Arrays;   
+import java.awt.geom.Point2D.Float;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import model.Piece;
@@ -9,89 +10,248 @@ import model.Piece;
 //hello
 public class PieceCompare {
 	public PieceCompare() {
-		
-		
+
 	}
-	
+
 	public void pieceComparator(Object[] PieceList) {
 		float[] circumferences = new float[PieceList.length];
 		ArrayList<Integer> piecesSuspectedOfDuplication = new ArrayList<Integer>();
 		boolean containBool = false;
-		for(int i = 0; i < (PieceList.length); i++) {
-			Point2D.Float[] v = (Point2D.Float[]) PieceList[i];
-			containBool = (containBool || contains(circumferences,getCircumference(v)));
-			if( contains(circumferences,getCircumference(v))) {
+		for (int i = 0; i < (PieceList.length); i++) {
+			PieceList[i] = removePointOnLine((Point2D.Float[]) PieceList[i]);
+			Point2D.Float[] piece = (Point2D.Float[]) PieceList[i];
+			containBool = (containBool || contains(circumferences, getCircumference(piece)));
+			if (contains(circumferences, getCircumference(piece))) {
 				piecesSuspectedOfDuplication.add(i);
 			}
-			circumferences[i] = getCircumference(v);
-			//System.out.println(Arrays.toString(circumferences));
+			circumferences[i] = getCircumference(piece);
+			// System.out.println(Arrays.toString(circumferences));
 		}
-		if(containBool) {
+		if (containBool) {
 			System.out.println("Alexanders bool er true");
-			piecesWithEqualCircumFerences(circumferences,piecesSuspectedOfDuplication);
-		}else {
+			ArrayList<Object> equalList = piecesWithEqualCircumFerences(circumferences, piecesSuspectedOfDuplication);
+			for (int i = 0; i < equalList.size(); i++) {
+				System.out.print(Arrays.toString((int[]) equalList.get(i)));
+			}
+			System.out.println("");
+			equalList = checkEqualNumberOfCorners(equalList,PieceList);
+			for (int i = 0; i < equalList.size(); i++) {
+				System.out.print(Arrays.toString((int[]) equalList.get(i)));
+			}
+			System.out.println("");
+			equalList = checkForEqualPieces(equalList, PieceList);
+			for (int i = 0; i < equalList.size(); i++) {
+				System.out.print(Arrays.toString((int[]) equalList.get(i)));
+			}
+			
+			
+		} else {
 			System.out.println("Alexanders bool er false");
-			
+
 		}
-		
-			
-		
-		
-		
+
 	}
 	
+	private ArrayList<Object> checkForEqualPieces(ArrayList<Object> equalList, Object[] pieceList) {
+		for(int i = 0; i < equalList.size();) {
+			int[] pairToCheck = (int[]) equalList.get(i);
+			Point2D.Float[] piece1 = (Point2D.Float[]) pieceList[pairToCheck[0]];
+			Point2D.Float[] piece2 = (Point2D.Float[]) pieceList[pairToCheck[1]];
+			
+			AncleLength[] angleLength1 = createAncleLengthArray(piece1);
+			AncleLength[] angleLength2 = createAncleLengthArray(piece2);
+			
+			if(checkAngleLengthPieces(angleLength1, angleLength2)) {
+				i++;
+			}else {
+				equalList.remove(i);
+			}
+		}
+		
+		return equalList;
+	}
+
 	
+	private boolean checkAngleLengthPieces(AncleLength[] angleLength1, AncleLength[] angleLength2) {
+		int length = angleLength1.length;
+		for(int j = 0; j < length; j++) {
+
+			for(int i = 0; i < length; i++) {
+
+				
+				double angle1 = (double) Math.round(angleLength1[i].getAngle() * 1000d);
+				double angle2 = (double) Math.round(angleLength2[i].getAngle() * 1000d);
+				
+				if(angle1 == angle2) {
+					double length1 = (double) Math.round(angleLength1[i].getLength() * 1000d);
+					double length2 = (double) Math.round(angleLength2[i].getLength() * 1000d);
+
+					
+					if(length1 == length2) {
+						if(i == length - 1) {
+							return true;
+						}
+					}else {
+						i = length+1;
+					}
+				}else {
+					i = length+1;
+				}
+			}
+			AncleLength[] tempArray = angleLength2.clone();
+			for(int k = 0; k < length; k++) {
+				angleLength2[k] = tempArray[((length-1)+k)%length];
+			}
+			
+		}
+		return false;
+	}
+
+	private AncleLength[] createAncleLengthArray(Float[] piece) {
+		
+		int listLength = piece.length;
+		AncleLength[] angleLength = new AncleLength[listLength-1];
+		for (int i = 0; i < (listLength - 1); i++) {
+			angleLength[i] = new AncleLength(getAngleFromThreePoints(piece[i], piece[i+1], piece[(i+2)%(listLength-1)]), distance(piece[i], piece[i+1]));
+		}
+		return angleLength;
+	}
+
+	private ArrayList<Object> checkEqualNumberOfCorners(ArrayList<Object> equalList, Object[] pieceList) {
+		for(int i = 0; i < equalList.size();) {
+			int[] pairToCheck = (int[]) equalList.get(i);
+			Point2D.Float[] piece1 = (Point2D.Float[]) pieceList[pairToCheck[0]];
+			Point2D.Float[] piece2 = (Point2D.Float[]) pieceList[pairToCheck[1]];
+			if(piece1.length == piece2.length) {
+				i++;
+			}else {
+				equalList.remove(i);
+			}
+		}
+		
+		return equalList;
+	}
+
+	private Object removePointOnLine(Point2D.Float[] piece) {
+		for(int i = 0;i<piece.length-1;i++) {
+			if(threePointOnLine(piece[i],piece[((i+1)%(piece.length))],piece[((i+2)%(piece.length))])) {
+				System.out.println("removed" + piece[((i+1)%(piece.length))].toString());
+				Point2D.Float[] newPiece = new Point2D.Float[piece.length-1];
+				int index = 0;
+				for(int j = 0;j<newPiece.length;) {
+					if((j+index)!=(((i+1)%(piece.length)))) {
+						newPiece[j] = piece[j+index];
+						j++;
+					}else {
+						index++;
+					}
+				}
+				return newPiece;
+			}	
+		}
+		return piece;
+	}
+
 	public boolean contains(float[] circumferences, float circumference) {
-		for(float x : circumferences) {
-			if(x == circumference ) {
+		for (float x : circumferences) {
+			if (x == circumference) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public float getCircumference(Point2D.Float[] points) {
+		float circumference = 0.0f;
+		for (int i = 0; i < (points.length - 1); i++) {
+			circumference += distance(points[i], points[i + 1]);
+		}
+		// System.out.println("circumference = " + circumference);
+		return circumference;
+
+	}
+
+	public float distance(Point2D.Float p1, Point2D.Float p2) {
+		return Math.abs(
+				(float) Math.sqrt((Math.pow((p2.getX() - p1.getX()), 2)) + (Math.pow((p2.getY() - p1.getY()), 2))));
+	}
+
+	public boolean threePointOnLine(Point2D.Float point1, Point2D.Float point2, Point2D.Float point3) {
+		double n = 0.0;
+		double m = 0.0;
+		m = (point2.getY() - point1.getY()) / (point2.getX() - point1.getX());
+		n = (point3.getY() - point2.getY()) / (point3.getX() - point2.getX());
+		if (m == n) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public ArrayList<Object> piecesWithEqualCircumFerences(float[] circumferences,
+		ArrayList<Integer> piecesSuspectedOfDuplication) {
+		ArrayList<Object> equalList = new ArrayList<Object>();
+		for (int i = 0; i < circumferences.length; i++) {
+			for (int j = 0; j < circumferences.length; j++) {
+				if ((j != i) && (((double) Math.round(circumferences[j] * 1000d)
+						/ 1000d) == ((double) Math.round(circumferences[i] * 1000d) / 1000d))) {
+					int[] toAdd = { i, j };
+					if (!(containsDuplicateValues(equalList, toAdd))) {
+						equalList.add(toAdd);
+					}
+				}
+			}
+		}
+		return equalList;
+
+	}
+
+	public boolean containsDuplicateValues(ArrayList<Object> equalList, int[] toAdd) {
+		for (int i = 0; i < equalList.size(); i++) {
+			int j = ((int[]) equalList.get(i))[0];
+			int k = ((int[]) equalList.get(i))[1];
+			if ((j == toAdd[0] && k == toAdd[1]) || (j == toAdd[1] && k == toAdd[0])) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public float getCircumference(Point2D.Float[] points) {
-		float circumference = 0.0f;
-		for(int i = 1; i < (points.length -1);i++) {
-			circumference += distance(points[i],points[i+1]);
+	public float getAngleFromThreePoints(Point2D.Float point1, Point2D.Float point2, Point2D.Float point3) {
+		Point2D.Float vectorBA = new Point2D.Float((float) (point1.getX()-point2.getX()),(float) (point1.getY()-point2.getY()));
+		Point2D.Float vectorBC = new Point2D.Float((float) (point3.getX()-point2.getX()),(float) (point3.getY()-point2.getY()));
+		
+		
+		
+		float lengthAB = (float) Math.sqrt(Math.pow(vectorBA.getX(), 2) + Math.pow(vectorBA.getY(), 2));
+		float lengthBC = (float) Math.sqrt(Math.pow(vectorBC.getX(), 2) + Math.pow(vectorBC.getY(), 2));
+		float dotProduct = (float) ((vectorBA.getX() * vectorBC.getX()) + (vectorBA.getY() * vectorBC.getY()));
+		
+		float distanceFromLine = distanceToCenter(point1,point3);
+		
+		float angle = (float) (Math.acos((dotProduct)/(lengthAB * lengthBC)));
+		if(distanceFromLine > distance(point2, new Point2D.Float(0.0f,0.0f))) {
+			angle = (float) ((2*Math.PI)-(angle));
 		}
-		//System.out.println("circumference = " + circumference);
-		return circumference;
+		return angle;
 		
 	}
 
-	public float distance (Point2D.Float p1,Point2D.Float p2) {
-		return Math.abs((float) Math.sqrt( (Math.pow((p2.getX() - p1.getX()),2)) + (Math.pow((p2.getY() - p1.getY()),2))));
+	private float distanceToCenter(Float point1, Float point3) {
+		float x0 = 0.0f;
+		float x1 = (float) point1.getX();
+		float x2 = (float) point3.getX();
+		float y0 = 0.0f;
+		float y1 = (float) point1.getY();
+		float y2 = (float) point3.getY();
+		
+		float distance = (float) (Math.abs(((x2-x1)*(y1-y0))-((x1-x0)*(y2-y1)))/(Math.sqrt((Math.pow((x2-x1), 2))+(Math.pow((y2-y1), 2)))));
+		
+		return distance;
+				
+		
+		
+		
 	}
-	
-	public boolean threePointOnLine(Point2D.Float point1,Point2D.Float point2,Point2D.Float point3) {
-		double n = 0.0;
-		double m = 0.0;
-		m = (point2.getY() - point1.getY()) / (point2.getX() - point1.getX());  
-	    n = (point3.getY() - point2.getY()) / (point3.getX() - point2.getX());
-	    if( m == n){  
-	        return true;  
-	    }else {  
-	    	return false; 
-	    } 
-	}
-	
-	
-	public ArrayList<Object> piecesWithEqualCircumFerences(float[] circumferences, ArrayList<Integer> piecesSuspectedOfDuplication){
-		ArrayList<Object> equalList = new ArrayList<Object>();
-		for(int i : piecesSuspectedOfDuplication){
-			for(int j = 0; j < circumferences.length;j++) {
-				if((j!=i)&&(circumferences[j] == circumferences[i])) {
-					int[] toAdd = {i,j};
-					System.out.println(Arrays.toString(toAdd));
-					equalList.add(toAdd);
-				}
-			}
-		}
-		return equalList;
-			
-	}
-	
 	
 }
-

@@ -70,12 +70,16 @@ public class PieceReader {
 			JSONObject piece = (JSONObject) piecesList.get(i);
 			JSONArray pieceCord = (JSONArray) piece.get("corners");
 			Point2D.Float[] pieceCorners = new Point2D.Float[pieceCord.size()+1];
+			double sumX = 0;
+			double sumY = 0;
 			
 			for (int j = 0; j < pieceCord.size(); j++) {
 				JSONObject corner = (JSONObject) pieceCord.get(j);
 				JSONObject corner1 = (JSONObject) corner.get("coord");
 				double cornerX = (double) corner1.get("x") * multiplier;
+				sumX += cornerX;
 				double cornerY = (double) corner1.get("y") * multiplier;
+				sumY += cornerY;
 				Point2D.Float point = new Point2D.Float((float) cornerX,(float) cornerY);
 				pieceCorners[j] = point;
 			}
@@ -85,6 +89,18 @@ public class PieceReader {
 			double cornerY = (double) corner1.get("y") * multiplier;
 			Point2D.Float point = new Point2D.Float((float) cornerX,(float) cornerY);
 			pieceCorners[pieceCord.size()] = point;
+			
+			double avgX = (sumX/pieceCord.size());
+			double avgY = (sumY/pieceCord.size());
+			
+			for(int k = 0; k < pieceCorners.length;k++) {
+				pieceCorners[k].x -= avgX;
+				pieceCorners[k].y -= avgY;
+				
+				
+				
+			}
+			
 			pieces[i] = pieceCorners;
 		}
 	}
