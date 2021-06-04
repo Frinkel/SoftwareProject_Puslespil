@@ -4,22 +4,29 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
 
+import model.ImageInitializer;
 import model.Piece;
 import processing.core.PApplet;
+import processing.core.PImage;
 import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 4;
+	private static int pieceAmount = 9;
 	private static int boardSize = 800;
-	private static int distortionPoints = 1;
+	private static int distortionPoints = 4;
+	
+	
+	static Generator generator;
 	
 	public static void main(String[] args) {
 		
 		View view = new View();
 		
 		
+		
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
+		
 		//boardSize = (int) (view.width/1.25);
 //		System.out.println("w " + view.width/2);
 		
@@ -56,32 +63,40 @@ public class Main {
 		*/
 		
 		
+		// Create the generator
+//		Generator g = new Generator(boardSize, pieceAmount, distortionPoints);
+//		
+//		// Get the images to be mapped onto the pieces
+//		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg"};
+//		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, g.getColumns(), g.getRows());
+//		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get(2), boardSize);
+//		//view.setImageList(sprites);
+//		
+//		
+//		Object[] O3 = g.generate();
+//		PieceCompare pC = new PieceCompare();
+//		pC.pieceComparator(O3);
+//		
+//		
+//		for(int i = 0; i < pieceAmount; i++) {
+//			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+//			Point2D.Float center = v[0];
+//			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
+//			for(int j = 1; j<v.length;j++) {
+//				v1[j-1]=v[j];
+//			}
+//			
+//			Piece p = new Piece(view, center, v1, sprites.get(i));
+//			view.addPieceToList(p);
+//		}
 		
-		Generator g = new Generator(boardSize, pieceAmount, distortionPoints);
-		
-		Object[] O3 = g.generate();
-		PieceCompare pC = new PieceCompare();
-		pC.pieceComparator(O3);
-		
-		
-		for(int i = 0; i < pieceAmount; i++) {
-			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-			Point2D.Float center = v[0];
-			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
-			for(int j = 1; j<v.length;j++) {
-				v1[j-1]=v[j];
-			}
-			
-			Piece p = new Piece(view, center, v1);
-			view.addPieceToList(p);
-		}
-		
-		
+		// COMMENT THIS OUT IF YOU WANNA TEST WITHOUT GENERATED
+		generatePuzzle(view);
 		
 		ArrayList<Piece> pieceList = view.getPieceList();
-		randomizePuzzle(view, pieceList, 100, view.width-100, true);
+		//randomizePuzzle(view, pieceList, 100, view.width-100, true);
 		
-		completionCheck(view, g);
+		//completionCheck(view, g);
 		
 		/*
 		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
@@ -137,8 +152,44 @@ public class Main {
 			
 			if(view.mouseReleased) {
 				//System.out.println("realease");
-				pieceSnapping(true, view, g, currentPiece);
+				pieceSnapping(true, view, generator, currentPiece);
 			}
+			
+			if(view.newPuzzle) {
+				view.resetPieceList();
+				generatePuzzle(view);
+				view.newPuzzle = false;
+				randomizePuzzle(view, pieceList, 100, view.width-100, true);
+			}
+		}
+	}
+	
+	public static void generatePuzzle(View view) {
+		generator = new Generator(boardSize, pieceAmount, distortionPoints);
+		
+		// Get the images to be mapped onto the pieces
+		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg"};
+		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
+		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
+		//view.setImageList(sprites);
+		System.out.println(Math.round(Math.random() * paths.length) - 1);
+		
+		
+		Object[] O3 = generator.generate();
+		PieceCompare pC = new PieceCompare();
+		pC.pieceComparator(O3);
+		
+		
+		for(int i = 0; i < pieceAmount; i++) {
+			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+			Point2D.Float center = v[0];
+			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
+			for(int j = 1; j<v.length;j++) {
+				v1[j-1]=v[j];
+			}
+			
+			Piece p = new Piece(view, center, v1, sprites.get(i));
+			view.addPieceToList(p);
 		}
 	}
 	
@@ -153,7 +204,7 @@ public class Main {
 		return null;
 	}
 	
-	// Checks if puzzle is completed
+	// Checks if puzzle is completed DOES NOT WORK AS INTENDED
 	private static void completionCheck(View view, Generator generator) {
 		/*
 		 * For each piece, find all neighbor pieces, and check if they are colliding, if all pieces are colliding with their corrosponding neighbor pieces, the puzzle must be solved.
@@ -166,16 +217,17 @@ public class Main {
 		// Find neighbor pieces
 		ArrayList<Piece> pieceList = view.getPieceList();
 		
-		for(Piece piece : pieceList) {
+		for(Piece currentPiece : pieceList) {
 			double boardsize = generator.getBoardSize();
 			int columns   = generator.getColumns();
 			int rows	  = generator.getRows();
 			double x_spacing = boardsize/columns;
 			double y_spacing = boardsize/rows;
+			int width 	= generator.getPieceBaseWidth();
+			int height 	= generator.getPieceBaseHeight();
 			
-			
-			int currentIndex = pieceList.indexOf(piece);
-			float angle =  piece.getAngle();
+			int currentIndex = pieceList.indexOf(currentPiece);
+			float angle =  currentPiece.getAngle();
 			//int width 	= generator.getPieceBaseWidth();
 			//int height 	= generator.getPieceBaseHeight();
 			int top 	=  currentIndex - (columns);
@@ -197,16 +249,18 @@ public class Main {
 			
 			// Collision check
 			if(topNeighbor != null) {
-				isComplete &= Math.round(PApplet.sin(PApplet.radians(piece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
-							  Math.round(PApplet.cos(PApplet.radians(piece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
-							((Math.round((piece.getOrigin().x + (PApplet.cos(PApplet.radians(-angle-90)) * - y_spacing))) == Math.round(topNeighbor.getOrigin().x) && 
-							  Math.round((piece.getOrigin().y - PApplet.sin(PApplet.radians(-angle-90)) * - y_spacing)) == Math.round(topNeighbor.getOrigin().y)));
+//				isComplete &= Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
+//						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
+//						topNeighbor.contains(
+//						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - width/2), 
+//						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * height/2);
 			}
 			if(rightNeighbor != null) {
-				isComplete &= Math.round(PApplet.sin(PApplet.radians(piece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
-							  Math.round(PApplet.cos(PApplet.radians(piece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
-							((Math.round((piece.getOrigin().x + (PApplet.cos(PApplet.radians(-angle+180)) * - x_spacing))) == Math.round(rightNeighbor.getOrigin().x) && 
-							  Math.round((piece.getOrigin().y - PApplet.sin(PApplet.radians(-angle+180)) * - x_spacing)) == Math.round(rightNeighbor.getOrigin().y)));
+				isComplete &= Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
+						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
+						rightNeighbor.contains(
+						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - (width/2 + 10)), 
+						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * (height/2 + 10));
 			}
 			
 		}
@@ -214,6 +268,11 @@ public class Main {
 		System.out.println(isComplete);
 	}
 	
+	
+	/*
+	 * DOES NOT WORK AS INTENDED;
+	 * PICKUP PIECE NOT WORKING AS INTEDED, MIGHT BE THE NEW CONTAINS METHOD!
+	 */
 	// Regulates piece snapping
 	private static void pieceSnapping(boolean active, View view, Generator generator, Piece currentPiece) {
 		if(currentPiece != null && active) {
@@ -242,18 +301,18 @@ public class Main {
 			// Control snapping
 			if(topNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
 						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
-						topNeighbor.getShape().contains(
-						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - currentPiece.getShapeHeight()), 
-						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * currentPiece.getShapeHeight())) {
+						topNeighbor.contains(
+						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - width/2), 
+						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * height/2)) {
 				Point2D.Float snap = new Point2D.Float(topNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 90)), topNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 90)));
 				currentPiece.movePiece(snap);
 				completionCheck(view, generator); // Check if puzzle is completed
 				
 			} else if(bottomNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(bottomNeighbor.getAngle()))) &&
 					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(bottomNeighbor.getAngle()))) &&
-					bottomNeighbor.getShape().contains(
-					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - currentPiece.getShapeHeight()), 
-					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * currentPiece.getShapeHeight())) {
+					bottomNeighbor.contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - width/2), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * height/2)) {
 				//System.out.println("bot collide");
 				Point2D.Float snap = new Point2D.Float(bottomNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 270)), bottomNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 270)));
 				currentPiece.movePiece(snap);
@@ -261,9 +320,9 @@ public class Main {
 				
 			} else if(rightNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
 					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
-					rightNeighbor.getShape().contains(
-					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - currentPiece.getShapeWidth()), 
-					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * currentPiece.getShapeWidth())) {
+					rightNeighbor.contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - width/2), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * height/2)) {
 				//System.out.println("right collide");
 				Point2D.Float snap = new Point2D.Float(rightNeighbor.getOrigin().x - (width)*PApplet.cos(PApplet.radians(angle)), rightNeighbor.getOrigin().y - (width)*PApplet.sin(PApplet.radians(angle)));
 				currentPiece.movePiece(snap);
@@ -271,10 +330,9 @@ public class Main {
 				
 			} else if(leftNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(leftNeighbor.getAngle()))) &&
 					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(leftNeighbor.getAngle()))) &&
-					leftNeighbor.getShape().contains(
-					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle)) * - currentPiece.getShapeWidth()), 
-					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle)) * currentPiece.getShapeWidth())) {
-				//System.out.println("left collide");
+					leftNeighbor.contains(
+					currentPiece.getOrigin().x - (PApplet.cos(PApplet.radians(angle)) * width/2), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle)) * height/2)) {
 				Point2D.Float snap = new Point2D.Float(leftNeighbor.getOrigin().x + (width)*PApplet.cos(PApplet.radians(angle)), leftNeighbor.getOrigin().y + (width)*PApplet.sin(PApplet.radians(angle)));
 				currentPiece.movePiece(snap);
 				completionCheck(view, generator); // Check if puzzle is completed
