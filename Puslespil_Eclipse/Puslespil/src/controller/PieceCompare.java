@@ -57,7 +57,6 @@ public class PieceCompare {
 			int[] pairToCheck = (int[]) equalList.get(i);
 			Point2D.Float[] piece1 = (Point2D.Float[]) pieceList[pairToCheck[0]];
 			Point2D.Float[] piece2 = (Point2D.Float[]) pieceList[pairToCheck[1]];
-			
 			AncleLength[] angleLength1 = createAncleLengthArray(piece1);
 			AncleLength[] angleLength2 = createAncleLengthArray(piece2);
 			
@@ -107,8 +106,7 @@ public class PieceCompare {
 		return false;
 	}
 
-	private AncleLength[] createAncleLengthArray(Float[] piece) {
-		
+	public AncleLength[] createAncleLengthArray(Point2D.Float[] piece) {
 		int listLength = piece.length;
 		AncleLength[] angleLength = new AncleLength[listLength-1];
 		for (int i = 0; i < (listLength - 1); i++) {
@@ -228,11 +226,14 @@ public class PieceCompare {
 		float dotProduct = (float) ((vectorBA.getX() * vectorBC.getX()) + (vectorBA.getY() * vectorBC.getY()));
 		
 		float distanceFromLine = distanceToCenter(point1,point3);
-		
 		float angle = (float) (Math.acos((dotProduct)/(lengthAB * lengthBC)));
+		if(dotProduct == 0) {
+			angle = (float) (Math.PI/2);
+		}
 		if(distanceFromLine > distance(point2, new Point2D.Float(0.0f,0.0f))) {
 			angle = (float) ((2*Math.PI)-(angle));
 		}
+		
 		return angle;
 		
 	}
