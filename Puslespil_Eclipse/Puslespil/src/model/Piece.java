@@ -66,8 +66,8 @@ public class Piece {
 	        }
 	    shape.endShape(PApplet.CLOSE);
 	    //shape.setTexture(texture);
-	    shapeWidth = (shape.getWidth() - origin.x);
-	    shapeHeight = (shape.getHeight() - origin.y);
+	    //shapeWidth = (shape.getWidth() - origin.x);
+	    //shapeHeight = (shape.getHeight() - origin.y);
 	}
 	
 	public void display() {

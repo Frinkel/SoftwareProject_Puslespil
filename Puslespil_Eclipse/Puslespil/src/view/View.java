@@ -25,6 +25,8 @@ public class View extends PApplet {
 	ArrayList<Piece> pieceList = new ArrayList<Piece>();
 	public boolean mouseReleased = false;
 	ArrayList<PImage> sprites = new ArrayList<PImage>();
+	public int initWidth = width;
+	public int initHeight = height;
 	
 	Piece currentPiece;
 	
@@ -42,6 +44,8 @@ public class View extends PApplet {
 	Button menu_button;
 	Menubar menubar;
 	public boolean newPuzzle = false;
+	int menubarXPos = width;
+
 	
 	// identical use to setup in Processing IDE except for size()
 	public void setup() {
@@ -54,6 +58,8 @@ public class View extends PApplet {
 		menu_button = new Button(this, "Menu", width-120, 20, 100, 30);
 		menubar = new Menubar(this, width-150, 0, 150, height/2);
 		
+		
+		this.initWidth = width;
 	}
 	
 	// method used only for setting the size of the window
@@ -106,6 +112,11 @@ public class View extends PApplet {
 	// Visuals 
 	public void menubar() {
 		menubar.display();
+		
+		if(menubarXPos != width) {
+			menubar.updatePos(width - 150, 0);
+			menubarXPos = width;
+		}
 	}
 	
 	public void menuButtonClicked(int _x, int _y) {

@@ -92,6 +92,7 @@ public class Main {
 		
 		// COMMENT THIS OUT IF YOU WANNA TEST WITHOUT GENERATED
 		generatePuzzle(view);
+	
 		
 		ArrayList<Piece> pieceList = view.getPieceList();
 		//randomizePuzzle(view, pieceList, 100, view.width-100, true);
@@ -159,7 +160,7 @@ public class Main {
 				view.resetPieceList();
 				generatePuzzle(view);
 				view.newPuzzle = false;
-				randomizePuzzle(view, pieceList, 100, view.width-100, true);
+				randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
 			}
 		}
 	}

@@ -65,4 +65,9 @@ public class Menubar {
 		
 		return -1;
 	}
+	
+	public void updatePos(int _x, int _y) {
+		this.x = _x;
+		this.y = _y;
+	}
 }
