@@ -175,21 +175,20 @@ public class Main {
 		//view.setImageList(sprites);
 		System.out.println(Math.round(Math.random() * paths.length) - 1);
 		
-		
-		Object[] O3 = generator.generate();
+		PieceReader pR = new PieceReader();
+		Object[] O3 = pR.pieceReader();
+//		Object[] O3 = generator.generate();
 		PieceCompare pC = new PieceCompare();
 		pC.pieceComparator(O3);
+		PuzzleSolver pS = new PuzzleSolver();
+		pS.puzzleSolver(O3);
 		
-		
-		for(int i = 0; i < pieceAmount; i++) {
+		for(int i = 0; i < O3.length; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-			Point2D.Float center = v[0];
-			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
-			for(int j = 1; j<v.length;j++) {
-				v1[j-1]=v[j];
-			}
+			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
 			
-			Piece p = new Piece(view, center, v1, sprites.get(i));
+			
+			Piece p = new Piece(view, center, v, sprites.get(i));
 			view.addPieceToList(p);
 		}
 	}

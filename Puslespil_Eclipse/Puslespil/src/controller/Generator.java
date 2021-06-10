@@ -63,11 +63,9 @@ public class Generator {
 	// Generate a single piece
 	public Point2D.Float[] generatePiece(float centerX, float centerY, float sizeX, float sizeY, int distortionPoints, int relativePositionY, int relativePositionX, Object[] pieceStorage){
 		int points = getNumberOfPoints(relativePositionX, relativePositionY, distortionPoints);
-		Point2D.Float[] formarray = new Point2D.Float[points+2];
+		Point2D.Float[] formarray = new Point2D.Float[points+1];
 		//add center of the piece to the point list
 		int index = 0;
-		formarray[index] = new Point2D.Float(centerX, centerY);
-		index ++;
 		//add corner coordinate
 		formarray[index] = new Point2D.Float(-sizeX/2,-sizeY/2);
 		index ++;
@@ -223,13 +221,13 @@ public class Generator {
 		int n = 4;
 		if(y != 0) {n += distortionPoints;}
 		if(x != (divideX-1)) { n += distortionPoints; }
-		return n;
+		return n-1;
 	}
 	
 	private int findPointNumberX(int x,int y, int distortionPoints) {
 		int n = 3;
 		if(y != 0) {n += distortionPoints;}
-		return n;
+		return n-1;
 	}
 	
 	private float[] chooseRandomPoints(float upper, float lower, int distortionPoints) {

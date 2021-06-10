@@ -61,6 +61,7 @@ public class PieceCompare {
 			AncleLength[] angleLength1 = createAncleLengthArray(piece1);
 			AncleLength[] angleLength2 = createAncleLengthArray(piece2);
 			
+			
 			if(checkAngleLengthPieces(angleLength1, angleLength2)) {
 				i++;
 			}else {
@@ -171,8 +172,10 @@ public class PieceCompare {
 	}
 
 	public float distance(Point2D.Float p1, Point2D.Float p2) {
-		return Math.abs(
-				(float) Math.sqrt((Math.pow((p2.getX() - p1.getX()), 2)) + (Math.pow((p2.getY() - p1.getY()), 2))));
+		float toReturn = Math.abs((float) Math.sqrt((Math.pow((p2.getX() - p1.getX()), 2)) + (Math.pow((p2.getY() - p1.getY()), 2))));
+		
+		
+		return (float) (((double) Math.round(toReturn * 100d))/100);
 	}
 
 	public boolean threePointOnLine(Point2D.Float point1, Point2D.Float point2, Point2D.Float point3) {
@@ -227,17 +230,29 @@ public class PieceCompare {
 		float dotProduct = (float) ((vectorBA.getX() * vectorBC.getX()) + (vectorBA.getY() * vectorBC.getY()));
 		
 		float distanceFromLine = distanceToCenter(point1,point3);
+		float x = (float) ((point2.getX() - point1.getX()) + point3.getX());
+		float y = (float) ((point2.getY() - point1.getY()) + point3.getY());
+		Point2D.Float pointFrom1And2 = new Point2D.Float(x,y);
+		float distanceFromLinePoint = distanceToCenter(point2,pointFrom1And2);
 		float angle = (float) (Math.acos((dotProduct)/(lengthAB * lengthBC)));
 		if(dotProduct == 0) {
 			angle = (float) (Math.PI/2);
 		}
-		if(distanceFromLine > distance(point2, new Point2D.Float(0.0f,0.0f))) {
+		
+		
+		
+		
+		
+		
+		if(distanceFromLinePoint < distanceFromLine) {
 			angle = (float) ((2*Math.PI)-(angle));
 		}
 		
 		return angle;
 		
 	}
+
+	
 
 	private float distanceToCenter(Float point1, Float point3) {
 		float x0 = 0.0f;
