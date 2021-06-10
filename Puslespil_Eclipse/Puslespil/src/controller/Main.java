@@ -12,7 +12,7 @@ import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 9;
+	private static int pieceAmount = 2;
 	private static int boardSize = 800;
 	private static int distortionPoints = 4;
 	
@@ -160,7 +160,7 @@ public class Main {
 				view.resetPieceList();
 				generatePuzzle(view);
 				view.newPuzzle = false;
-				randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
+				//randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
 			}
 		}
 	}
@@ -185,12 +185,12 @@ public class Main {
 		System.out.println(Math.round(Math.random() * paths.length) - 1);
 		
 		PieceReader pR = new PieceReader();
-//		Object[] O3 = pR.pieceReader();
-		Object[] O3 = generator.generate();
+		Object[] O3 = pR.pieceReader();
+//		Object[] O3 = generator.generate();
 		PieceCompare pC = new PieceCompare();
 		pC.pieceComparator(O3);
 		PuzzleSolver pS = new PuzzleSolver();
-//		pS.puzzleSolver(O3);
+		pS.puzzleSolvers(O3);
 		
 		for(int i = 0; i < O3.length; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];

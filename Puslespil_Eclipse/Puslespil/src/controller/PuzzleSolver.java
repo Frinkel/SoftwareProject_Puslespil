@@ -15,7 +15,7 @@ public class PuzzleSolver {
 
 	}
 
-	public void puzzleSolver(Object[] pieceList) {
+	public float puzzleSolvers(Object[] pieceList) {
 
 		PieceCompare pC = new PieceCompare();
 		Object[] AncleLengthPieceList = new Object[pieceList.length];
@@ -36,13 +36,30 @@ public class PuzzleSolver {
 		
 		Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) matchingArray[0], pieceList);
 		System.out.println(Arrays.deepToString(threeMatchingPoints));
-		
-		
+		float rotationalAngle = findRotationOfMatchingPair(threeMatchingPoints);
+		System.out.println("rotationalAngle : " + rotationalAngle);
 		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1], threeMatchingPoints[0][2]));
 		System.out.println("equals? ");
 		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1], threeMatchingPoints[1][2]));
+		return rotationalAngle;
 		
 	}
+
+	private float findRotationOfMatchingPair(Point2D.Float[][] threeMatchingPoints) {
+		Point2D.Float vector0 = new Point2D.Float((float) (((threeMatchingPoints[0][0])).getX()-(threeMatchingPoints[0][2]).getX()),(float) ((threeMatchingPoints[0][0]).getY()-(threeMatchingPoints[0][2]).getY()));
+		Point2D.Float vector1 = new Point2D.Float((float) ((threeMatchingPoints[1][2]).getX()-(threeMatchingPoints[1][0]).getX()),(float) ((threeMatchingPoints[1][2]).getY()-(threeMatchingPoints[1][0]).getY()));
+		
+		float length0 = (float) Math.sqrt(Math.pow(vector0.getX(), 2) + Math.pow(vector0.getY(), 2));
+		float length1 = (float) Math.sqrt(Math.pow(vector1.getX(), 2) + Math.pow(vector1.getY(), 2));
+		float dotProduct = (float) ((vector0.getX() * vector1.getX()) + (vector0.getY() * vector1.getY()));
+		
+		
+		float angle = (float) (Math.acos((dotProduct)/(length0 * length1)));
+		return angle;
+	
+	}
+	
+	
 
 	public Object[] groupPieces(Object[] pieceList) {
 		ArrayList<Integer> gr1 = new ArrayList<Integer>();
