@@ -8,6 +8,7 @@ import model.Button;
 import model.ImageInitializer;
 import model.Menubar;
 import model.Piece;
+import model.Slider;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -30,6 +31,8 @@ public class View extends PApplet {
 	public int initWidth = width;
 	public int initHeight = height;
 	
+	boolean debugView = false;
+	
 	Piece currentPiece;
 	
 	float angle = 0;
@@ -46,11 +49,16 @@ public class View extends PApplet {
 	// Menu variables
 	boolean showMenu = false;
 	Button menu_button;
-	Menubar menubar;
-	public boolean newPuzzle = false;
+	public Menubar menubar;
+	public boolean newPuzzle = true;
 	int menubarXPos = width;
 	PFont completionFont;
 	PFont menuFont;
+	
+	
+	
+	
+	
 	
 	// identical use to setup in Processing IDE except for size()
 	public void setup() {
@@ -70,6 +78,8 @@ public class View extends PApplet {
 		//FONT
 		completionFont = createFont("Arial", 26);
 		menuFont = createFont("Arial", 14);
+		
+		
 	}
 	
 	// method used only for setting the size of the window
@@ -85,7 +95,7 @@ public class View extends PApplet {
 		//scale(view_scale);
 		
 		// Change background color to white
-		background(255);
+		background(100);
 		
 		// Draw the pieces
 		boolean piecelocked = false;
@@ -115,13 +125,19 @@ public class View extends PApplet {
 			}
 		}
 		
+		
+		
 		// Draw the menu bar
 		menubar();
+		
 		// Draw the completion view
 		if(puzzleComplete) {completionView();}
 		
+		if(debugView) {debugDisplay();}
+		
 	}
 	
+
 	
 	// Visuals 
 	public void menubar() {
@@ -157,8 +173,13 @@ public class View extends PApplet {
 		text("Congratulations, you completed the puzzle!", menubarXPos/2, 100);
 	}
 	
+	public void debugDisplay() {
+		for(Piece piece : pieceList) {
+			piece.debugDisplay();
+		}
+	}
 
-	// Mouse press event
+	// Mouse events
 	public void mousePressed() {
 		
 		boolean piecelocked = false;
@@ -201,14 +222,16 @@ public class View extends PApplet {
 			mouseReleased = false;
 			angle = 0;
 		}
+		
 	}
 	
-	// Move piece
 	public void mouseDragged(MouseEvent event) {
 		
 		if(currentPiece != null) {
 			currentPiece.movePiece(new Point2D.Float(mouseX, mouseY));
 		}
+		
+		menubar.sliderDragged();
 	}
 	
 	public void mouseWheel(MouseEvent event) {
@@ -219,6 +242,21 @@ public class View extends PApplet {
 		}
 	}
 	
+	// Keyboard events
+	public void keyPressed() {
+		if(this.key == 'd') {
+			debugView = !debugView;
+		}
+		
+		if(this.key == 'r') {
+			if(currentPiece != null) {
+				angle += 45;
+				currentPiece.rotatePiece(angle);
+			}
+		}
+	}
+	
+	// Getters and setters
 	public void setImageList(ArrayList<PImage> _sprites) {
 		this.sprites = _sprites;
 	}

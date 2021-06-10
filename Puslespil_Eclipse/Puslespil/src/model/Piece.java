@@ -107,6 +107,27 @@ public class Piece {
 	    */
 	    
 	}
+	
+	public void debugDisplay() {
+		pA.fill(255);
+		pA.stroke(0,0,0);
+		pA.ellipse(origin.x, origin.y,10,10);
+	    // TESTING
+	    pA.stroke(255,0,0);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle)) * -200);
+	    pA.stroke(0,255,0);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+90)) * -200);
+	    pA.stroke(0,0,255);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -200);
+	    pA.stroke(255,255,0);
+	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
+	    
+	    for(int i = 0; i < shape.getVertexCount(); i++) {
+			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;
+			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
+			pA.ellipse(rotatedX, rotatedY, 10, 10);
+		}
+	}
 
 	// FROM: https://stackoverflow.com/questions/8721406/how-to-determine-if-a-point-is-inside-a-2d-convex-polygon
 	public boolean contains(float x, float y) {
