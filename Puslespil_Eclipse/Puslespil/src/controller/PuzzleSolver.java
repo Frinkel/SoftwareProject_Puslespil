@@ -35,15 +35,15 @@ public class PuzzleSolver {
 		Object[] adjacencyArray = (Object[]) adjacencyAndMatchingArray[0];
 		Object[] matchingArray = (Object[]) adjacencyAndMatchingArray[1];
 
-		for (int i = 0; i < adjacencyArray.length; i++) {
-			int[] alreadyCovered = new int[matchingArray.length];
-			int[] adjacencyPair = (int[]) adjacencyArray[i];
-			for(int j = 1; j < adjacencyPair.length;j++) {
-				alreadyCovered[i] = adjacencyPair[0];
-				
-			}
-			// code
-		}
+//		for (int i = 0; i < adjacencyArray.length; i++) {
+//			int[] alreadyCovered = new int[matchingArray.length];
+//			int[] adjacencyPair = (int[]) adjacencyArray[i];
+//			for(int j = 1; j < adjacencyPair.length;j++) {
+//				alreadyCovered[i] = adjacencyPair[0];
+//				
+//			}
+//			// code
+//		}
 
 		Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) matchingArray[0], pieceList);
 		System.out.println(Arrays.deepToString(threeMatchingPoints));
