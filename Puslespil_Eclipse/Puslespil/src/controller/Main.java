@@ -228,44 +228,86 @@ public class Main {
 			
 			int currentIndex = pieceList.indexOf(currentPiece);
 			float angle =  currentPiece.getAngle();
-			//int width 	= generator.getPieceBaseWidth();
-			//int height 	= generator.getPieceBaseHeight();
 			int top 	=  currentIndex - (columns);
-			//int bottom 	=  currentIndex + (columns);
+			int bottom 	=  currentIndex + (columns);
 			int right 	=  currentIndex       	+ 1;
-			//int left 	=  currentIndex	     	- 1;
+			int left 	=  currentIndex	     	- 1;
 			//int offset 	=  100;
 			
 			
 			Piece topNeighbor 		= null;
-			//Piece bottomNeighbor 	= null;
+			Piece bottomNeighbor 	= null;
 			Piece rightNeighbor 	= null;
-			//Piece leftNeighbor		= null;
+			Piece leftNeighbor		= null;
 			
 			if(top >= 0 && top < pieceList.size()) 								{ topNeighbor    = pieceList.get(top);} 
-			//if(bottom >= 0 && bottom < pieceList.size()) 						{ bottomNeighbor = pieceList.get(bottom);}
+			if(bottom >= 0 && bottom < pieceList.size()) 						{ bottomNeighbor = pieceList.get(bottom);}
 			if(right >= 0 && right < pieceList.size() && (right)%columns != 0) 	{ rightNeighbor  = pieceList.get(right);}
-			//if(left >= 0 && left < pieceList.size() && (left+1)%columns != 0) 	{ leftNeighbor	 = pieceList.get(left);}
+			if(left >= 0 && left < pieceList.size() && (left+1)%columns != 0) 	{ leftNeighbor	 = pieceList.get(left);}
 			
-			// Collision check
-			if(topNeighbor != null) {
-//				isComplete &= Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
-//						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
-//						topNeighbor.contains(
-//						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - width/2), 
-//						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * height/2);
+
+			
+			if(topNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
+					topNeighbor.contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - width), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * height)) {
+				isComplete &= true;
+			} else if(topNeighbor != null) {
+				isComplete &= false;
 			}
-			if(rightNeighbor != null) {
-				isComplete &= Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
-						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
-						rightNeighbor.contains(
-						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - (width/2 + 10)), 
-						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * (height/2 + 10));
+			
+			if(bottomNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(bottomNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(bottomNeighbor.getAngle()))) &&
+					bottomNeighbor.contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - width), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * height)) {
+				isComplete &= true;
+			} else if(bottomNeighbor != null) {
+				isComplete &= false;
 			}
+			
+			
+			if(rightNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
+					rightNeighbor.contains(
+					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - width), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * height)) {
+				isComplete &= true;
+			} else if(rightNeighbor != null) {
+				isComplete &= false;
+			}
+			
+			if(leftNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(leftNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(leftNeighbor.getAngle()))) &&
+					leftNeighbor.contains(
+					currentPiece.getOrigin().x - (PApplet.cos(PApplet.radians(angle)) * width), 
+					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle)) * height)) {
+				isComplete &= true;
+			} else if(leftNeighbor != null) {
+				isComplete &= false;
+			}
+			//System.out.println("comp: " + isComplete);
+//			// Collision check
+//			if(topNeighbor != null) {
+////				isComplete &= Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
+////						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
+////						topNeighbor.contains(
+////						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - width/2), 
+////						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * height/2);
+//			}
+//			if(rightNeighbor != null) {
+//				isComplete &= Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
+//						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
+//						rightNeighbor.contains(
+//						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - (width/2 + 10)), 
+//						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * (height/2 + 10));
+//			}
 			
 		}
 		
-		System.out.println(isComplete);
+		view.puzzleComplete = isComplete;
+		System.out.println("Is puzzle completed?: " + isComplete);
 	}
 	
 	

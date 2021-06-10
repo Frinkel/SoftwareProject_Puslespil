@@ -9,9 +9,11 @@ import model.ImageInitializer;
 import model.Menubar;
 import model.Piece;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PImage;
 import processing.core.PMatrix;
 import processing.core.PShape;
+import processing.core.PShapeSVG.Font;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
@@ -32,6 +34,8 @@ public class View extends PApplet {
 	
 	float angle = 0;
 	
+	public boolean puzzleComplete = false;
+	
 	// Zoom and pan
 	float view_scale;
 	float viewX, viewY;
@@ -45,7 +49,8 @@ public class View extends PApplet {
 	Menubar menubar;
 	public boolean newPuzzle = false;
 	int menubarXPos = width;
-
+	PFont completionFont;
+	PFont menuFont;
 	
 	// identical use to setup in Processing IDE except for size()
 	public void setup() {
@@ -60,6 +65,11 @@ public class View extends PApplet {
 		
 		
 		this.initWidth = width;
+		
+		
+		//FONT
+		completionFont = createFont("Arial", 26);
+		menuFont = createFont("Arial", 14);
 	}
 	
 	// method used only for setting the size of the window
@@ -101,16 +111,22 @@ public class View extends PApplet {
 			} catch(Exception e) {
 				System.out.println("***********************************BREAK********************************************");
 				newPuzzle = true;
+				puzzleComplete = false;
 			}
 		}
 		
 		// Draw the menu bar
 		menubar();
+		// Draw the completion view
+		if(puzzleComplete) {completionView();}
+		
 	}
 	
 	
 	// Visuals 
 	public void menubar() {
+		textAlign(LEFT);
+		textFont(menuFont, 14);
 		menubar.display();
 		
 		if(menubarXPos != width) {
@@ -123,6 +139,7 @@ public class View extends PApplet {
 		switch(menubar.MouseOverButton(_x, _y)) {
 		case(0):
 			newPuzzle = true;
+			puzzleComplete = false;
 		break;
 		case(1):
 			System.out.println("1");
@@ -131,6 +148,13 @@ public class View extends PApplet {
 			System.out.println("2");
 		break;
 		}
+	}
+	
+	public void completionView() {
+		textAlign(CENTER);
+		textFont(completionFont, 26);
+		fill(color(220,0,0));
+		text("Congratulations, you completed the puzzle!", menubarXPos/2, 100);
 	}
 	
 
