@@ -6,10 +6,11 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PShape;
+import view.View;
 
 public class Slider {
 	
-	PApplet pA;
+	View view;
 	
 	PShape rect;
 	PShape clickable;
@@ -34,8 +35,8 @@ public class Slider {
 	boolean isInside = false;
 	
 	
-	public Slider(PApplet _pA, String _name, int _x, int _y, int _min, int _max, int initValue) {
-		this.pA = _pA;
+	public Slider(View _pA, String _name, int _x, int _y, int _min, int _max, int initValue) {
+		this.view = _pA;
 		this.x = _x;
 		this.y = _y;
 		this.originX = _x;
@@ -45,44 +46,23 @@ public class Slider {
 		this.max = _max;
 		this.name = _name;
 		
-		rect = pA.createShape(PConstants.RECT, x, y-5, sliderWidth, 10);
+		rect = view.createShape(PConstants.RECT, x, y-5, sliderWidth, 10);
 		
 		int offSet = (int) ((float)(sliderWidth*(value/(float)max)-sides/2));
 		clickableX = x + offSet + sides/2;
 		clickableY = y - 10;
 		
-		clickable = pA.createShape(PConstants.RECT, clickableX, clickableY, 20, 20);
-		clickable.setFill(pA.color(255, 255, 255));
+		clickable = view.createShape(PConstants.RECT, clickableX, clickableY, 20, 20);
+		clickable.setFill(view.color(255, 255, 255));
 		clickable.setStroke(false);
 		rect.setStroke(false);
+		rect.setFill(view.color(255,255,255));
 		
-//		clickable = pA.createShape(PShape.PATH);
-//		clickable.beginShape();
-//		clickable.vertex(x + offSet, clickableY);
-//		clickable.vertex((x+sides) + offSet, clickableY);
-//		clickable.vertex((x+sides) + offSet, clickableY+sides);
-//		clickable.vertex(x + offSet, clickableY+sides);
-//		clickable.vertex(x + offSet, clickableY);
-//		clickable.endShape(PConstants.CLOSE);
-		//clickable.translate(-100 + (initValue/max), -5);
-		
-		// RECT
-//		rect.setFill(255);
-//		//rect.setStroke(0);
-//		//rect.setStrokeWeight(2);
-//		rect.setStroke(0);
-//		rect.setStrokeWeight(10);
-//		
-//		// CLICKABLE
-//		clickable.setFill(255);
-//		clickable.setStroke(0);
-//		clickable.setStrokeWeight(2);
-		
-		font = pA.createFont("Arial",16,true);
+		font = view.createFont("Arial",14,true);
 	}
 	
 	boolean mouseOver() {
-		int mx = pA.mouseX, my = pA.mouseY;
+		int mx = view.mouseX, my = view.mouseY;
 		if (mx > clickableX-sides & mx < clickableX+sides & my > clickableY & my < clickableY+sides)  isInside = true;
 		else                                        											isInside = false;
 		
@@ -90,66 +70,39 @@ public class Slider {
 	}
 	
 	public void drawSlider() {
-		pA.fill(255);
-		pA.textFont(font,16);
-		pA.textAlign(PConstants.LEFT);
-		pA.text(min, x - 10, clickableY + 16);
-		pA.text(max, x + sliderWidth + 3, clickableY + 16);
+		view.fill(255);
+		view.textFont(font,14);
+		view.textAlign(PConstants.LEFT);
+		view.text(min, x - 10, clickableY + 16);
+		view.text(max, x + sliderWidth + 3, clickableY + 16);
 		
 		// DRAW
-		pA.shape(rect);
-		pA.shape(clickable);
+		view.shape(rect);
+		view.shape(clickable);
 		
 		//pA.rect(10, 10, 100, 100);
 		
-		pA.text(value, clickableX - sides/4, clickableY - 5);
-		
-		pA.text(name, x+sliderWidth/2-pA.textWidth(name)/2, y-30);
+		view.fill(255);
+		view.textAlign(PConstants.CENTER);
+		view.text(value, clickableX - sides/4, clickableY - 5);
+		view.text(name, x+(int)(sliderWidth/2), y-30);
 		
 		
 	}
 	
 	private void updateBox(int x, int y, int _offSet) {
-		
-		clickable = pA.createShape(PConstants.RECT, clickableX-sides/2, clickableY, 20, 20);
-		//x = PApplet.constrain(x, originX, originX + sliderWidth);
-		
-//		clickable = pA.createShape(PShape.PATH);
-//		clickable.beginShape();
-//		clickable.vertex(x + _offSet, y);
-//		clickable.vertex((x+sides) + _offSet, y);
-//		clickable.vertex((x+sides) + _offSet, y+sides);
-//		clickable.vertex(x + _offSet, y+sides);
-//		clickable.vertex(x + _offSet, y);
-//		clickable.endShape();
-//		clickable.setStrokeWeight(2);
+		clickable = view.createShape(PConstants.RECT, clickableX-sides/2, clickableY, 20, 20);
 	}
 	
 
 	public void onMouseDragged() {
-		if(mouseOver()) {
-			//clickable.setFill(0);
-			//clickable.setStroke(0);
-			//clickable.setStrokeWeight(2);
-			//rect.setStrokeWeight(2);
-			clickableX = PApplet.constrain(pA.mouseX, originX, originX + sliderWidth);
+		if(mouseOver() && !view.inputState) {
+			clickableX = PApplet.constrain(view.mouseX, originX, originX + sliderWidth);
+			view.fill(255);
 			updateBox(clickableX, clickableY, -sides/2);
 			
 			value = (int)Math.round(((float)(clickableX - originX)/sliderWidth)*(max - min) + min);
-			
-			
-		} else {
-			//clickable.setFill(255);
-			//clickable.setStroke(0);
-			//clickable.setStrokeWeight(2);
-		}
-	}
 
-	public void onMouseReleased() {
-		if(clickable.contains(pA.mouseX, pA.mouseY)) {
-			//clickable.setFill(255);
-			//clickable.setStroke(0);
-			//clickable.setStrokeWeight(2);
 		}
 	}
 	

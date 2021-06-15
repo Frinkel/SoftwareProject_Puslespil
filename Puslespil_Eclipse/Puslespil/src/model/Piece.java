@@ -52,10 +52,22 @@ public class Piece {
 		
 		this.texture = img;
 		
-		init();
+		initWithTexture();
 	}
 	
 	private void init() {
+		shape = pA.createShape();
+	    shape.beginShape();
+	    	shape.fill(255);
+	    	shape.stroke(0);
+	    	shape.strokeWeight(2);
+	        for (int i = 0; i < vertices.length-1; i++) {
+	        	shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y);
+	        }
+	    shape.endShape(PApplet.CLOSE);
+	}
+	
+	private void initWithTexture() {
 		shape = pA.createShape();
 	    shape.beginShape();
 	    	shape.noStroke();
@@ -65,47 +77,10 @@ public class Piece {
 	        	shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y, Math.signum(vertices[i].x + Math.abs(vertices[i].x)), Math.signum(vertices[i].y + Math.abs(vertices[i].y)));
 	        }
 	    shape.endShape(PApplet.CLOSE);
-	    //shape.setTexture(texture);
-	    //shapeWidth = (shape.getWidth() - origin.x);
-	    //shapeHeight = (shape.getHeight() - origin.y);
 	}
 	
 	public void display() {
-		//shape.setFill(col);
-		
 	    pA.shape(shape);
-//	    pA.ellipse(origin.x, origin.y,10,10);
-//	    // TESTING
-//	    pA.stroke(255,0,0);
-//	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle)) * -200);
-//	    pA.stroke(0,255,0);
-//	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+90)) * -200);
-//	    pA.stroke(0,0,255);
-//	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -200);
-//	    pA.stroke(255,255,0);
-//	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
-//	    pA.stroke(0,0,0);
-	    	    
-	    // GREEN = LEFT
-	    /*
-	    pA.stroke(0,255,0);
-	    pA.line(origin.x - (50 * PApplet.cos(PApplet.radians(angle))), origin.y - (50 * PApplet.sin(PApplet.radians(angle))), (origin.x - (50 * PApplet.cos(PApplet.radians(angle)))) + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , (origin.y-(50 * PApplet.sin(PApplet.radians(angle)))) - PApplet.sin(PApplet.radians(-angle+90)) * -200);
-	    pA.line(origin.x + (50 * PApplet.cos(PApplet.radians(angle))), origin.y + (50 * PApplet.sin(PApplet.radians(angle))), (origin.x + (50 * PApplet.cos(PApplet.radians(angle)))) + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , (origin.y+(50 * PApplet.sin(PApplet.radians(angle)))) - PApplet.sin(PApplet.radians(-angle+90)) * -200);
-	    //System.out.println(shapeWidth);
-	    //pA.line(origin.x - ((shapeWidth - 50) * PApplet.cos(PApplet.radians(-angle))), origin.y + (50 * PApplet.sin(PApplet.radians(angle))), (origin.x - ((shapeWidth - 50) * PApplet.cos(PApplet.radians(angle)))) + (PApplet.cos(PApplet.radians(-angle)) * -100) , (origin.y+(50 * PApplet.sin(PApplet.radians(angle)))) - PApplet.sin(PApplet.radians(-angle)) * -100);
-	    
-	    
-	    
-	    pA.stroke(255,0,0);
-	    float xmult = (float) (PApplet.sin(PApplet.radians(-angle)));
-	    float ymult = (float) (PApplet.cos(PApplet.radians(-angle)));
-	    //System.out.println("a" + -angle +" x:"+xmult + " y:"+ymult);
-	    pA.line(origin.x - (50 * xmult), origin.y - (50 * ymult), (origin.x - 50 * xmult) + (PApplet.cos(PApplet.radians(-angle)) * -200) , (origin.y - 50 * ymult) - PApplet.sin(PApplet.radians(-angle)) * -200);
-	    pA.line(origin.x + (50 * xmult), origin.y + (50 * ymult), (origin.x + 50 * xmult) + (PApplet.cos(PApplet.radians(-angle)) * -200) , (origin.y + 50 * ymult) - PApplet.sin(PApplet.radians(-angle)) * -200);
-	    
-	    //pA.line(origin.x - ((shapeWidth-50) * xmult), origin.y - (50 * ymult), (origin.x - (shapeWidth-50) * xmult) + (PApplet.cos(PApplet.radians(-angle)) * -200) , (origin.y - 50 * ymult) - PApplet.sin(PApplet.radians(-angle)) * -200);
-	    */
-	    
 	}
 	
 	public void debugDisplay() {
@@ -121,6 +96,7 @@ public class Piece {
 	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -200);
 	    pA.stroke(255,255,0);
 	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
+	    pA.stroke(255);
 	    
 	    for(int i = 0; i < shape.getVertexCount(); i++) {
 			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;

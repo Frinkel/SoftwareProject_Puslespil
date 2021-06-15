@@ -50,7 +50,7 @@ public class ImageInitializer {
 		for(int i = 0; i < rows; i++) {
 			System.out.println("new");
 			for(int j = 0; j < columns; j++) {
-				System.out.print((j*height) +" " + (i*width) + ", ");
+				//System.out.print((j*height) +" " + (i*width) + ", ");
 				PImage nimg = img.get(j*width, i*height, width, height);
 				sprites.add(nimg);
 			}
