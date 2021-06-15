@@ -117,7 +117,7 @@ public class PuzzleSolver {
 //		float newCenterY = (float) (prevCenter.getY() + (vectorBA.getY()*direction));
 //		
 		Point2D.Float newCenter = new Point2D.Float(newCenterX,newCenterY);
-//		System.out.println("new Center: " + newCenter + "  Vector   " + vectorBA);
+		System.out.println("angel " + angle + "new Center: " + newCenter + "  Vector   " + vectorBA);
 		return newCenter;
 	}
 
@@ -201,10 +201,11 @@ public class PuzzleSolver {
 		float length1 = (float) Math.sqrt(Math.pow(vector1.getX(), 2) + Math.pow(vector1.getY(), 2));
 		float dotProduct = (float) ((vector0.getX() * vector1.getX()) + (vector0.getY() * vector1.getY()));
 		
-		
 		float angle = (float) (Math.acos((dotProduct)/(length0 * length1)));
-		
-		
+		if(((dotProduct)/(length0 * length1)) > 1 ) {
+			angle = 0;
+		}
+
 		Point2D.Float[] pointsToRotate = new Point2D.Float[] {(threeMatchingPoints[1][0]),(threeMatchingPoints[1][1]),(threeMatchingPoints[1][2])};
 		Point2D.Float[] rotatedPoints = rotatePoints(pointsToRotate,angle);
 		

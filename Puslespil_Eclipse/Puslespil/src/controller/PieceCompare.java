@@ -240,10 +240,6 @@ public class PieceCompare {
 		}
 		
 		
-		
-		
-		
-		
 		if(distanceFromLinePoint < distanceFromLine) {
 			angle = (float) ((2*Math.PI)-(angle));
 		}
