@@ -36,14 +36,15 @@ public class PuzzleSolver {
 		Object[] adjacencyArray = (Object[]) adjacencyAndMatchingArray[0];
 		Object[] matchingArray = (Object[]) adjacencyAndMatchingArray[1];
 		
+		
+		
 		int[] finalPath = calculatePath(pieceList.length, adjacencyArray, matchingArray, (ArrayList<Integer>) groups[0], (ArrayList<Integer>) groups[1], (ArrayList<Integer>) groups[2],
 				(int) groups[3], (int) groups[4], (int) groups[5]);
 		
 		System.out.println(Arrays.toString(finalPath));
 		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(finalPath, matchingArray, pieceList, pC);
-		System.out.println(Arrays.toString(pieceAndRotationalAngle));
+//		System.out.println(Arrays.toString(pieceAndRotationalAngle));
 		
-
 //		Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) matchingArray[0], pieceList);
 //		System.out.println(Arrays.deepToString(threeMatchingPoints));
 
@@ -116,7 +117,7 @@ public class PuzzleSolver {
 //		float newCenterY = (float) (prevCenter.getY() + (vectorBA.getY()*direction));
 //		
 		Point2D.Float newCenter = new Point2D.Float(newCenterX,newCenterY);
-		System.out.println("new Center: " + newCenter + "  Vector   " + vectorBA);
+//		System.out.println("new Center: " + newCenter + "  Vector   " + vectorBA);
 		return newCenter;
 	}
 
@@ -150,6 +151,7 @@ public class PuzzleSolver {
 		}else {
 			startingIndex = gr1.get(0);
 		}
+		
 		alreadyCovered.add(startingIndex);
 		int[] finalPath = getPath(startingIndex, adjacencyArray, alreadyCovered, length);
 		return finalPath;
@@ -162,11 +164,17 @@ public class PuzzleSolver {
 			ArrayList<Integer> pair = ((ArrayList<Integer>) adjacencyArray[i]);
 			if(pair.get(0) == startingIndex) {
 				adjacencyPair = pair;
+				System.out.println("startingIndex " + startingIndex);
+				if(startingIndex == 74) {
+					System.out.println("WERE IN 74 " + adjacencyPair.toString());
+				}
 			}
 		}
 		for(int i = 1; i < adjacencyPair.size(); i++) {
 			if(!alreadyCovered.contains(adjacencyPair.get(i))) {
 				alreadyCovered.add(adjacencyPair.get(i));
+				System.out.println("adjacencyPair i : " + adjacencyPair.get(i));
+				
 				int[] array1 = getPath(adjacencyPair.get(i), adjacencyArray, alreadyCovered, length);
 				if(array1.length == length) {
 					return array1;
@@ -298,7 +306,7 @@ public class PuzzleSolver {
 		ArrayList<Integer> gr2, ArrayList<Integer> gr3, int gr1Length, int gr2Length, int gr3Length) {
 
 		Object[] adjacencyArray = new Object[gr1.size() + gr2.size() + gr3.size()];
-		Object[] matchingArray = new Object[2 * gr1.size() + 3 * gr2.size() + 4 * gr3.size()];
+		Object[] matchingArray = new Object[2 * gr1.size() + (3*gr2.size()-(2 * gr1.size())) + (4 * gr3.size()-((3*gr2.size()-(2 * gr1.size()))))];
 		int k = 0;
 		for (int i = 0; i < gr1.size(); i++) {
 			ArrayList<Integer> toAdd = new ArrayList<Integer>();
