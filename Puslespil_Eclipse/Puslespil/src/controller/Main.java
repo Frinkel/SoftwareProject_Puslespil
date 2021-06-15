@@ -3,6 +3,7 @@ package controller;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import model.ImageInitializer;
 import model.Piece;
@@ -12,9 +13,9 @@ import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 2;
+	private static int pieceAmount = 9;
 	private static int boardSize = 800;
-	private static int distortionPoints = 4;
+	private static int distortionPoints = 2;
 	
 	
 	static Generator generator;
@@ -171,8 +172,8 @@ public class Main {
 			pieceAmount = view.menubar.sliderPieceAmount.getValue();
 			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
 		} else {
-			pieceAmount = 2;
-			distortionPoints = 2;
+			pieceAmount = 16;
+			distortionPoints = 4;
 		}
 		
 		generator = new Generator(boardSize, pieceAmount, distortionPoints);
@@ -190,14 +191,18 @@ public class Main {
 		PieceCompare pC = new PieceCompare();
 		pC.pieceComparator(O3);
 		PuzzleSolver pS = new PuzzleSolver();
-		pS.puzzleSolvers(O3);
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(O3);
 		
 		for(int i = 0; i < O3.length; i++) {
+			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];
 			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
 			
+			Piece p = new Piece(view, center, v, sprites.get(0));
 			
-			Piece p = new Piece(view, center, v, sprites.get(i));
+			p.rotatePiece(PApplet.degrees(angle));
+			
+			
 			view.addPieceToList(p);
 		}
 	}

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import controller.PieceCompare;
 
 import model.Piece;
+import processing.core.PApplet;
 
 //hello
 public class PuzzleSolver {
@@ -15,7 +16,7 @@ public class PuzzleSolver {
 
 	}
 
-	public float puzzleSolvers(Object[] pieceList) {
+	public PieceAndAngleDatatype[] puzzleSolvers(Object[] pieceList) {
 
 		PieceCompare pC = new PieceCompare();
 		Object[] AncleLengthPieceList = new Object[pieceList.length];
@@ -34,49 +35,155 @@ public class PuzzleSolver {
 				(int) groups[3], (int) groups[4], (int) groups[5]);
 		Object[] adjacencyArray = (Object[]) adjacencyAndMatchingArray[0];
 		Object[] matchingArray = (Object[]) adjacencyAndMatchingArray[1];
+		
+		int[] finalPath = calculatePath(pieceList.length, adjacencyArray, matchingArray, (ArrayList<Integer>) groups[0], (ArrayList<Integer>) groups[1], (ArrayList<Integer>) groups[2],
+				(int) groups[3], (int) groups[4], (int) groups[5]);
+		
+		System.out.println(Arrays.toString(finalPath));
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(finalPath, matchingArray, pieceList, pC);
+		System.out.println(Arrays.toString(pieceAndRotationalAngle));
+		
 
-//		for (int i = 0; i < adjacencyArray.length; i++) {
-//			int[] alreadyCovered = new int[matchingArray.length];
-//			int[] adjacencyPair = (int[]) adjacencyArray[i];
-//			for(int j = 1; j < adjacencyPair.length;j++) {
-//				alreadyCovered[i] = adjacencyPair[0];
-//				
-//			}
-//			// code
-//		}
+//		Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) matchingArray[0], pieceList);
+//		System.out.println(Arrays.deepToString(threeMatchingPoints));
 
-		Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) matchingArray[0], pieceList);
-		System.out.println(Arrays.deepToString(threeMatchingPoints));
+//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1],
+//				threeMatchingPoints[0][2]));
 
-		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1],
-				threeMatchingPoints[0][2]));
+//		float rotationalAngle = findRotationOfMatchingPair(threeMatchingPoints, pC);
+//		System.out.println("rotationalAngle : " + rotationalAngle);
+//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1], threeMatchingPoints[0][2]));
 
-		float rotationalAngle = findRotationOfMatchingPair(threeMatchingPoints);
-		System.out.println("rotationalAngle : " + rotationalAngle);
-		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1], threeMatchingPoints[0][2]));
+//		System.out.println("equals? ");
 
-		System.out.println("equals? ");
-
-		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1],
-				threeMatchingPoints[1][2]));
+//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1],
+//				threeMatchingPoints[1][2]));
 
 
-		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1], threeMatchingPoints[1][2]));
-		return rotationalAngle;
+//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1], threeMatchingPoints[1][2]));
+		return pieceAndRotationalAngle;
 		
 	}
 
-	private float findRotationOfMatchingPair(Point2D.Float[][] threeMatchingPoints) {
+	private PieceAndAngleDatatype[] rotatePiecesOnPath(int[] finalPath, Object[] matchingArray, Object[] pieceList, PieceCompare pC) {
+		// TODO Auto-generated method stub
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = new PieceAndAngleDatatype[finalPath.length];
+		pieceAndRotationalAngle[0] = new PieceAndAngleDatatype(finalPath[0], 0.0f);
+		
+		for(int i = 0; i < finalPath.length-1; i++) {
+			
+			int[] pair = getPair(finalPath[i], finalPath[i+1], matchingArray);
+			Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) pair, pieceList);
+			float angle = findRotationOfMatchingPair(threeMatchingPoints, pC);
+			if(pair[0] == finalPath[i]) {
+				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], angle+(pieceAndRotationalAngle[i].getPieceAngle()));
+			}else {
+				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], -angle+(pieceAndRotationalAngle[i].getPieceAngle()));
+			}
+			
+			System.out.println("angle : " + angle);
+			System.out.println(Arrays.toString(pair));
+			
+			
+		}
+		return pieceAndRotationalAngle;
+	}
+
+	private int[] getPair(int integer, int integer2, Object[] matchingArray) {
+		// TODO Auto-generated method stub
+		
+		for (int i = 0; i < matchingArray.length; i++) {
+			
+			if(matchingArray[i] == (null)) {
+				return new int[] {-1};
+			}
+			int[] pairToCheck = (int[]) matchingArray[i];
+			if ((pairToCheck[0] == integer2 && pairToCheck[1] == integer) || (pairToCheck[1] == integer2 && pairToCheck[0] == integer)) {
+				return pairToCheck;
+			}
+		}
+		return new int[] {-1};
+		
+	}
+
+	private int[] calculatePath(int length, Object[] adjacencyArray, Object[] matchingArray, ArrayList<Integer> gr1,
+			ArrayList<Integer> gr2, ArrayList<Integer> gr3, int gr1Length, int gr2Length, int gr3Length) {
+		ArrayList<Integer> alreadyCovered = new ArrayList<Integer>();
+		int startingIndex = 0;
+		if(gr1Length == 0) {
+			if(gr2Length == 0) {
+				startingIndex = gr3.get(0);
+			}else {
+				startingIndex = gr2.get(0);
+			}
+		}else {
+			startingIndex = gr1.get(0);
+		}
+		alreadyCovered.add(startingIndex);
+		int[] finalPath = getPath(startingIndex, adjacencyArray, alreadyCovered, length);
+		return finalPath;
+	}
+
+	private int[] getPath(int startingIndex, Object[] adjacencyArray, ArrayList<Integer> alreadyCovered, int length) {
+		ArrayList<Integer> adjacencyPair = null;
+		
+		for(int i = 0; i < adjacencyArray.length; i++) {
+			ArrayList<Integer> pair = ((ArrayList<Integer>) adjacencyArray[i]);
+			if(pair.get(0) == startingIndex) {
+				adjacencyPair = pair;
+			}
+		}
+		for(int i = 1; i < adjacencyPair.size(); i++) {
+			if(!alreadyCovered.contains(adjacencyPair.get(i))) {
+				alreadyCovered.add(adjacencyPair.get(i));
+				int[] array1 = getPath(adjacencyPair.get(i), adjacencyArray, alreadyCovered, length);
+				if(array1.length == length) {
+					return array1;
+				}
+			}
+			
+		}
+		int[] newArray = new int[alreadyCovered.size()];
+		for(int i = 0; i < alreadyCovered.size(); i++) {
+			newArray[i] = alreadyCovered.get(i);
+		}
+		return newArray;
+		
+		
+		
+	}
+
+	private float findRotationOfMatchingPair(Point2D.Float[][] threeMatchingPoints, PieceCompare pC) {
 		Point2D.Float vector0 = new Point2D.Float((float) (((threeMatchingPoints[0][0])).getX()-(threeMatchingPoints[0][2]).getX()),(float) ((threeMatchingPoints[0][0]).getY()-(threeMatchingPoints[0][2]).getY()));
 		Point2D.Float vector1 = new Point2D.Float((float) ((threeMatchingPoints[1][2]).getX()-(threeMatchingPoints[1][0]).getX()),(float) ((threeMatchingPoints[1][2]).getY()-(threeMatchingPoints[1][0]).getY()));
-		
+//		System.out.println("vector0 " + vector0);
+//		System.out.println("vector1 " + vector1);
 		float length0 = (float) Math.sqrt(Math.pow(vector0.getX(), 2) + Math.pow(vector0.getY(), 2));
 		float length1 = (float) Math.sqrt(Math.pow(vector1.getX(), 2) + Math.pow(vector1.getY(), 2));
 		float dotProduct = (float) ((vector0.getX() * vector1.getX()) + (vector0.getY() * vector1.getY()));
 		
 		
 		float angle = (float) (Math.acos((dotProduct)/(length0 * length1)));
-		return angle;
+		
+		Point2D.Float[] rotatedPoints = new Point2D.Float[3];
+		
+		for(int i = 0; i < 3; i++) {
+			float rotatedX = (float) (PApplet.cos(angle) * (threeMatchingPoints[1][i].getX()) - PApplet.sin(angle) * (threeMatchingPoints[1][i].getY()));
+			float rotatedY = (float) (PApplet.sin(angle) * (threeMatchingPoints[1][i].getX()) + PApplet.cos(angle) * (threeMatchingPoints[1][i].getY()));
+			rotatedPoints[i] = new Point2D.Float(rotatedX, rotatedY);
+		}
+		
+		float d1 = ((float) (((double) Math.round((pC.distance((threeMatchingPoints[0][2]), rotatedPoints[0])) * 100d)) / 100));
+		float d2 = ((float) (((double) Math.round((pC.distance((threeMatchingPoints[0][1]), rotatedPoints[1])) * 100d)) / 100));
+		float d3 = ((float) (((double) Math.round((pC.distance((threeMatchingPoints[0][0]), rotatedPoints[2])) * 100d)) / 100));
+//		System.out.println("d1 + d2 + d3 " + d1 + " " + d2 + " " + d3);
+//		System.out.println(Arrays.toString(rotatedPoints));
+//		System.out.println(angle);
+		if(d1 == d2 && d2 == d3 && d1 == d3) {
+			return angle;
+		}else {
+			return (float) (2*Math.PI-angle);
+		}
 	
 	}
 	
@@ -349,9 +456,9 @@ public class PuzzleSolver {
 						toAdd.add(neighbourInt);
 						matchingArray[k] = toAddMatching;
 						k++;
-					}else {
-						toAdd.add(gr2.get(j));
 					}
+				}else {
+					toAdd.add(gr2.get(j));
 				}
 			}
 			for (int j = 0; j < gr3.size(); j++) {
@@ -387,7 +494,6 @@ public class PuzzleSolver {
 		for (int i = 0; i < matchingArray.length; i++) {
 			
 			if(matchingArray[i] == (null)) {
-				System.out.println("hello");
 				return false;
 			}
 			int[] pairToCheck = (int[]) matchingArray[i];
@@ -429,6 +535,16 @@ public class PuzzleSolver {
 			}
 		}
 		return threeMatchingPoints;
+	}
+
+	public float getAngleGivenIndex(int index, PieceAndAngleDatatype[] pieceAndRotationalAngle) {
+		for(int i = 0; i < pieceAndRotationalAngle.length;i++) {
+			if(pieceAndRotationalAngle[i].getPieceIndex() == index) {
+				return pieceAndRotationalAngle[i].getPieceAngle();
+			}
+		}
+		return 0.0f;
+		
 	}
 
 }
