@@ -1,21 +1,19 @@
 package view;
 
+
 import java.awt.geom.Point2D;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import controller.Main;
 import model.Button;
-import model.ImageInitializer;
 import model.Menubar;
 import model.Piece;
-import model.Slider;
+import model.TextInputField;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
-import processing.core.PMatrix;
-import processing.core.PShape;
-import processing.core.PShapeSVG.Font;
-import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class View extends PApplet {
@@ -39,12 +37,6 @@ public class View extends PApplet {
 	
 	public boolean puzzleComplete = false;
 	
-	// Zoom and pan
-	float view_scale;
-	float viewX, viewY;
-	
-	PImage img;
-	PShape myShape;
 	
 	// Menu variables
 	boolean showMenu = false;
@@ -52,26 +44,28 @@ public class View extends PApplet {
 	public Menubar menubar;
 	public boolean newPuzzle = true;
 	int menubarXPos = width;
+	int menubarHeight = height/2;
 	PFont completionFont;
 	PFont menuFont;
+	public TextInputField pathInput;
+	boolean ctrlPressed = false;
 	
+	// Controls if we're writing in the input field
+	public boolean writing = false;
 	
-	
-	
+	// Controls whether to generate a puzzle or read a JSON
+	public boolean inputState = false;
 	
 	
 	// identical use to setup in Processing IDE except for size()
 	public void setup() {
 		
-		// Zoom and Pan init values
-		view_scale = 1f;
-		viewX = 0;
-		viewY = 0;
+		menubarHeight = height/2;
 		
 		menu_button = new Button(this, "Menu", width-120, 20, 100, 30);
-		menubar = new Menubar(this, width-150, 0, 150, height/2);
-		
-		
+		menubar = new Menubar(this, width-150, 0, 150, menubarHeight);
+		pathInput = new TextInputField(this, width/2, height);
+		System.out.println(menubarHeight);
 		this.initWidth = width;
 		
 		
@@ -90,42 +84,22 @@ public class View extends PApplet {
 	
 	// identical use to draw in Processing IDE
 	public void draw(){
-		// For zoom and panning
-		//translate(viewX, viewY);
-		//scale(view_scale);
-		
+
 		// Change background color to white
-		background(100);
+		background(200);
 		
 		// Draw the pieces
-		boolean piecelocked = false;
 		if(!pieceList.isEmpty() && showMenu == false) {
-//			for(int i = pieceList.size()-1; i >= 0; i--) {
-//				if(pieceList.get(i).isMouseOver() && !piecelocked && currentPiece == null) {
-//					pieceList.get(i).col = color(255,0,0);
-//					piecelocked = true;
-//				} else {
-//					pieceList.get(i).col = 0;
-//				}
-//			}
-//			if(currentPiece != null) {
-//				currentPiece.col = color(255,0,0);
-//			}
 			try {
-			for(Piece piece : pieceList) {
-//				if(pieceList.isEmpty() || piece == null) {
-//					break;
-//				}
-				piece.display();
-			}
+				for(Piece piece : pieceList) {
+					piece.display();
+				}
 			} catch(Exception e) {
 				System.out.println("***********************************BREAK********************************************");
 				newPuzzle = true;
 				puzzleComplete = false;
 			}
 		}
-		
-		
 		
 		// Draw the menu bar
 		menubar();
@@ -134,6 +108,10 @@ public class View extends PApplet {
 		if(puzzleComplete) {completionView();}
 		
 		if(debugView) {debugDisplay();}
+		
+		if(inputState) { // If state is read JSON file
+			pathInput.draw();
+		}
 		
 	}
 	
@@ -148,6 +126,7 @@ public class View extends PApplet {
 		if(menubarXPos != width) {
 			menubar.updatePos(width - 150, 0);
 			menubarXPos = width;
+			pathInput.updatePos(width, menubarHeight);
 		}
 	}
 	
@@ -196,22 +175,7 @@ public class View extends PApplet {
 		
 		menuButtonClicked(mouseX, mouseY);
 		
-//		if(menu_button.MouseIsOver()) {
-//			System.out.println("click");
-//			showMenu = !showMenu;
-//		}
-		
-		/*
-		for(Piece piece : pieceList){
-			
-			if(piece.isMouseOver()) {
-				//System.out.println("piece clicked");
-				currentPiece = piece;
-				currentPiece.isCurrentPiece = true;
-				angle = currentPiece.getAngle();
-			}
-		}
-		*/
+		pathInput.selectInputField();
 	}
 	
 	public void mouseReleased() {
@@ -244,16 +208,72 @@ public class View extends PApplet {
 	
 	// Keyboard events
 	public void keyPressed() {
-		if(this.key == 'd') {
+		
+		// Toggle debug view
+		if(this.key == 'd' && !writing) {
 			debugView = !debugView;
 		}
 		
+		// Rotate currentPiece by key
 		if(this.key == 'r') {
 			if(currentPiece != null) {
 				angle += 45;
 				currentPiece.rotatePiece(angle);
 			}
 		}
+		
+		
+		
+		// --------- TextField Control ---------
+		// Paste into input field
+		if(key == CODED) {
+			if(keyCode == CONTROL) {
+				ctrlPressed = true;
+			}
+		} else {
+			if(ctrlPressed && keyCode == 86) {
+				System.out.println("ctrl + v");
+				pathInput.pasteContents();
+				ctrlPressed = false;
+			}
+		}
+		pathInput.addChar(key);
+		
+		// Confirm that the path has to be read
+		if(key == ENTER && pathInput.selected() && inputState) {
+			//System.out.println("return");
+			System.out.println(pathInput.getValue());
+			System.out.println(checkPath(pathInput.getValue()));
+			pathInput.toggleSelected();
+		}
+		
+	}
+	
+	public void keyReleased() {
+		
+		// Reset control key
+		if (key == CODED) {
+			if (keyCode == CONTROL) {
+				ctrlPressed = false;
+			}
+		}
+	} 
+	
+	public boolean checkPath(String string) {
+		return isFileJSON(string) && doesPathExist(string);
+	}
+	
+	public boolean isFileJSON(String string) {
+		if(string.length() > 4) {
+			return (string.substring(string.length()-4, string.length()).toLowerCase().equals("json"));
+		}
+		
+		return false;
+	}
+	
+	public boolean doesPathExist(String string) {
+		Path p = Paths.get(string);
+		return (Files.exists(p));
 	}
 	
 	// Getters and setters
@@ -276,4 +296,7 @@ public class View extends PApplet {
 	public Piece getCurrentPiece() {
 		return currentPiece;
 	}
+
+	
+	
 }

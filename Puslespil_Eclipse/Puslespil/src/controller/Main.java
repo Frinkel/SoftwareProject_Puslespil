@@ -3,7 +3,6 @@ package controller;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import model.ImageInitializer;
 import model.Piece;
@@ -13,9 +12,9 @@ import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 24;
+	private static int pieceAmount = 9;
 	private static int boardSize = 800;
-	private static int distortionPoints = 2;
+	private static int distortionPoints = 4;
 	
 	
 	static Generator generator;
@@ -158,11 +157,62 @@ public class Main {
 			}
 			
 			if(view.newPuzzle) {
-				view.resetPieceList();
-				generatePuzzle(view);
-				view.newPuzzle = false;
-				//randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
+				if(view.inputState) {
+					// PIECE READER
+					
+				} else {
+					// GENERATE RANDOM
+					view.resetPieceList();
+					generatePuzzle(view);
+					view.newPuzzle = false;
+					randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
+				}
+				
+				
 			}
+		}
+	}
+	
+	
+	public static void readPuzzle(View view) {
+		//int pieceAmount, distortionPoints;
+		if(view.menubar != null) {
+			pieceAmount = view.menubar.sliderPieceAmount.getValue();
+			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
+		} else {
+			pieceAmount = 2;
+			distortionPoints = 2;
+		}
+		
+		//generator = new Generator(boardSize, pieceAmount, distortionPoints);
+		
+		
+		PieceReader pR = new PieceReader();
+		Object[] O3 = pR.pieceReader();
+		
+		
+		
+		// Get the images to be mapped onto the pieces
+		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
+		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
+		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
+		//view.setImageList(sprites);
+		System.out.println(Math.round(Math.random() * paths.length) - 1);
+		
+		
+		//Object[] O3 = generator.generate();
+		PieceCompare pC = new PieceCompare();
+		pC.pieceComparator(O3);
+		PuzzleSolver pS = new PuzzleSolver();
+//		pS.puzzleSolver(O3);
+		
+		for(int i = 0; i < O3.length; i++) {
+			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
+			
+			
+			Piece p = new Piece(view, center, v, sprites.get(0));
+			view.addPieceToList(p);
 		}
 	}
 	
@@ -172,8 +222,8 @@ public class Main {
 			pieceAmount = view.menubar.sliderPieceAmount.getValue();
 			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
 		} else {
-			pieceAmount = 24;
-			distortionPoints = 4;
+			pieceAmount = 2;
+			distortionPoints = 2;
 		}
 		
 		generator = new Generator(boardSize, pieceAmount, distortionPoints);
@@ -186,27 +236,66 @@ public class Main {
 		System.out.println(Math.round(Math.random() * paths.length) - 1);
 		
 		PieceReader pR = new PieceReader();
-		Object[] O3 = pR.pieceReader();
-//		Object[] O3 = generator.generate();
+//		Object[] O3 = pR.pieceReader();
+		Object[] O3 = generator.generate();
 		PieceCompare pC = new PieceCompare();
 		pC.pieceComparator(O3);
 		PuzzleSolver pS = new PuzzleSolver();
-		PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(O3);
+//		pS.puzzleSolver(O3);
 		
 		for(int i = 0; i < O3.length; i++) {
-			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
-			//System.out.println("angle: " + angle);
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-			Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
-			System.out.println("Piece number i " + i + "  " + Arrays.toString(v));
-			Piece p = new Piece(view, center, v, sprites.get(0));
-			
-			p.rotatePiece(PApplet.degrees(angle));
+			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
 			
 			
+			Piece p = new Piece(view, center, v, sprites.get(i));
 			view.addPieceToList(p);
 		}
 	}
+	
+//	public static void generatePuzzle(View view) {
+//		int pieceAmount, distortionPoints;
+//		if(view.menubar != null) {
+//			pieceAmount = view.menubar.sliderPieceAmount.getValue();
+//			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
+//		} else {
+//			pieceAmount = 24;
+//			distortionPoints = 4;
+//		}
+//		
+//		generator = new Generator(boardSize, pieceAmount, distortionPoints);
+//		
+//		// Get the images to be mapped onto the pieces
+//		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
+//		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
+//		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
+//		//view.setImageList(sprites);
+//		System.out.println(Math.round(Math.random() * paths.length) - 1);
+//		
+//		PieceReader pR = new PieceReader();
+//		Object[] O3 = pR.pieceReader();
+////		Object[] O3 = generator.generate();
+//		PieceCompare pC = new PieceCompare();
+//		pC.pieceComparator(O3);
+//		PuzzleSolver pS = new PuzzleSolver();
+//		PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(O3);
+//		
+//		for(int i = 0; i < O3.length; i++) {
+//			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
+//			//System.out.println("angle: " + angle);
+//			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+//			Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
+//			System.out.println("Piece number i " + i + "  " + Arrays.toString(v));
+//			Piece p = new Piece(view, center, v, sprites.get(0));
+//			
+//			p.rotatePiece(PApplet.degrees(angle));
+//			
+//			
+//			view.addPieceToList(p);
+//		}
+//	}
+	
+	
 	
 	// Gets the current piece
 	private static Piece getCurrentPiece(View view) {
@@ -443,5 +532,4 @@ public class Main {
 		return identical;
 	}
 }
-
 
