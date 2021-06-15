@@ -43,12 +43,14 @@ public class View extends PApplet {
 	Button menu_button;
 	public Menubar menubar;
 	public boolean newPuzzle = true;
+	public boolean solvePuzzle = false;
 	int menubarXPos = width;
 	int menubarHeight = height/2;
 	PFont completionFont;
 	PFont menuFont;
 	public TextInputField pathInput;
 	boolean ctrlPressed = false;
+	public String puzzlePath = "";
 	
 	// Controls if we're writing in the input field
 	public boolean writing = false;
@@ -138,6 +140,7 @@ public class View extends PApplet {
 		break;
 		case(1):
 			System.out.println("1");
+			solvePuzzle = true;
 		break;
 		case(2):
 			System.out.println("2");
@@ -244,7 +247,12 @@ public class View extends PApplet {
 			//System.out.println("return");
 			System.out.println(pathInput.getValue());
 			System.out.println(checkPath(pathInput.getValue()));
+			if(checkPath(pathInput.getValue())) {
+				puzzlePath = pathInput.getValue();
+			}
 			pathInput.toggleSelected();
+			
+			newPuzzle = true;
 		}
 		
 	}

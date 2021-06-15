@@ -48,13 +48,13 @@ public class Menubar {
 		view.rect(x, y, width, height, 0, 0, 20, 20);
 		
 		// On hover
-		if(MouseIsOver(x, 40) && !view.inputState) {
+		if(MouseIsOver(x, 35) && !view.inputState) {
 			view.fill(100);
 			view.rect(x, y + 35, width, 40);
-		} else if (MouseIsOver(x, 60)) {
+		} else if (MouseIsOver(x, 75)) {
 			view.fill(100);
 			view.rect(x, y + 75, width, 40);
-		} else if (MouseIsOver(x, 100)) {
+		} else if (MouseIsOver(x, 115)) {
 			view.fill(100);
 			view.rect(x, y + 115, width, 40);
 		}
@@ -100,11 +100,11 @@ public class Menubar {
 	
 	public int MouseOverButton(int _x, int _y) {
 		
-		if(MouseIsOver(x, 40) && !view.inputState) {
+		if(MouseIsOver(x, 35) && !view.inputState) {
 			return 0;
-		} else if (MouseIsOver(x, 60)) {
+		} else if (MouseIsOver(x, 75)) {
 			return 1;
-		} else if (MouseIsOver(x, 100)) {
+		} else if (MouseIsOver(x, 115)) {
 			return 2;
 		}
 		

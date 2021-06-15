@@ -87,6 +87,7 @@ public class Piece {
 	
 	public void debugDisplay() {
 		pA.fill(255);
+		pA.strokeWeight(2);
 		pA.stroke(0,0,0);
 		pA.ellipse(origin.x, origin.y,10,10);
 	    // TESTING
