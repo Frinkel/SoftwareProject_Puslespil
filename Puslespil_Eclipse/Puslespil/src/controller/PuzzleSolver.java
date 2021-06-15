@@ -68,7 +68,7 @@ public class PuzzleSolver {
 	private PieceAndAngleDatatype[] rotatePiecesOnPath(int[] finalPath, Object[] matchingArray, Object[] pieceList, PieceCompare pC) {
 		// TODO Auto-generated method stub
 		PieceAndAngleDatatype[] pieceAndRotationalAngle = new PieceAndAngleDatatype[finalPath.length];
-		pieceAndRotationalAngle[0] = new PieceAndAngleDatatype(finalPath[0], 0.0f);
+		pieceAndRotationalAngle[0] = new PieceAndAngleDatatype(finalPath[0], 0.0f, new Point2D.Float(500.0f,500.0f));
 		
 		for(int i = 0; i < finalPath.length-1; i++) {
 			
@@ -76,17 +76,48 @@ public class PuzzleSolver {
 			Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) pair, pieceList);
 			float angle = findRotationOfMatchingPair(threeMatchingPoints, pC);
 			if(pair[0] == finalPath[i]) {
-				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], angle+(pieceAndRotationalAngle[i].getPieceAngle()));
+				Point2D.Float center = getPosOfCenter(threeMatchingPoints,angle+(pieceAndRotationalAngle[i].getPieceAngle()), (pieceAndRotationalAngle[i].getPieceAngle()), (pieceAndRotationalAngle[i].getCenter()),1);
+				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], angle+(pieceAndRotationalAngle[i].getPieceAngle()),center);
 			}else {
-				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], -angle+(pieceAndRotationalAngle[i].getPieceAngle()));
+				Point2D.Float center = getPosOfCenter(threeMatchingPoints,((-angle)+(pieceAndRotationalAngle[i].getPieceAngle())), (pieceAndRotationalAngle[i].getPieceAngle()), (pieceAndRotationalAngle[i].getCenter()),-1);
+				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], -angle+(pieceAndRotationalAngle[i].getPieceAngle()),center);
 			}
 			
-			System.out.println("angle : " + angle);
+			//System.out.println("angle : " + angle);
 			System.out.println(Arrays.toString(pair));
 			
 			
 		}
 		return pieceAndRotationalAngle;
+	}
+
+	private Point2D.Float getPosOfCenter(Point2D.Float[][] threeMatchingPoints, float angle, float prevAngle, Point2D.Float prevCenter,int direction) {
+		Point2D.Float[] pointsToRotate1 = new Point2D.Float[] {(threeMatchingPoints[1][0]),(threeMatchingPoints[1][1]),(threeMatchingPoints[1][2])};
+		Point2D.Float[] rotatedPoints1 = rotatePoints(pointsToRotate1,angle);
+		
+		Point2D.Float[] pointsToRotate2 = new Point2D.Float[] {(threeMatchingPoints[0][0]),(threeMatchingPoints[0][1]),(threeMatchingPoints[0][2])};
+		Point2D.Float[] rotatedPoints2 = rotatePoints(pointsToRotate2,prevAngle);
+		
+
+		
+		if(direction < 0 ) {
+			rotatedPoints1 = rotatePoints(pointsToRotate2,angle);
+			rotatedPoints2 = rotatePoints(pointsToRotate1,prevAngle);
+		}
+		Point2D.Float point1 = rotatedPoints2[1];
+		Point2D.Float point2 = rotatedPoints1[1];
+		Point2D.Float vectorBA = new Point2D.Float((float) (point1.getX()-point2.getX()),(float) (point1.getY()-point2.getY()));
+		
+		
+		float newCenterX = (float) (prevCenter.getX() + vectorBA.getX());
+		float newCenterY = (float) (prevCenter.getY() + vectorBA.getY());
+		
+//		float newCenterX = (float) (prevCenter.getX() + (vectorBA.getX()*direction));
+//		float newCenterY = (float) (prevCenter.getY() + (vectorBA.getY()*direction));
+//		
+		Point2D.Float newCenter = new Point2D.Float(newCenterX,newCenterY);
+		System.out.println("new Center: " + newCenter + "  Vector   " + vectorBA);
+		return newCenter;
 	}
 
 	private int[] getPair(int integer, int integer2, Object[] matchingArray) {
@@ -165,13 +196,9 @@ public class PuzzleSolver {
 		
 		float angle = (float) (Math.acos((dotProduct)/(length0 * length1)));
 		
-		Point2D.Float[] rotatedPoints = new Point2D.Float[3];
 		
-		for(int i = 0; i < 3; i++) {
-			float rotatedX = (float) (PApplet.cos(angle) * (threeMatchingPoints[1][i].getX()) - PApplet.sin(angle) * (threeMatchingPoints[1][i].getY()));
-			float rotatedY = (float) (PApplet.sin(angle) * (threeMatchingPoints[1][i].getX()) + PApplet.cos(angle) * (threeMatchingPoints[1][i].getY()));
-			rotatedPoints[i] = new Point2D.Float(rotatedX, rotatedY);
-		}
+		Point2D.Float[] pointsToRotate = new Point2D.Float[] {(threeMatchingPoints[1][0]),(threeMatchingPoints[1][1]),(threeMatchingPoints[1][2])};
+		Point2D.Float[] rotatedPoints = rotatePoints(pointsToRotate,angle);
 		
 		float d1 = ((float) (((double) Math.round((pC.distance((threeMatchingPoints[0][2]), rotatedPoints[0])) * 100d)) / 100));
 		float d2 = ((float) (((double) Math.round((pC.distance((threeMatchingPoints[0][1]), rotatedPoints[1])) * 100d)) / 100));
@@ -187,6 +214,16 @@ public class PuzzleSolver {
 	
 	}
 	
+	private Point2D.Float[] rotatePoints(Point2D.Float[] pointsToRotate, float angle ){
+		Point2D.Float[] rotatedPoints = new Point2D.Float[3];
+		
+		for(int i = 0; i < 3; i++) {
+			float rotatedX = (float) (PApplet.cos(angle) * (pointsToRotate[i].getX()) - (PApplet.sin(angle) * (pointsToRotate[i].getY())));
+			float rotatedY = (float) (PApplet.sin(angle) * (pointsToRotate[i].getX()) + (PApplet.cos(angle) * (pointsToRotate[i].getY())));
+			rotatedPoints[i] = new Point2D.Float(rotatedX, rotatedY);
+		}
+		return rotatedPoints;
+	}
 	
 
 	public Object[] groupPieces(Object[] pieceList) {
@@ -544,6 +581,16 @@ public class PuzzleSolver {
 			}
 		}
 		return 0.0f;
+		
+	}
+	
+	public Point2D.Float getCenterGivenIndex(int index, PieceAndAngleDatatype[] pieceAndRotationalAngle) {
+		for(int i = 0; i < pieceAndRotationalAngle.length;i++) {
+			if(pieceAndRotationalAngle[i].getPieceIndex() == index) {
+				return pieceAndRotationalAngle[i].getCenter();
+			}
+		}
+		return new Point2D.Float(0.0f,0.0f);
 		
 	}
 

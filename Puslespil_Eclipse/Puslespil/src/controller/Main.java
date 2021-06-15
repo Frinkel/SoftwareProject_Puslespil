@@ -13,7 +13,7 @@ import view.View;
 
 public class Main {
 	// The argument passed to main must match the class name
-	private static int pieceAmount = 9;
+	private static int pieceAmount = 24;
 	private static int boardSize = 800;
 	private static int distortionPoints = 2;
 	
@@ -172,7 +172,7 @@ public class Main {
 			pieceAmount = view.menubar.sliderPieceAmount.getValue();
 			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
 		} else {
-			pieceAmount = 16;
+			pieceAmount = 24;
 			distortionPoints = 4;
 		}
 		
@@ -195,9 +195,10 @@ public class Main {
 		
 		for(int i = 0; i < O3.length; i++) {
 			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
+			//System.out.println("angle: " + angle);
 			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
-			
+			Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
+			System.out.println("Piece number i " + i + "  " + Arrays.toString(v));
 			Piece p = new Piece(view, center, v, sprites.get(0));
 			
 			p.rotatePiece(PApplet.degrees(angle));
