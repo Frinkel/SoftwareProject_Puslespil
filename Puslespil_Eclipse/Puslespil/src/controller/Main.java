@@ -3,6 +3,7 @@ package controller;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import model.ImageInitializer;
 import model.Piece;
@@ -22,8 +23,6 @@ public class Main {
 	public static void main(String[] args) {
 		
 		View view = new View();
-		
-		
 		
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
 		
@@ -165,7 +164,7 @@ public class Main {
 					view.resetPieceList();
 					generatePuzzle(view);
 					view.newPuzzle = false;
-					randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
+					//randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
 				}
 				
 				
@@ -216,51 +215,14 @@ public class Main {
 		}
 	}
 	
-	public static void generatePuzzle(View view) {
-		int pieceAmount, distortionPoints;
-		if(view.menubar != null) {
-			pieceAmount = view.menubar.sliderPieceAmount.getValue();
-			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
-		} else {
-			pieceAmount = 2;
-			distortionPoints = 2;
-		}
-		
-		generator = new Generator(boardSize, pieceAmount, distortionPoints);
-		
-		// Get the images to be mapped onto the pieces
-		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
-		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
-		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
-		//view.setImageList(sprites);
-		System.out.println(Math.round(Math.random() * paths.length) - 1);
-		
-		PieceReader pR = new PieceReader();
-//		Object[] O3 = pR.pieceReader();
-		Object[] O3 = generator.generate();
-		PieceCompare pC = new PieceCompare();
-		pC.pieceComparator(O3);
-		PuzzleSolver pS = new PuzzleSolver();
-//		pS.puzzleSolver(O3);
-		
-		for(int i = 0; i < O3.length; i++) {
-			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
-			
-			
-			Piece p = new Piece(view, center, v, sprites.get(i));
-			view.addPieceToList(p);
-		}
-	}
-	
 //	public static void generatePuzzle(View view) {
 //		int pieceAmount, distortionPoints;
 //		if(view.menubar != null) {
 //			pieceAmount = view.menubar.sliderPieceAmount.getValue();
 //			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
 //		} else {
-//			pieceAmount = 24;
-//			distortionPoints = 4;
+//			pieceAmount = 2;
+//			distortionPoints = 2;
 //		}
 //		
 //		generator = new Generator(boardSize, pieceAmount, distortionPoints);
@@ -273,27 +235,79 @@ public class Main {
 //		System.out.println(Math.round(Math.random() * paths.length) - 1);
 //		
 //		PieceReader pR = new PieceReader();
-//		Object[] O3 = pR.pieceReader();
-////		Object[] O3 = generator.generate();
+////		Object[] O3 = pR.pieceReader();
+//		Object[] O3 = generator.generate();
 //		PieceCompare pC = new PieceCompare();
 //		pC.pieceComparator(O3);
 //		PuzzleSolver pS = new PuzzleSolver();
-//		PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(O3);
+////		pS.puzzleSolver(O3);
 //		
 //		for(int i = 0; i < O3.length; i++) {
-//			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
-//			//System.out.println("angle: " + angle);
 //			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-//			Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
-//			System.out.println("Piece number i " + i + "  " + Arrays.toString(v));
-//			Piece p = new Piece(view, center, v, sprites.get(0));
-//			
-//			p.rotatePiece(PApplet.degrees(angle));
+//			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
 //			
 //			
+//			Piece p = new Piece(view, center, v, sprites.get(i));
 //			view.addPieceToList(p);
 //		}
 //	}
+	
+	public static void generatePuzzle(View view) {
+		int pieceAmount, distortionPoints;
+		if(view.menubar != null) {
+			pieceAmount = view.menubar.sliderPieceAmount.getValue();
+			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
+		} else {
+			pieceAmount = 4;
+			distortionPoints = 20;
+		}
+		
+		generator = new Generator(boardSize, pieceAmount, distortionPoints);
+		
+		// Get the images to be mapped onto the pieces
+		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
+		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
+		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
+		//view.setImageList(sprites);
+		System.out.println(Math.round(Math.random() * paths.length) - 1);
+		
+		PieceReader pR = new PieceReader();
+		Object[] O3 = pR.pieceReader();
+		//Object[] O3 = generator.generate();
+		PieceCompare pC = new PieceCompare();
+		pC.pieceComparator(O3);
+		//PuzzleSolver pS = new PuzzleSolver();
+		//PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(O3);
+		
+		for(int i = 0; i < O3.length; i++) {
+			//float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
+			//System.out.println("angle: " + angle);
+			Point2D.Float[] v = (Point2D.Float[]) O3[i];
+			//Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
+			Point2D.Float center = new Point2D.Float(250,250);
+			System.out.println("Piece number i " + i + "  " + Arrays.toString(v));
+			Piece p = new Piece(view, center, v);
+			
+			//p.rotatePiece(PApplet.degrees(angle));
+			view.addPieceToList(p);
+		}
+		
+		solvePuzzle(view, O3);
+	}
+	
+	
+	public static void solvePuzzle(View view, Object[] pieces) {
+		PuzzleSolver pS = new PuzzleSolver();
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(pieces);
+		
+		for(int i = 0; i < 2; i++) {
+			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
+			//Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
+			Point2D.Float center = new Point2D.Float(250,250);
+			view.getPieceList().get(i).rotatePiece(PApplet.degrees(angle));
+			//view.getPieceList().get(i).movePiece(center);
+		}
+	}
 	
 	
 	

@@ -89,7 +89,7 @@ public class View extends PApplet {
 		background(200);
 		
 		// Draw the pieces
-		if(!pieceList.isEmpty() && showMenu == false) {
+		if(!pieceList.isEmpty()) {
 			try {
 				for(Piece piece : pieceList) {
 					piece.display();

@@ -58,13 +58,15 @@ public class Piece {
 	private void init() {
 		shape = pA.createShape();
 	    shape.beginShape();
-	    	shape.fill(255);
+	    	//shape.fill(255);
 	    	shape.stroke(0);
 	    	shape.strokeWeight(2);
 	        for (int i = 0; i < vertices.length-1; i++) {
 	        	shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y);
 	        }
 	    shape.endShape(PApplet.CLOSE);
+//	    shape.setStroke(false);
+//	    shape.setFill(false);
 	}
 	
 	private void initWithTexture() {
