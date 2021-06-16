@@ -150,11 +150,13 @@ public class Main {
 	private static Piece getCurrentPiece(View view) {
 		ArrayList<Piece> pieceList = view.getPieceList();
 		
-		//if(!view.getPieceList().isEmpty()) {
-			for(Piece piece : pieceList) {			
-				if(piece.isCurrentPiece && piece != null) {
+		//if(view.getPieceList().isEmpty() == false) {
+			for(Piece piece : pieceList) {
+				
+				if(piece.isCurrentPiece) {
 					return piece;
 				}
+				
 			}
 		//}
 		
