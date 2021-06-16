@@ -11,52 +11,48 @@ import processing.core.PImage;
 import processing.core.PMatrix;
 import processing.core.PShape;
 import processing.core.PVector;
+import view.View;
 
 public class Piece {
 	
-	PApplet pA;
-	public int col = 0;
-	float xOffset, yOffset;
+	// Get a reference to the PApplet object
+	View view;
+	
+	// Piece variables
 	float angle = 0;
 	public boolean isCurrentPiece = false;
 	float shapeWidth = 0;
 	float shapeHeight = 0;
 	PImage texture = null;
-	
-	
-	public boolean overPiece, pieceLocked = false;
-	
-	// Vertices 
+		
+	// Piece creation variables
 	Point2D.Float[] vertices;
 	Point2D.Float origin;
-	
 	PShape shape;
 	
 	
-	public Piece(PApplet _pA, Point2D.Float _origin, Point2D.Float[] _vertices){
-		// Get a reference to the main PApplet class
-		this.pA = _pA;
-		
+	public Piece(View _view, Point2D.Float _origin, Point2D.Float[] _vertices){
+		this.view = _view;
 		this.vertices = _vertices;
 		this.origin = _origin;
 		
+		// Create the piece (without texture)
 		init();
 	}
 	
-	public Piece(PApplet _pA, Point2D.Float _origin, Point2D.Float[] _vertices, PImage img){
-		// Get a reference to the main PApplet class
-		this.pA = _pA;
-		
+	public Piece(View _view, Point2D.Float _origin, Point2D.Float[] _vertices, PImage img){
+		this.view = _view;
 		this.vertices = _vertices;
 		this.origin = _origin;
-		
 		this.texture = img;
 		
+		// Create the piece (with texture)
 		initWithTexture();
 	}
 	
+	// Piece creation
 	private void init() {
-		shape = pA.createShape();
+		shape = view.createShape();
 	    shape.beginShape();
 	    	shape.fill(255);
 	    	shape.stroke(0);
@@ -65,12 +61,10 @@ public class Piece {
 	        	shape.vertex(origin.x + vertices[i].x, origin.y + vertices[i].y);
 	        }
 	    shape.endShape(PApplet.CLOSE);
-//	    shape.setStroke(false);
-//	    shape.setFill(false);
 	}
 	
 	private void initWithTexture() {
-		shape = pA.createShape();
+		shape = view.createShape();
 	    shape.beginShape();
 	    	shape.noStroke();
 	    	shape.textureMode(PConstants.NORMAL);
@@ -81,30 +75,36 @@ public class Piece {
 	    shape.endShape(PApplet.CLOSE);
 	}
 	
+	// Visuals
 	public void display() {
-	    pA.shape(shape);
+	    view.shape(shape);
 	}
 	
 	public void debugDisplay() {
-		pA.fill(255);
-		pA.strokeWeight(2);
-		pA.stroke(0,0,0);
-		pA.ellipse(origin.x, origin.y,10,10);
-	    // TESTING
-	    pA.stroke(255,0,0);
-	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle)) * -200);
-	    pA.stroke(0,255,0);
-	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+90)) * -200);
-	    pA.stroke(0,0,255);
-	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -200);
-	    pA.stroke(255,255,0);
-	    pA.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
-	    pA.stroke(255);
+		// Configuration
+		view.fill(255, 255, 255);
+		view.strokeWeight(2);
+		view.stroke(0,0,0);
+		
+		// Center
+		view.ellipse(origin.x, origin.y,10,10);
 	    
+		// Angle lines
+	    view.stroke(255,0,0);
+	    view.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle)) * -200);
+	    view.stroke(0,255,0);
+	    view.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+90)) * -200);
+	    view.stroke(0,0,255);
+	    view.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle-90)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle-90)) * -200);
+	    view.stroke(255,255,0);
+	    view.line(origin.x, origin.y, origin.x + (PApplet.cos(PApplet.radians(-angle+180)) * -200) , origin.y - PApplet.sin(PApplet.radians(-angle+180)) * -200);
+	    view.stroke(255);
+	    
+	    // Vertices
 	    for(int i = 0; i < shape.getVertexCount(); i++) {
 			float rotatedX = PApplet.cos(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) - PApplet.sin(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.x;;
 			float rotatedY = PApplet.sin(PApplet.radians(angle)) * ((origin.x + vertices[i].x) - origin.x) + PApplet.cos(PApplet.radians(angle)) * ((origin.y + vertices[i].y)-origin.y) + origin.y;
-			pA.ellipse(rotatedX, rotatedY, 10, 10);
+			view.ellipse(rotatedX, rotatedY, 10, 10);
 		}
 	}
 
@@ -124,9 +124,8 @@ public class Piece {
 		return result;
 	}
 
-	
 	public boolean isMouseOver() {
-		if (this.contains(pA.mouseX, pA.mouseY)) {
+		if (this.contains(view.mouseX, view.mouseY)) {
 			return true;
 		} else {
 			return false;

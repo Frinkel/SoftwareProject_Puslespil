@@ -80,7 +80,7 @@ public class Menubar {
 		
 		view.fill(255);
 		view.text("Solve puzzle", x + 35, y + 100);
-		view.text("Solve next piece", x + 25, y + 140);
+		view.text("Solve rotation", x + 30, y + 140);
 		view.line(x + 10, y + 160, x + width-10, y+160);
 		
 		// Draw the puzzle input toggle

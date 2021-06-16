@@ -48,9 +48,11 @@ public class ToggleSwitch {
 		if(mouseIsOver(x, y, width/2, height) && state) {
 			//System.out.println(state);
 			state = !state;
+			view.resetPieceList();
 		} else if(mouseIsOver(x+width/2, y, width/2, height) && !state) {
 			//System.out.println(state);
 			state = !state;
+			view.resetPieceList();
 		}
 	}
 	

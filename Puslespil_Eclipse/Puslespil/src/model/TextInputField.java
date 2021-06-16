@@ -130,11 +130,11 @@ public class TextInputField {
 	}
 	
 	public String getValue() {
-		if(inputFieldSelected) {
 			return text;
-		}
-		
-		return null;
+	}
+	
+	public void setValue(String s) {
+		text = s;
 	}
 	
 	public boolean selected() {

@@ -2,6 +2,7 @@ package view;
 
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Float;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,14 +34,18 @@ public class View extends PApplet {
 	ArrayList<Piece> pieceList = new ArrayList<Piece>();	
 	float angle = 0;
 	Piece currentPiece;
+	ArrayList<Point2D.Float> offsetList = new ArrayList<>();
 	
 	// Menu variables
 	public Menubar menubar;
 	public boolean newPuzzle = true;
 	public boolean solvePuzzle = false;
+	public boolean solveRotation = false;
 	public String puzzlePath = "";
+	private String textInput = "";
 	boolean showMenu = false;
 	boolean ctrlPressed = false;
+	boolean shiftPressed = false;
 	public TextInputField pathInput;
 	int menubarXPos = width;
 	int menubarHeight = height/2;	
@@ -137,7 +142,7 @@ public class View extends PApplet {
 	}
 
 	// Mouse events
-	public void mousePressed() {
+	public void mousePressed(MouseEvent event) {
 		
 		// Controls the pickup of a Piece
 		boolean piecelocked = false;
@@ -157,6 +162,22 @@ public class View extends PApplet {
 		
 		// Check if the input field is selected
 		pathInput.selectInputField();
+		
+		if(pathInput.selected()) {
+			pathInput.setValue(textInput);
+		} else if(!pathInput.selected() && !pathInput.getValue().equals("Enter Path to Puzzle here!") && !pathInput.getValue().equals("Invalid Path!")) {
+			textInput = pathInput.getValue();
+		}
+		
+		// Generate an offsetList whenever the middle mousebutton is clicked
+		if(event.getButton() == 3) {
+			offsetList.clear();
+			for(Piece piece : pieceList) {
+				int offsetX = (int) (mouseX - piece.getOrigin().x);
+				int offsetY = (int) (mouseY - piece.getOrigin().y);
+				offsetList.add(new Point2D.Float(offsetX, offsetY));
+			}
+		}
 	}
 	
 	public void mouseReleased() {
@@ -173,18 +194,28 @@ public class View extends PApplet {
 	
 	public void mouseDragged(MouseEvent event) {
 		// Move the currently picked up Piece
-		if(currentPiece != null) {
+		if(currentPiece != null && event.getButton() == LEFT) {
 			currentPiece.movePiece(new Point2D.Float(mouseX, mouseY));
 		}
 		
 		// Controls if the sliders is dragged
 		menubar.sliderDragged();
+		
+		// Move all pieces together
+		if(event.getButton() == 3) { // Middle mouse button		
+			for(Piece piece : pieceList) {
+				piece.movePiece(new Point2D.Float(mouseX - offsetList.get(pieceList.indexOf(piece)).x, mouseY - offsetList.get(pieceList.indexOf(piece)).y));
+			}
+		}
 	}
 	
 	public void mouseWheel(MouseEvent event) {
 		// Rotate piece
-		if(currentPiece != null) {
+		if(currentPiece != null && !shiftPressed) {
 			angle += event.getCount()*45;
+			currentPiece.rotatePiece(angle);
+		} else if(currentPiece != null && shiftPressed && inputState) {
+			angle += event.getCount();
 			currentPiece.rotatePiece(angle);
 		}
 	}
@@ -206,13 +237,13 @@ public class View extends PApplet {
 			}
 		}
 		
-		
-		
 		// --------- TextField Control ---------
 		// Paste into input field
 		if(key == CODED) {
 			if(keyCode == CONTROL) {
 				ctrlPressed = true;
+			} else if(keyCode == SHIFT) {
+				shiftPressed = true;
 			}
 		} else {
 			if(ctrlPressed && keyCode == 86) {
@@ -229,13 +260,15 @@ public class View extends PApplet {
 		if(key == ENTER && pathInput.selected() && inputState) {
 			if(checkPath(pathInput.getValue())) {
 				puzzlePath = pathInput.getValue();
+				
+				// Tell Main to generate a new puzzle
+				newPuzzle = true;
+			} else {
+				textInput = pathInput.getValue();
+				pathInput.setValue("Invalid Path!");
 			}
 			pathInput.toggleSelected();
-			
-			// Tell Main to generate a new puzzle
-			newPuzzle = true;
 		}
-		
 	}
 	
 	public void keyReleased() {
@@ -244,6 +277,8 @@ public class View extends PApplet {
 		if (key == CODED) {
 			if (keyCode == CONTROL) {
 				ctrlPressed = false;
+			} else if(keyCode == SHIFT) {
+				shiftPressed = false;
 			}
 		}
 	} 
@@ -278,6 +313,7 @@ public class View extends PApplet {
 		break;
 		case(2):
 			System.out.println("2");
+			solveRotation = true;
 		break;
 		}
 	}

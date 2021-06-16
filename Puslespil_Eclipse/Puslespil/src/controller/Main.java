@@ -17,7 +17,7 @@ public class Main {
 	static Object[] puzzleArray;;
 	
 	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\Puzzle-2r-2c-5863-rot.JSON
-	//C:\Users\Joel\Downloads\Gr00\checkIdentical.json
+	//C:\Users\Joel\Downloads\Gr00\puzzle_02_auto.json
 	
 	// Main method
 	public static void main(String[] args) {
@@ -40,13 +40,13 @@ public class Main {
 			
 			// Listen for the newPuzzle call from the view, stating a new puzzle should be generated
 			if(view.newPuzzle) {
-				if(view.inputState) { // READ IN A PUZZLE
+				if(view.inputState && view.puzzlePath != "") { // READ IN A PUZZLE
 					view.resetPieceList();
 					readPuzzle(view, view.puzzlePath);
 					view.newPuzzle = false;
 					randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
 					
-				} else { // GENERATE RANDOM PUZZLE
+				} else if(!view.inputState) { // GENERATE RANDOM PUZZLE
 					view.resetPieceList();
 					generatePuzzle(view);
 					view.newPuzzle = false;
@@ -55,9 +55,14 @@ public class Main {
 			}
 			
 			// Listen for the solvePuzzle call from the view, stating that the puzzle should be solved by our solving algorithm
-			if(view.solvePuzzle && puzzleArray != null) {
+			if(view.solvePuzzle && puzzleArray != null && !view.getPieceList().isEmpty()) {
 				solvePuzzle(view, puzzleArray);
 				view.solvePuzzle = false;
+			}
+			
+			if(view.solveRotation && puzzleArray != null && !view.getPieceList().isEmpty()) {
+				solveRotation(view, puzzleArray);
+				view.solveRotation = false;
 			}
 		}
 	}
@@ -131,13 +136,28 @@ public class Main {
 		}
 	}
 	
+	public static void solveRotation(View view, Object[] pieces) {
+		PuzzleSolver puzzleSolver = new PuzzleSolver();
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = puzzleSolver.puzzleSolvers(pieces); // Might want to rename puzzleSolvers function?
+		
+		// Loop through all pieces and calculate their solved rotation and position, and move the pieces
+		for(int i = 0; i < pieces.length; i++) {
+			float angle = puzzleSolver.getAngleGivenIndex(i, pieceAndRotationalAngle);
+			view.getPieceList().get(i).rotatePiece(PApplet.degrees(angle));
+		}
+	}
+	
 	private static Piece getCurrentPiece(View view) {
 		ArrayList<Piece> pieceList = view.getPieceList();
-		for(Piece piece : pieceList) {
-			if(piece.isCurrentPiece) {
-				return piece;
+		
+		//if(!view.getPieceList().isEmpty()) {
+			for(Piece piece : pieceList) {			
+				if(piece.isCurrentPiece && piece != null) {
+					return piece;
+				}
 			}
-		}
+		//}
+		
 		return null;
 	}
 	
