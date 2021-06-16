@@ -28,10 +28,7 @@ public class PieceReader {
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
-		//the form of the entire puzzle
-		Point2D.Float[] formarray = new Point2D.Float[4];
-		readForm(obj, formarray);
-		
+
 		//find the amount of pieces
 		long numberOfPieces = (Long) jsonObject.get("no. of pieces");
 		System.out.println("no of pieces:" + numberOfPieces);
@@ -59,10 +56,7 @@ public class PieceReader {
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
-		//the form of the entire puzzle
-//		Point2D.Float[] formarray = new Point2D.Float[4];
-//		readForm(obj, formarray);
-		
+
 		//find the amount of pieces
 		long numberOfPieces = (Long) jsonObject.get("no. of pieces");
 		System.out.println("no of pieces:" + numberOfPieces);
@@ -77,23 +71,6 @@ public class PieceReader {
 		}
 		
 		return pieces;
-	}
-
-	public void readForm(Object obj, Point2D.Float[] pointarray) {
-		JSONObject jsonObject = (JSONObject) obj;
-		JSONObject board = (JSONObject) jsonObject.get("puzzle");
-		System.out.println(board.toString());
-		JSONArray boardCord = (JSONArray) board.get("form");
-		System.out.println(boardCord.size());
-		for (int i = 0; i < boardCord.size(); i++) {
-			JSONObject corner = (JSONObject) boardCord.get(i);
-			JSONObject corner1 = (JSONObject) corner.get("coord");
-			double cornerX = (double) corner1.get("x") * multiplier;
-			double cornerY = (double) corner1.get("y") * multiplier;
-			
-			Point2D.Float point = new Point2D.Float((float) cornerX,(float) cornerY);
-			pointarray[i] = point;
-		}
 	}
 
 	public void readPieces(JSONArray piecesList,Object[] pieces, int nop) {
