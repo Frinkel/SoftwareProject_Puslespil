@@ -26,7 +26,7 @@ public class PuzzleSolver {
 			Point2D.Float[] piece = (Point2D.Float[]) pieceList[i];
 			AncleLength[] angleLength = pC.createAncleLengthArray(piece);
 			AncleLengthPieceList[i] = angleLength;
-			System.out.println("aL " + i + "      " + Arrays.toString(angleLength));
+//			System.out.println("aL " + i + "      " + Arrays.toString(angleLength));
 		}
 		Object[] groups = groupPieces(pieceList);
 
@@ -41,7 +41,7 @@ public class PuzzleSolver {
 		int[] finalPath = calculatePath(pieceList.length, adjacencyArray, matchingArray, (ArrayList<Integer>) groups[0], (ArrayList<Integer>) groups[1], (ArrayList<Integer>) groups[2],
 				(int) groups[3], (int) groups[4], (int) groups[5]);
 		
-		System.out.println(Arrays.toString(finalPath));
+//		System.out.println(Arrays.toString(finalPath));
 		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(finalPath, matchingArray, pieceList, pC);
 //		System.out.println(Arrays.toString(pieceAndRotationalAngle));
 		
@@ -85,7 +85,7 @@ public class PuzzleSolver {
 			}
 			
 			//System.out.println("angle : " + angle);
-			System.out.println(Arrays.toString(pair));
+//			System.out.println(Arrays.toString(pair));
 			
 			
 		}
@@ -117,7 +117,7 @@ public class PuzzleSolver {
 //		float newCenterY = (float) (prevCenter.getY() + (vectorBA.getY()*direction));
 //		
 		Point2D.Float newCenter = new Point2D.Float(newCenterX,newCenterY);
-		System.out.println("angel " + angle + "new Center: " + newCenter + "  Vector   " + vectorBA);
+//		System.out.println("angel " + angle + "new Center: " + newCenter + "  Vector   " + vectorBA);
 		return newCenter;
 	}
 
@@ -164,16 +164,16 @@ public class PuzzleSolver {
 			ArrayList<Integer> pair = ((ArrayList<Integer>) adjacencyArray[i]);
 			if(pair.get(0) == startingIndex) {
 				adjacencyPair = pair;
-				System.out.println("startingIndex " + startingIndex);
+//				System.out.println("startingIndex " + startingIndex);
 				if(startingIndex == 74) {
-					System.out.println("WERE IN 74 " + adjacencyPair.toString());
+//					System.out.println("WERE IN 74 " + adjacencyPair.toString());
 				}
 			}
 		}
 		for(int i = 1; i < adjacencyPair.size(); i++) {
 			if(!alreadyCovered.contains(adjacencyPair.get(i))) {
 				alreadyCovered.add(adjacencyPair.get(i));
-				System.out.println("adjacencyPair i : " + adjacencyPair.get(i));
+//				System.out.println("adjacencyPair i : " + adjacencyPair.get(i));
 				
 				int[] array1 = getPath(adjacencyPair.get(i), adjacencyArray, alreadyCovered, length);
 				if(array1.length == length) {
@@ -307,13 +307,13 @@ public class PuzzleSolver {
 		ArrayList<Integer> gr2, ArrayList<Integer> gr3, int gr1Length, int gr2Length, int gr3Length) {
 
 		Object[] adjacencyArray = new Object[gr1.size() + gr2.size() + gr3.size()];
-		Object[] matchingArray = new Object[2 * gr1.size() + (3*gr2.size()-(2 * gr1.size())) + (4 * gr3.size()-((3*gr2.size()-(2 * gr1.size()))))];
+		Object[] matchingArray = new Object[2 * gr1.size() + (3*gr2.size()) + (4 * gr3.size())];
 		int k = 0;
 		for (int i = 0; i < gr1.size(); i++) {
 			ArrayList<Integer> toAdd = new ArrayList<Integer>();
 			toAdd.add(gr1.get(i));
 			if (gr2.isEmpty()) {
-				System.out.println(" is in first case");
+//				System.out.println(" is in first case");
 				for (int j = 0; j < gr1.size(); j++) {
 					if (i != j) {
 						if (!containsPair(matchingArray, gr1.get(i), gr1.get(j))) {
@@ -333,7 +333,7 @@ public class PuzzleSolver {
 
 					}
 				}
-				System.out.println(toAdd.toString());
+//				System.out.println(toAdd.toString());
 
 				adjacencyArray[i] = toAdd;
 			} else if (gr3.isEmpty()) {
@@ -368,11 +368,11 @@ public class PuzzleSolver {
 						toAdd.add(gr2.get(j));
 					}
 				}
-				System.out.println(toAdd.toString());
+//				System.out.println(toAdd.toString());
 
 				adjacencyArray[i] = toAdd;
 			} else {
-				System.out.println("is in last case");
+//				System.out.println("is in last case");
 				for (int j = 0; j < gr2.size(); j++) {
 					if (!containsPair(matchingArray, gr1.get(i), gr2.get(j))) {
 						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr1.get(i)],
@@ -388,7 +388,7 @@ public class PuzzleSolver {
 					}
 
 				}
-				System.out.println(toAdd.toString());
+//				System.out.println(toAdd.toString());
 
 				adjacencyArray[i] = toAdd;
 			}
@@ -430,7 +430,7 @@ public class PuzzleSolver {
 						}
 					}
 				}
-				System.out.println(toAdd.toString());
+//				System.out.println(toAdd.toString());
 
 				adjacencyArray[i + gr1.size()] = toAdd;
 			} else {
@@ -482,7 +482,7 @@ public class PuzzleSolver {
 						toAdd.add(gr3.get(j));
 					}
 				}
-				System.out.println(toAdd.toString());
+//				System.out.println(toAdd.toString());
 
 				adjacencyArray[i + gr1.size()] = toAdd;
 
@@ -524,13 +524,13 @@ public class PuzzleSolver {
 					}
 				}
 			}
-			System.out.println(toAdd.toString());
+			//System.out.println(toAdd.toString());
 
 			adjacencyArray[i + gr1.size() + gr2.size()] = toAdd;
 
 		}
-		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
-		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
+//		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
+//		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
 		return new Object[] { adjacencyArray, matchingArray };
 
 	}
