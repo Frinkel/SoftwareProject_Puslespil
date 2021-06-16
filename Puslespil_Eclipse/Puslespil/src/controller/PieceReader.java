@@ -60,8 +60,8 @@ public class PieceReader {
 			e.printStackTrace();
 		}
 		//the form of the entire puzzle
-		Point2D.Float[] formarray = new Point2D.Float[4];
-		readForm(obj, formarray);
+//		Point2D.Float[] formarray = new Point2D.Float[4];
+//		readForm(obj, formarray);
 		
 		//find the amount of pieces
 		long numberOfPieces = (Long) jsonObject.get("no. of pieces");

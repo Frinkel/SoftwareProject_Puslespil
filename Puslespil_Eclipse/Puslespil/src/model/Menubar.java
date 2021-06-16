@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 import view.View;
 
 public class Menubar {
@@ -18,6 +19,7 @@ public class Menubar {
 	// Togglers
 	public ToggleSwitch firstToggle;
 	
+	PFont menuFont;
 	
 	int minDistortionPoints = 1;
 	int minPieceAmount = 1;
@@ -38,6 +40,8 @@ public class Menubar {
 		sliderList.add(sliderPieceAmount);
 		sliderList.add(sliderDistortionPoints);
 		
+		menuFont = view.createFont("Arial", 14);	
+		
 		firstToggle = new ToggleSwitch((View) view, "Generate", "Read", x, 350, width, 30, false);
 		
 	}
@@ -46,6 +50,8 @@ public class Menubar {
 		
 		view.fill(0);
 		view.rect(x, y, width, height, 0, 0, 20, 20);
+		view.textAlign(PApplet.LEFT);
+		view.textFont(menuFont, 14);
 		
 		// On hover
 		if(MouseIsOver(x, 35) && !view.inputState) {
@@ -135,8 +141,10 @@ public class Menubar {
 	}
 	
 	public void sliderDragged() {
-		for(Slider slider : sliderList) {
-			slider.onMouseDragged();
+		if(view.getCurrentPiece() == null) {
+			for(Slider slider : sliderList) {
+				slider.onMouseDragged();
+			}
 		}
 	}
 }

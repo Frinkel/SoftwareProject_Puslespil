@@ -22,35 +22,29 @@ public class View extends PApplet {
 		System.out.println("View running..");
 	}
 	
-	// Variables
-	ArrayList<Piece> pieceList = new ArrayList<Piece>();
-	public boolean mouseReleased = false;
-	ArrayList<PImage> sprites = new ArrayList<PImage>();
+	// View variables
 	public int initWidth = width;
 	public int initHeight = height;
-	
-	boolean debugView = false;
-	
-	Piece currentPiece;
-	
-	float angle = 0;
-	
+	public boolean mouseReleased = false;
 	public boolean puzzleComplete = false;
 	
+	// Piece variables
+	boolean debugView = false;
+	ArrayList<Piece> pieceList = new ArrayList<Piece>();	
+	float angle = 0;
+	Piece currentPiece;
 	
 	// Menu variables
-	boolean showMenu = false;
-	Button menu_button;
 	public Menubar menubar;
 	public boolean newPuzzle = true;
 	public boolean solvePuzzle = false;
-	int menubarXPos = width;
-	int menubarHeight = height/2;
-	PFont completionFont;
-	PFont menuFont;
-	public TextInputField pathInput;
-	boolean ctrlPressed = false;
 	public String puzzlePath = "";
+	boolean showMenu = false;
+	boolean ctrlPressed = false;
+	public TextInputField pathInput;
+	int menubarXPos = width;
+	int menubarHeight = height/2;	
+	PFont completionFont;
 	
 	// Controls if we're writing in the input field
 	public boolean writing = false;
@@ -59,96 +53,73 @@ public class View extends PApplet {
 	public boolean inputState = false;
 	
 	
-	// identical use to setup in Processing IDE except for size()
+	// Setup runs once, when the view is created
 	public void setup() {
-		
+		// Menu setup
 		menubarHeight = height/2;
-		
-		menu_button = new Button(this, "Menu", width-120, 20, 100, 30);
 		menubar = new Menubar(this, width-150, 0, 150, menubarHeight);
 		pathInput = new TextInputField(this, width/2, height);
-		System.out.println(menubarHeight);
 		this.initWidth = width;
 		
-		
-		//FONT
+		// Font setup
 		completionFont = createFont("Arial", 26);
-		menuFont = createFont("Arial", 14);
-		
-		
 	}
 	
-	// method used only for setting the size of the window
+	// The method is used only for setting the size of the window
 	public void settings() {
-		// Create the view object
+		// Set the veiw port size
 		size(displayHeight*3>>2, displayHeight*3>>2, P3D);
 	}
 	
-	// identical use to draw in Processing IDE
+	// Draw is run every frame of the program
 	public void draw(){
-
-		// Change background color to white
+		
+		// Reapply background color (To erase what was previously drawn)
 		background(200);
 		
-		// Draw the pieces
+		// Draw the Pieces
 		if(!pieceList.isEmpty()) {
 			try {
 				for(Piece piece : pieceList) {
 					piece.display();
 				}
 			} catch(Exception e) {
-				System.out.println("***********************************BREAK********************************************");
+				System.out.println("Redrawing..");
 				newPuzzle = true;
 				puzzleComplete = false;
 			}
 		}
 		
-		// Draw the menu bar
+		// Draw Menubar
 		menubar();
 		
 		// Draw the completion view
 		if(puzzleComplete) {completionView();}
 		
+		// Draw the debug display
 		if(debugView) {debugDisplay();}
 		
-		if(inputState) { // If state is read JSON file
-			pathInput.draw();
-		}
+		// Draw the input field
+		if(inputState) {pathInput.draw();}
 		
 	}
-	
 
 	
-	// Visuals 
+	// Visuals
 	public void menubar() {
-		textAlign(LEFT);
-		textFont(menuFont, 14);
+		// Draw the menubar
 		menubar.display();
 		
+		// Update the position if the view is resized
 		if(menubarXPos != width) {
 			menubar.updatePos(width - 150, 0);
 			menubarXPos = width;
 			pathInput.updatePos(width, menubarHeight);
 		}
 	}
-	
-	public void menuButtonClicked(int _x, int _y) {
-		switch(menubar.MouseOverButton(_x, _y)) {
-		case(0):
-			newPuzzle = true;
-			puzzleComplete = false;
-		break;
-		case(1):
-			System.out.println("1");
-			solvePuzzle = true;
-		break;
-		case(2):
-			System.out.println("2");
-		break;
-		}
-	}
-	
+
 	public void completionView() {
+		// Draw the completion text
 		textAlign(CENTER);
 		textFont(completionFont, 26);
 		fill(color(220,0,0));
@@ -156,14 +127,19 @@ public class View extends PApplet {
 	}
 	
 	public void debugDisplay() {
-		for(Piece piece : pieceList) {
-			piece.debugDisplay();
+		try {
+			for(Piece piece : pieceList) {
+				piece.debugDisplay();
+			}
+		} catch(Exception e) {
+			System.out.println("Redrawing debug..");
 		}
 	}
 
 	// Mouse events
 	public void mousePressed() {
 		
+		// Controls the pickup of a Piece
 		boolean piecelocked = false;
 		if(!pieceList.isEmpty() && showMenu == false) {
 			for(int i = pieceList.size()-1; i >= 0; i--) {
@@ -176,12 +152,15 @@ public class View extends PApplet {
 			}
 		}
 		
+		// Checks whether a menubar button is clicked
 		menuButtonClicked(mouseX, mouseY);
 		
+		// Check if the input field is selected
 		pathInput.selectInputField();
 	}
 	
 	public void mouseReleased() {
+		// Reset the current picked up Piece
 		if(currentPiece != null) {
 			mouseReleased = true;
 			currentPiece.isCurrentPiece = false;
@@ -193,11 +172,12 @@ public class View extends PApplet {
 	}
 	
 	public void mouseDragged(MouseEvent event) {
-		
+		// Move the currently picked up Piece
 		if(currentPiece != null) {
 			currentPiece.movePiece(new Point2D.Float(mouseX, mouseY));
 		}
 		
+		// Controls if the sliders is dragged
 		menubar.sliderDragged();
 	}
 	
@@ -208,6 +188,7 @@ public class View extends PApplet {
 			currentPiece.rotatePiece(angle);
 		}
 	}
+	
 	
 	// Keyboard events
 	public void keyPressed() {
@@ -240,18 +221,18 @@ public class View extends PApplet {
 				ctrlPressed = false;
 			}
 		}
+		
+		// Add the char to the input field
 		pathInput.addChar(key);
 		
-		// Confirm that the path has to be read
+		// Check if the patch exists and that the file type is correct
 		if(key == ENTER && pathInput.selected() && inputState) {
-			//System.out.println("return");
-			System.out.println(pathInput.getValue());
-			System.out.println(checkPath(pathInput.getValue()));
 			if(checkPath(pathInput.getValue())) {
 				puzzlePath = pathInput.getValue();
 			}
 			pathInput.toggleSelected();
 			
+			// Tell Main to generate a new puzzle
 			newPuzzle = true;
 		}
 		
@@ -284,19 +265,33 @@ public class View extends PApplet {
 		return (Files.exists(p));
 	}
 	
-	// Getters and setters
-	public void setImageList(ArrayList<PImage> _sprites) {
-		this.sprites = _sprites;
+	// Misc
+	public void menuButtonClicked(int _x, int _y) {
+		switch(menubar.MouseOverButton(_x, _y)) {
+		case(0): // Create a new puzzle
+			newPuzzle = true;
+			puzzleComplete = false;
+		break;
+		case(1): // Solve puzzle
+			System.out.println("1");
+			solvePuzzle = true;
+		break;
+		case(2):
+			System.out.println("2");
+		break;
+		}
 	}
-	
-	public void addPieceToList(Piece piece) {
-		pieceList.add(piece);
-	}
-	
+
 	public void resetPieceList() {
 		pieceList.clear();
 	}
 	
+	// Getters and setters
+	
+	public void addPieceToList(Piece piece) {
+		pieceList.add(piece);
+	}
+
 	public ArrayList<Piece> getPieceList() {
 		return pieceList;
 	}
@@ -305,6 +300,4 @@ public class View extends PApplet {
 		return currentPiece;
 	}
 
-	
-	
 }

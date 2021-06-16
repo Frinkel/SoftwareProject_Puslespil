@@ -12,161 +12,41 @@ import processing.core.PImage;
 import view.View;
 
 public class Main {
-	// The argument passed to main must match the class name
-	private static int pieceAmount = 9;
 	private static int boardSize = 800;
-	private static int distortionPoints = 4;
-	
-	
 	static Generator generator;
-	
-	
 	static Object[] puzzleArray;;
 	
+	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\Puzzle-2r-2c-5863-rot.JSON
+	//C:\Users\Joel\Downloads\Gr00\checkIdentical.json
+	
+	// Main method
 	public static void main(String[] args) {
-		
+		// Create the view
 		View view = new View();
 		
+		// Run the view
 		PApplet.runSketch(new String[]{"--location=200,200", ""}, view);
 		
-		//boardSize = (int) (view.width/1.25);
-//		System.out.println("w " + view.width/2);
-		
-		
-		
-		//float[] v2 = {-100, -100, 100, -100, 150, 0, 100, 100, -100, 100, -100, -100};
-		//Piece p2 = new Piece(view, 100, 100, v2);
-		//view.addPieceToList(p2);
-		
-		/*
-		
-		Point2D.Float[] v2 = (Point2D.Float[]) O2[53];
-		Piece p2 = new Piece(view, new Point2D.Float(600.0f, 600.0f), v2);
-		view.addPieceToList(p2);
-		
-		Point2D.Float[] v3 = (Point2D.Float[]) O2[54];
-		Piece p3 = new Piece(view, new Point2D.Float(200.0f, 200.0f), v3);
-		view.addPieceToList(p3);
-		*/
-		
-		/*
-		PieceReader pR = new PieceReader();
-		Object[] O2 = pR.pieceReader();
-		int j = -1;
-		int a = 0;
-		for(int i = 0; i < 121; i++) {
-			Point2D.Float[] v = (Point2D.Float[]) O2[i];
-			a++;
-			if(i % 11 == 0) {j++; a=0;}
-			
-			Piece p = new Piece(view, new Point2D.Float(0.0f+100*a, 0.0f+100*j), v);
-			view.addPieceToList(p);
-		}
-		*/
-		
-		
-		// Create the generator
-//		Generator g = new Generator(boardSize, pieceAmount, distortionPoints);
-//		
-//		// Get the images to be mapped onto the pieces
-//		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg"};
-//		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, g.getColumns(), g.getRows());
-//		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get(2), boardSize);
-//		//view.setImageList(sprites);
-//		
-//		
-//		Object[] O3 = g.generate();
-//		PieceCompare pC = new PieceCompare();
-//		pC.pieceComparator(O3);
-//		
-//		
-//		for(int i = 0; i < pieceAmount; i++) {
-//			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-//			Point2D.Float center = v[0];
-//			Point2D.Float[] v1 = new Point2D.Float[v.length-1];
-//			for(int j = 1; j<v.length;j++) {
-//				v1[j-1]=v[j];
-//			}
-//			
-//			Piece p = new Piece(view, center, v1, sprites.get(i));
-//			view.addPieceToList(p);
-//		}
-		
-		// COMMENT THIS OUT IF YOU WANNA TEST WITHOUT GENERATED
-		//generatePuzzle(view);
-	
-		
 		ArrayList<Piece> pieceList = view.getPieceList();
-		//randomizePuzzle(view, pieceList, 100, view.width-100, true);
-		
-		//completionCheck(view, g);
-		
-		/*
-		Point2D.Float[] v1 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-		Piece p1 = new Piece(view, new Point2D.Float(400.0f, 400.0f), v1);
-		//p1.rotatePiece(90);
-		view.addPieceToList(p1);
-		/*
-		Point2D.Float[] v2 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-50, 0), new Point2D.Float(-100, -100)};
-		Piece p2 = new Piece(view, new Point2D.Float(500.0f, 500.0f), v1);
-		view.addPieceToList(p2);
-		
-		/*
-		Point2D.Float[] v3 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-150, 0), new Point2D.Float(-100, -100)};
-		Piece p3 = new Piece(view, new Point2D.Float(700.0f, 700.0f), v3);
-		view.addPieceToList(p3);
-		
-		Point2D.Float[] v4 = {new Point2D.Float(-100, -100), new Point2D.Float(100, -100), new Point2D.Float(100, 100), new Point2D.Float(-100, 100), new Point2D.Float(-150, 0), new Point2D.Float(-100, -100)};
-		Piece p4 = new Piece(view, new Point2D.Float(700.0f, 700.0f), v4);
-		view.addPieceToList(p4);
-		*/
-		
-		
-		//System.out.println(identicalIdentifier(p1,p3));
-		
-		
-		
-		
-		/*
-		PieceReader pR = new PieceReader();
-		Object[] O2 = pR.pieceReader();
-		pC.pieceComparator(O2);
-		
-		
-		int j = -1;
-		int a = 0;
-		for(int i = 0; i < 8; i++) {
-			Point2D.Float[] v = (Point2D.Float[]) O2[i];
-			a++;
-			if(i % 11 == 0) {j++; a=0;}
-			
-			Piece p = new Piece(view, new Point2D.Float(0.0f+100*a, 0.0f+100*j), v);
-			view.addPieceToList(p);
-		}
-		*/
-		
-		//new Thread(new puzzleButler(view)).start();
-		
-		// Continue running below code
-		//Piece currentPiece = view.getCurrentPiece();
 		boolean run = true;
+		
+		// Does everything in while loop while the view is running
 		while(run) {
 			Piece currentPiece = getCurrentPiece(view);
 			
 			if(view.mouseReleased) {
-				//System.out.println("realease");
 				pieceSnapping(true, view, generator, currentPiece);
 			}
 			
+			// Listen for the newPuzzle call from the view, stating a new puzzle should be generated
 			if(view.newPuzzle) {
-				if(view.inputState) {
-					// PIECE READER
+				if(view.inputState) { // READ IN A PUZZLE
 					view.resetPieceList();
 					readPuzzle(view, view.puzzlePath);
 					view.newPuzzle = false;
-					//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\Puzzle-2r-2c-4062-rot.JSON
-				} else {
-					// GENERATE RANDOM
+					randomizePuzzle(view, pieceList, 100, view.initWidth-100, true);
+					
+				} else { // GENERATE RANDOM PUZZLE
 					view.resetPieceList();
 					generatePuzzle(view);
 					view.newPuzzle = false;
@@ -174,6 +54,7 @@ public class Main {
 				}				
 			}
 			
+			// Listen for the solvePuzzle call from the view, stating that the puzzle should be solved by our solving algorithm
 			if(view.solvePuzzle && puzzleArray != null) {
 				solvePuzzle(view, puzzleArray);
 				view.solvePuzzle = false;
@@ -182,42 +63,20 @@ public class Main {
 	}
 	
 	
+	// Read a puzzle from a path, the puzzle MUST be a JSON file
 	public static void readPuzzle(View view, String path) {
-		//int pieceAmount, distortionPoints;
-		if(view.menubar != null) {
-			pieceAmount = view.menubar.sliderPieceAmount.getValue();
-			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
-		} else {
-			pieceAmount = 2;
-			distortionPoints = 2;
-		}
 		
-		//generator = new Generator(boardSize, pieceAmount, distortionPoints);
+		PieceReader pieceReader = new PieceReader();
+		puzzleArray = pieceReader.readPuzzle(path);
 		
 		
-		PieceReader pR = new PieceReader();
-		puzzleArray = pR.readPuzzle(path);
-		
-		
-		
-		// Get the images to be mapped onto the pieces
-		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
-		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
-		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
-		//view.setImageList(sprites);
-		System.out.println(Math.round(Math.random() * paths.length) - 1);
-		
-		
-		//Object[] O3 = generator.generate();
 		PieceCompare pC = new PieceCompare();
 		pC.pieceComparator(puzzleArray);
-		//PuzzleSolver pS = new PuzzleSolver();
-//		pS.puzzleSolver(O3);
 		
+		// Loop through puzzle array and create each Piece
 		for(int i = 0; i < puzzleArray.length; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) puzzleArray[i];
 			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
-			
 			
 			Piece p = new Piece(view, center, v);
 			view.addPieceToList(p);
@@ -226,12 +85,14 @@ public class Main {
 	
 	public static void generatePuzzle(View view) {
 		int pieceAmount, distortionPoints;
+		
+		// Get data from the sliders in the menubar
 		if(view.menubar != null) {
 			pieceAmount = view.menubar.sliderPieceAmount.getValue();
 			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
 		} else {
-			pieceAmount = 2;
-			distortionPoints = 2;
+			pieceAmount = 1;
+			distortionPoints = 1;
 		}
 		
 		generator = new Generator(boardSize, pieceAmount, distortionPoints);
@@ -240,86 +101,36 @@ public class Main {
 		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
 		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
 		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
-		//view.setImageList(sprites);
+
 		System.out.println(Math.round(Math.random() * paths.length) - 1);
 		
-		PieceReader pR = new PieceReader();
-//		Object[] O3 = pR.pieceReader();
 		puzzleArray = generator.generate();
 		PieceCompare pC = new PieceCompare();
 		pC.pieceComparator(puzzleArray);
-		PuzzleSolver pS = new PuzzleSolver();
-//		pS.puzzleSolver(O3);
 		
+		// Loop through puzzle array and create each Piece
 		for(int i = 0; i < puzzleArray.length; i++) {
 			Point2D.Float[] v = (Point2D.Float[]) puzzleArray[i];
 			Point2D.Float center = new Point2D.Float(0.0f,0.0f);
-			
 			
 			Piece p = new Piece(view, center, v, sprites.get(i));
 			view.addPieceToList(p);
 		}
 	}
 	
-//	public static void generatePuzzle(View view) {
-//		int pieceAmount, distortionPoints;
-//		if(view.menubar != null) {
-//			pieceAmount = view.menubar.sliderPieceAmount.getValue();
-//			distortionPoints = view.menubar.sliderDistortionPoints.getValue();
-//		} else {
-//			pieceAmount = 4;
-//			distortionPoints = 20;
-//		}
-//		
-//		generator = new Generator(boardSize, pieceAmount, distortionPoints);
-//		
-//		// Get the images to be mapped onto the pieces
-//		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
-//		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
-//		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
-//		//view.setImageList(sprites);
-//		System.out.println(Math.round(Math.random() * paths.length) - 1);
-//		
-//		PieceReader pR = new PieceReader();
-//		Object[] O3 = pR.pieceReader();
-//		//Object[] O3 = generator.generate();
-//		PieceCompare pC = new PieceCompare();
-//		pC.pieceComparator(O3);
-//		//PuzzleSolver pS = new PuzzleSolver();
-//		//PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(O3);
-//		
-//		for(int i = 0; i < O3.length; i++) {
-//			//float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
-//			//System.out.println("angle: " + angle);
-//			Point2D.Float[] v = (Point2D.Float[]) O3[i];
-//			//Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
-//			Point2D.Float center = new Point2D.Float(250,250);
-//			System.out.println("Piece number i " + i + "  " + Arrays.toString(v));
-//			Piece p = new Piece(view, center, v);
-//			
-//			//p.rotatePiece(PApplet.degrees(angle));
-//			view.addPieceToList(p);
-//		}
-//		
-//		solvePuzzle(view, O3);
-//	}
-	
-	
 	public static void solvePuzzle(View view, Object[] pieces) {
-		PuzzleSolver pS = new PuzzleSolver();
-		PieceAndAngleDatatype[] pieceAndRotationalAngle = pS.puzzleSolvers(pieces);
+		PuzzleSolver puzzleSolver = new PuzzleSolver();
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = puzzleSolver.puzzleSolvers(pieces); // Might want to rename puzzleSolvers function?
 		
+		// Loop through all pieces and calculate their solved rotation and position, and move the pieces
 		for(int i = 0; i < pieces.length; i++) {
-			float angle = pS.getAngleGivenIndex(i, pieceAndRotationalAngle);
-			Point2D.Float center = pS.getCenterGivenIndex(i, pieceAndRotationalAngle);
+			float angle = puzzleSolver.getAngleGivenIndex(i, pieceAndRotationalAngle);
+			Point2D.Float center = puzzleSolver.getCenterGivenIndex(i, pieceAndRotationalAngle);
 			view.getPieceList().get(i).rotatePiece(PApplet.degrees(angle));
 			view.getPieceList().get(i).movePiece(center);
 		}
 	}
 	
-	
-	
-	// Gets the current piece
 	private static Piece getCurrentPiece(View view) {
 		ArrayList<Piece> pieceList = view.getPieceList();
 		for(Piece piece : pieceList) {
@@ -330,7 +141,7 @@ public class Main {
 		return null;
 	}
 	
-	// Checks if puzzle is completed DOES NOT WORK AS INTENDED
+	// Checks if puzzle is completed DOES NOT WORK AS INTENDED (BUGGED ON SOME ANGLES)
 	private static void completionCheck(View view, Generator generator) {
 		/*
 		 * For each piece, find all neighbor pieces, and check if they are colliding, if all pieces are colliding with their corrosponding neighbor pieces, the puzzle must be solved.
@@ -436,11 +247,6 @@ public class Main {
 		System.out.println("Is puzzle completed?: " + isComplete);
 	}
 	
-	
-	/*
-	 * DOES NOT WORK AS INTENDED;
-	 * PICKUP PIECE NOT WORKING AS INTEDED, MIGHT BE THE NEW CONTAINS METHOD!
-	 */
 	// Regulates piece snapping
 	private static void pieceSnapping(boolean active, View view, Generator generator, Piece currentPiece) {
 		if(currentPiece != null && active) {
@@ -484,7 +290,6 @@ public class Main {
 					bottomNeighbor.contains(
 					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - multiplierX), 
 					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * multiplierY)) {
-				//System.out.println("bot collide");
 				Point2D.Float snap = new Point2D.Float(bottomNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 270)), bottomNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 270)));
 				currentPiece.movePiece(snap);
 				completionCheck(view, generator); // Check if puzzle is completed
@@ -494,7 +299,6 @@ public class Main {
 					rightNeighbor.contains(
 					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - multiplierX), 
 					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * multiplierY)) {
-				//System.out.println("right collide");
 				Point2D.Float snap = new Point2D.Float(rightNeighbor.getOrigin().x - (width)*PApplet.cos(PApplet.radians(angle)), rightNeighbor.getOrigin().y - (width)*PApplet.sin(PApplet.radians(angle)));
 				currentPiece.movePiece(snap);
 				completionCheck(view, generator); // Check if puzzle is completed
@@ -523,7 +327,7 @@ public class Main {
 		}
 	}
 	
-	// Checks whether two pieces are identical
+	// Checks whether two pieces are identical (BRUTE FORCE)
 	public static boolean identicalIdentifier(Piece p1, Piece p2) {
 		float p1StartAngle = p1.getAngle();
 		Point2D.Float p2StartOrigin = p2.getOrigin();
