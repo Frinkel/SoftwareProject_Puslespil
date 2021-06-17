@@ -140,7 +140,7 @@ public class PuzzleSolver {
 
 	private int[] calculatePath(int length, Object[] adjacencyArray, Object[] matchingArray, ArrayList<Integer> gr1,
 			ArrayList<Integer> gr2, ArrayList<Integer> gr3, int gr1Length, int gr2Length, int gr3Length) {
-		ArrayList<Integer> alreadyCovered = new ArrayList<Integer>();
+		//ArrayList<Integer> alreadyCovered = new ArrayList<Integer>();
 		int startingIndex = 0;
 		if(gr1Length == 0) {
 			if(gr2Length == 0) {
@@ -152,44 +152,107 @@ public class PuzzleSolver {
 			startingIndex = gr1.get(0);
 		}
 		
-		alreadyCovered.add(startingIndex);
-		int[] finalPath = getPath(startingIndex, adjacencyArray, alreadyCovered, length);
+		int[][] adjacencyArray2= new int[adjacencyArray.length][];
+		for(int i = 0; i < adjacencyArray.length; i++) {
+			ArrayList<Integer> temp = (ArrayList<Integer>) adjacencyArray[i];
+			int[] temp2 = new int[temp.size()];
+			for(int j = 0; j < temp.size(); j++) {
+				temp2[j] = temp.get(j);
+			}
+			adjacencyArray2[i] = temp2;
+		}
+		int[] alreadyCovered = {startingIndex};
+		int[] finalPath = getPath(startingIndex, adjacencyArray2, alreadyCovered, length);
+//		System.out.println(Arrays.toString(finalPath));
+		if(finalPath == null) {
+			finalPath = new int[]{0};
+		}
 		return finalPath;
+		//return new int[] {0, 13, 10, 19, 43, 58, 73, 17, 54, 45, 59, 79, 32, 8, 20, 23, 9, 41, 60, 76, 36, 50, 62, 51, 65, 47, 12, 6, 37, 11, 42, 24, 5, 18, 56, 14, 15, 1, 21, 55, 64, 7, 66, 25, 75, 28, 68, 46, 31, 33, 71, 77, 35, 30, 70, 52, 49, 63, 29, 40, 34, 16, 38, 72, 61, 44, 2, 22, 4, 26, 53, 27, 74, 78, 69, 3, 39, 57, 48, 67};
+
 	}
 
-	private int[] getPath(int startingIndex, Object[] adjacencyArray, ArrayList<Integer> alreadyCovered, int length) {
-		ArrayList<Integer> adjacencyPair = null;
-		
-		for(int i = 0; i < adjacencyArray.length; i++) {
-			ArrayList<Integer> pair = ((ArrayList<Integer>) adjacencyArray[i]);
-			if(pair.get(0) == startingIndex) {
+//	private int[] getPath(int startingIndex, Object[] adjacencyArray, ArrayList<Integer> alreadyCovered, int length) {
+//		ArrayList<Integer> adjacencyPair = null;
+//		
+//		for(int i = 0; i < adjacencyArray.length; i++) {
+//			ArrayList<Integer> pair = ((ArrayList<Integer>) adjacencyArray[i]);
+//			if(pair.get(0) == startingIndex) {
+//				adjacencyPair = pair;
+////				System.out.println("startingIndex " + startingIndex);
+//				if(startingIndex == 74) {
+////					System.out.println("WERE IN 74 " + adjacencyPair.toString());
+//				}
+//			}
+//		}
+//		for(int i = 1; i < adjacencyPair.size(); i++) {
+//			if(!alreadyCovered.contains(adjacencyPair.get(i))) {
+//				System.out.println(adjacencyPair.get(i) + "  " + adjacencyPair.get(i));
+//				alreadyCovered.add(adjacencyPair.get(i));
+////				System.out.println("adjacencyPair i : " + adjacencyPair.get(i));
+//				int[] array1 = getPath(adjacencyPair.get(i), adjacencyArray, alreadyCovered, length);
+//				if(array1.length == length) {
+//					return array1;
+//				}
+//			}
+//			
+//		}
+//		int[] newArray = new int[alreadyCovered.size()];
+//		for(int i = 0; i < alreadyCovered.size(); i++) {
+//			newArray[i] = alreadyCovered.get(i);
+//		}
+//		return newArray;
+//		
+//		
+//		
+//	}
+	
+	private int[] getPath(int startingIndex, int[][] adjacencyArray, int[] alreadyCovered,
+			int length) {
+		int[] adjacencyPair = null;
+		int [] toReturn = null;
+
+		for (int i = 0; i < adjacencyArray.length; i++) {
+			int[] pair = adjacencyArray[i];
+			if (pair[0] == startingIndex) {
 				adjacencyPair = pair;
-//				System.out.println("startingIndex " + startingIndex);
-				if(startingIndex == 74) {
-//					System.out.println("WERE IN 74 " + adjacencyPair.toString());
-				}
 			}
 		}
-		for(int i = 1; i < adjacencyPair.size(); i++) {
-			if(!alreadyCovered.contains(adjacencyPair.get(i))) {
-				alreadyCovered.add(adjacencyPair.get(i));
-//				System.out.println("adjacencyPair i : " + adjacencyPair.get(i));
+		int tempL = alreadyCovered.length;
+		int[] temp = new int[tempL + 1];
+		for(int j = 0; j < tempL; j++) {
+			temp[j] = alreadyCovered[j];
+		}
+		for(int i = 1; i < adjacencyPair.length; i++) {
+			if (alreadyCovered.length < length) {
+
+
 				
-				int[] array1 = getPath(adjacencyPair.get(i), adjacencyArray, alreadyCovered, length);
-				if(array1.length == length) {
-					return array1;
+				if (!arrContains(alreadyCovered,adjacencyPair[i])) {
+					temp[tempL] = adjacencyPair[i];
+					int[] temp2 = getPath(adjacencyPair[i], adjacencyArray, temp, length);
+					if(temp2 != null) {
+						toReturn = temp2;
+						if(toReturn.length >= length) {
+							return toReturn;
+						}
+					}
 				}
+
+			}else {
+//				System.out.println(alreadyCovered.length + "        " + Arrays.toString(alreadyCovered));
+				return alreadyCovered;
 			}
-			
 		}
-		int[] newArray = new int[alreadyCovered.size()];
-		for(int i = 0; i < alreadyCovered.size(); i++) {
-			newArray[i] = alreadyCovered.get(i);
-		}
-		return newArray;
-		
-		
-		
+		return toReturn;		
+	}
+	private boolean arrContains(int[] arr, int a) {
+		  for(int n : arr) {
+			  if(n == a){
+				  return true;
+			  }  
+		  }
+		  return false;
 	}
 
 	private float findRotationOfMatchingPair(Point2D.Float[][] threeMatchingPoints, PieceCompare pC) {
@@ -296,9 +359,9 @@ public class PuzzleSolver {
 
 		}
 
-		System.out.println("gr1 L :" + gr1Length + " members" + gr1.toString());
-		System.out.println("gr2 L :" + gr2Length + " members" + gr2.toString());
-		System.out.println("gr3 L :" + gr3Length + " members" + gr3.toString());
+//		System.out.println("gr1 L :" + gr1Length + " members" + gr1.toString());
+//		System.out.println("gr2 L :" + gr2Length + " members" + gr2.toString());
+//		System.out.println("gr3 L :" + gr3Length + " members" + gr3.toString());
 
 		return new Object[] { gr1, gr2, gr3, gr1Length, gr2Length, gr3Length };
 	}
@@ -530,6 +593,7 @@ public class PuzzleSolver {
 
 		}
 //		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
+//		System.out.println("size : " + adjacencyArray.length);
 //		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
 		return new Object[] { adjacencyArray, matchingArray };
 
@@ -573,13 +637,15 @@ public class PuzzleSolver {
 
 	private Float[][] getPointsOfTwoSuitablePieces(int[] matchingPoints, Object[] pieceList) {
 		Point2D.Float[][] threeMatchingPoints = new Point2D.Float[2][3];
-
+		
 		for (int i = 0; i < 2; i++) {
+			//System.out.print(matchingPoints[i]);
 			Point2D.Float[] piece = (Float[]) pieceList[matchingPoints[i]];
 			for (int j = 0; j < 3; j++) {
 				threeMatchingPoints[i][j] = piece[(matchingPoints[i + 2] + j) % (piece.length)];
 			}
 		}
+		///System.out.println("");
 		return threeMatchingPoints;
 	}
 
