@@ -24,7 +24,7 @@ public class PuzzleSolver {
 		for (int i = 0; i < pieceList.length; i++) {
 
 			Point2D.Float[] piece = (Point2D.Float[]) pieceList[i];
-			AncleLength[] angleLength = pC.createAncleLengthArray(piece);
+			AngleLength[] angleLength = pC.createAncleLengthArray(piece);
 			AncleLengthPieceList[i] = angleLength;
 //			System.out.println("aL " + i + "      " + Arrays.toString(angleLength));
 		}
@@ -36,61 +36,101 @@ public class PuzzleSolver {
 		Object[] adjacencyArray = (Object[]) adjacencyAndMatchingArray[0];
 		Object[] matchingArray = (Object[]) adjacencyAndMatchingArray[1];
 		
+
+		int startingIndex = 0;
+		if((int) groups[3] == 0) {
+			if((int) groups[4] == 0) {
+				startingIndex = ((ArrayList<Integer>) groups[2]).get(0);
+			}else {
+				startingIndex = ((ArrayList<Integer>) groups[1]).get(0);
+			}
+		}else {
+			startingIndex = ((ArrayList<Integer>) groups[0]).get(0);
+		}
 		
-		
-		int[] finalPath = calculatePath(pieceList.length, adjacencyArray, matchingArray, (ArrayList<Integer>) groups[0], (ArrayList<Integer>) groups[1], (ArrayList<Integer>) groups[2],
-				(int) groups[3], (int) groups[4], (int) groups[5]);
-		
-		System.out.println(Arrays.toString(finalPath));
-		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(finalPath, matchingArray, pieceList, pC);
-//		System.out.println(Arrays.toString(pieceAndRotationalAngle));
-		
-//		Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) matchingArray[0], pieceList);
-//		System.out.println(Arrays.deepToString(threeMatchingPoints));
-
-//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1],
-//				threeMatchingPoints[0][2]));
-
-//		float rotationalAngle = findRotationOfMatchingPair(threeMatchingPoints, pC);
-//		System.out.println("rotationalAngle : " + rotationalAngle);
-//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[0][0], threeMatchingPoints[0][1], threeMatchingPoints[0][2]));
-
-//		System.out.println("equals? ");
-
-//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1],
-//				threeMatchingPoints[1][2]));
-
-
-//		System.out.println(pC.getAngleFromThreePoints(threeMatchingPoints[1][0], threeMatchingPoints[1][1], threeMatchingPoints[1][2]));
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(startingIndex, pieceList.length, matchingArray, adjacencyArray, pieceList, pC);
 		return pieceAndRotationalAngle;
 		
 	}
 
-	private PieceAndAngleDatatype[] rotatePiecesOnPath(int[] finalPath, Object[] matchingArray, Object[] pieceList, PieceCompare pC) {
+	private PieceAndAngleDatatype[] rotatePiecesOnPath(int startingIndex, int length, Object[] matchingArray, Object[] adjacencyArray, Object[] pieceList, PieceCompare pC) {
 		// TODO Auto-generated method stub
-		PieceAndAngleDatatype[] pieceAndRotationalAngle = new PieceAndAngleDatatype[finalPath.length];
-		pieceAndRotationalAngle[0] = new PieceAndAngleDatatype(finalPath[0], 0.0f, new Point2D.Float(500.0f,500.0f));
+		int[][] adjacencyArray2= new int[adjacencyArray.length][];
+		for(int i = 0; i < adjacencyArray.length; i++) {
+			ArrayList<Integer> temp = (ArrayList<Integer>) adjacencyArray[i];
+			int[] temp2 = new int[temp.size()];
+			for(int j = 0; j < temp.size(); j++) {
+				temp2[j] = temp.get(j);
+			}
+			adjacencyArray2[i] = temp2;
+		}
 		
-		for(int i = 0; i < finalPath.length-1; i++) {
+		PieceAndAngleDatatype[] pieceAndRotationalAngle = new PieceAndAngleDatatype[length];
+		pieceAndRotationalAngle[0] = new PieceAndAngleDatatype(startingIndex, 0.0f, new Point2D.Float(500.0f,500.0f));
+		
+		for(int i = 0; i < length-1; i++) {
+			int[] nextPiece = findPieceThatNeedAngleAndCenter(adjacencyArray2,pieceAndRotationalAngle);
+			pieceAndRotationalAngle[i+1] = rotatePiecesAndFindCenter(nextPiece[0], nextPiece[1], matchingArray, pieceList, pieceAndRotationalAngle, pC);
 			
-			int[] pair = getPair(finalPath[i], finalPath[i+1], matchingArray);
+		}
+		return pieceAndRotationalAngle;
+	}
+	
+	
+	private int[] findPieceThatNeedAngleAndCenter(int[][] adjacencyArray2,
+			PieceAndAngleDatatype[] pieceAndRotationalAngle) {
+		
+		for(int i = 0; i < pieceAndRotationalAngle.length; i++) {
+			int[] current = adjacencyArray2[i];			
+			if(getIndexInAngleCenterArray(pieceAndRotationalAngle, current[0]) != -1) {
+				for(int j = 1; j < current.length; j++) {
+					if(getIndexInAngleCenterArray(pieceAndRotationalAngle, current[j]) == -1) {
+						return new int[] {current[0], current[j]};
+					}
+				}
+			}
+		}		
+		return new int[] {0, 0};
+	}
+
+	private PieceAndAngleDatatype rotatePiecesAndFindCenter(int piece1, int piece2, Object[] matchingArray, Object[] pieceList,PieceAndAngleDatatype[] pieceAndRotationalAngle,PieceCompare pC) {
+		// TODO Auto-generated method stub
+		PieceAndAngleDatatype pieceRotationAndCenter = new PieceAndAngleDatatype(0, 0, null);
+		//pieceAndRotationalAngle[0] = new PieceAndAngleDatatype(finalPath[0], 0.0f, new Point2D.Float(500.0f,500.0f));
+		
+		//for(int i = 0; i < finalPath.length-1; i++) {
+			int i = getIndexInAngleCenterArray(pieceAndRotationalAngle, piece1);
+			int[] pair = getPair(piece1, piece2, matchingArray);
 			Point2D.Float[][] threeMatchingPoints = getPointsOfTwoSuitablePieces((int[]) pair, pieceList);
 			float angle = findRotationOfMatchingPair(threeMatchingPoints, pC);
-			if(pair[0] == finalPath[i]) {
+			if(pair[0] == piece1) {
 				Point2D.Float center = getPosOfCenter(threeMatchingPoints,angle+(pieceAndRotationalAngle[i].getPieceAngle()), (pieceAndRotationalAngle[i].getPieceAngle()), (pieceAndRotationalAngle[i].getCenter()),1);
-				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], angle+(pieceAndRotationalAngle[i].getPieceAngle()),center);
+				pieceRotationAndCenter = new PieceAndAngleDatatype(piece2, angle+(pieceAndRotationalAngle[i].getPieceAngle()),center);
 			}else {
 				Point2D.Float center = getPosOfCenter(threeMatchingPoints,((-angle)+(pieceAndRotationalAngle[i].getPieceAngle())), (pieceAndRotationalAngle[i].getPieceAngle()), (pieceAndRotationalAngle[i].getCenter()),-1);
-				pieceAndRotationalAngle[i+1] = new PieceAndAngleDatatype(finalPath[i+1], -angle+(pieceAndRotationalAngle[i].getPieceAngle()),center);
-			}
+				pieceRotationAndCenter = new PieceAndAngleDatatype(piece2, -angle+(pieceAndRotationalAngle[i].getPieceAngle()),center);
+		//	}
 			
 			//System.out.println("angle : " + angle);
 //			System.out.println(Arrays.toString(pair));
 			
 			
 		}
-		return pieceAndRotationalAngle;
+		return pieceRotationAndCenter;
 	}
+	
+	private int getIndexInAngleCenterArray(PieceAndAngleDatatype[] pieceAndRotationalAngle, int piece) {
+		for(int i = 0; i < pieceAndRotationalAngle.length;i++ ){
+			if(pieceAndRotationalAngle[i] == null) {
+				return -1;
+			}else if(pieceAndRotationalAngle[i].getPieceIndex() == piece) {
+				return i;
+			}
+		}
+		return -1;
+		
+	}
+	
 
 	private Point2D.Float getPosOfCenter(Point2D.Float[][] threeMatchingPoints, float angle, float prevAngle, Point2D.Float prevCenter,int direction) {
 		//System.out.println();
@@ -173,40 +213,7 @@ public class PuzzleSolver {
 
 	}
 
-//	private int[] getPath(int startingIndex, Object[] adjacencyArray, ArrayList<Integer> alreadyCovered, int length) {
-//		ArrayList<Integer> adjacencyPair = null;
-//		
-//		for(int i = 0; i < adjacencyArray.length; i++) {
-//			ArrayList<Integer> pair = ((ArrayList<Integer>) adjacencyArray[i]);
-//			if(pair.get(0) == startingIndex) {
-//				adjacencyPair = pair;
-////				System.out.println("startingIndex " + startingIndex);
-//				if(startingIndex == 74) {
-////					System.out.println("WERE IN 74 " + adjacencyPair.toString());
-//				}
-//			}
-//		}
-//		for(int i = 1; i < adjacencyPair.size(); i++) {
-//			if(!alreadyCovered.contains(adjacencyPair.get(i))) {
-//				System.out.println(adjacencyPair.get(i) + "  " + adjacencyPair.get(i));
-//				alreadyCovered.add(adjacencyPair.get(i));
-////				System.out.println("adjacencyPair i : " + adjacencyPair.get(i));
-//				int[] array1 = getPath(adjacencyPair.get(i), adjacencyArray, alreadyCovered, length);
-//				if(array1.length == length) {
-//					return array1;
-//				}
-//			}
-//			
-//		}
-//		int[] newArray = new int[alreadyCovered.size()];
-//		for(int i = 0; i < alreadyCovered.size(); i++) {
-//			newArray[i] = alreadyCovered.get(i);
-//		}
-//		return newArray;
-//		
-//		
-//		
-//	}
+
 	
 	private int[] getPath(int startingIndex, int[][] adjacencyArray, int[] alreadyCovered,
 			int length) {
@@ -381,8 +388,8 @@ public class PuzzleSolver {
 				for (int j = 0; j < gr1.size(); j++) {
 					if (i != j) {
 						if (!containsPair(matchingArray, gr1.get(i), gr1.get(j))) {
-							int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr1.get(i)],
-									(AncleLength[]) AncleLengthPieceList[gr1.get(j)], gr1.get(i), gr1.get(j));
+							int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr1.get(i)],
+									(AngleLength[]) AncleLengthPieceList[gr1.get(j)], gr1.get(i), gr1.get(j));
 							int neighbourInt = toAddMatching[1];
 							if (neighbourInt != -1) {
 								toAdd.add(neighbourInt);
@@ -404,8 +411,8 @@ public class PuzzleSolver {
 				for (int j = 0; j < gr1.size(); j++) {
 					if (i != j) {
 						if (!containsPair(matchingArray, gr1.get(i), gr1.get(j))) {
-							int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr1.get(i)],
-									(AncleLength[]) AncleLengthPieceList[gr1.get(j)], gr1.get(i), gr1.get(j));
+							int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr1.get(i)],
+									(AngleLength[]) AncleLengthPieceList[gr1.get(j)], gr1.get(i), gr1.get(j));
 							int neighbourInt = toAddMatching[1];
 							if (neighbourInt != -1) {
 								toAdd.add(neighbourInt);
@@ -420,8 +427,8 @@ public class PuzzleSolver {
 
 				for (int j = 0; j < gr2.size(); j++) {
 					if (!containsPair(matchingArray, gr1.get(i), gr2.get(j))) {
-						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr1.get(i)],
-								(AncleLength[]) AncleLengthPieceList[gr2.get(j)], gr1.get(i), gr2.get(j));
+						int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr1.get(i)],
+								(AngleLength[]) AncleLengthPieceList[gr2.get(j)], gr1.get(i), gr2.get(j));
 						int neighbourInt = toAddMatching[1];
 						if (neighbourInt != -1) {
 							toAdd.add(neighbourInt);
@@ -439,8 +446,8 @@ public class PuzzleSolver {
 //				System.out.println("is in last case");
 				for (int j = 0; j < gr2.size(); j++) {
 					if (!containsPair(matchingArray, gr1.get(i), gr2.get(j))) {
-						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr1.get(i)],
-								(AncleLength[]) AncleLengthPieceList[gr2.get(j)], gr1.get(i), gr2.get(j));
+						int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr1.get(i)],
+								(AngleLength[]) AncleLengthPieceList[gr2.get(j)], gr1.get(i), gr2.get(j));
 						int neighbourInt = toAddMatching[1];
 						if (neighbourInt != -1) {
 							toAdd.add(neighbourInt);
@@ -464,8 +471,8 @@ public class PuzzleSolver {
 			if (gr3.isEmpty()) {
 				for (int j = 0; j < gr1.size(); j++) {
 					if (!containsPair(matchingArray, gr2.get(i), gr1.get(j))) {
-						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr2.get(i)],
-								(AncleLength[]) AncleLengthPieceList[gr1.get(j)], gr2.get(i), gr1.get(j));
+						int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr2.get(i)],
+								(AngleLength[]) AncleLengthPieceList[gr1.get(j)], gr2.get(i), gr1.get(j));
 						int neighbourInt = toAddMatching[1];
 	
 						if (neighbourInt != -1) {
@@ -480,8 +487,8 @@ public class PuzzleSolver {
 				for (int j = 0; j < gr2.size(); j++) {
 					if (i != j) {
 						if (!containsPair(matchingArray, gr2.get(i), gr2.get(j))) {
-							int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr2.get(i)],
-									(AncleLength[]) AncleLengthPieceList[gr2.get(j)], gr2.get(i), gr2.get(j));
+							int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr2.get(i)],
+									(AngleLength[]) AncleLengthPieceList[gr2.get(j)], gr2.get(i), gr2.get(j));
 							int neighbourInt = toAddMatching[1];
 	
 							if (neighbourInt != -1) {
@@ -500,8 +507,8 @@ public class PuzzleSolver {
 			} else {
 				for (int j = 0; j < gr1.size(); j++) {
 					if (!containsPair(matchingArray, gr2.get(i), gr1.get(j))) {
-						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr2.get(i)],
-								(AncleLength[]) AncleLengthPieceList[gr1.get(j)], gr2.get(i), gr1.get(j));
+						int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr2.get(i)],
+								(AngleLength[]) AncleLengthPieceList[gr1.get(j)], gr2.get(i), gr1.get(j));
 						int neighbourInt = toAddMatching[1];
 	
 						if (neighbourInt != -1) {
@@ -516,8 +523,8 @@ public class PuzzleSolver {
 				for (int j = 0; j < gr2.size(); j++) {
 					if (i != j) {
 						if (!containsPair(matchingArray, gr2.get(i), gr2.get(j))) {
-							int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr2.get(i)],
-									(AncleLength[]) AncleLengthPieceList[gr2.get(j)], gr2.get(i), gr2.get(j));
+							int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr2.get(i)],
+									(AngleLength[]) AncleLengthPieceList[gr2.get(j)], gr2.get(i), gr2.get(j));
 							int neighbourInt = toAddMatching[1];
 	
 							if (neighbourInt != -1) {
@@ -533,8 +540,8 @@ public class PuzzleSolver {
 
 				for (int j = 0; j < gr3.size(); j++) {
 					if (!containsPair(matchingArray, gr2.get(i), gr3.get(j))) {
-						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr2.get(i)],
-								(AncleLength[]) AncleLengthPieceList[gr3.get(j)], gr2.get(i), gr3.get(j));
+						int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr2.get(i)],
+								(AngleLength[]) AncleLengthPieceList[gr3.get(j)], gr2.get(i), gr3.get(j));
 						int neighbourInt = toAddMatching[1];
 	
 						if (neighbourInt != -1) {
@@ -558,8 +565,8 @@ public class PuzzleSolver {
 			toAdd.add(gr3.get(i));
 			for (int j = 0; j < gr2.size(); j++) {
 				if (!containsPair(matchingArray, gr3.get(i), gr2.get(j))) {
-					int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr3.get(i)],
-							(AncleLength[]) AncleLengthPieceList[gr2.get(j)], gr3.get(i), gr2.get(j));
+					int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr3.get(i)],
+							(AngleLength[]) AncleLengthPieceList[gr2.get(j)], gr3.get(i), gr2.get(j));
 					int neighbourInt = toAddMatching[1];
 	
 					if (neighbourInt != -1) {
@@ -574,8 +581,8 @@ public class PuzzleSolver {
 			for (int j = 0; j < gr3.size(); j++) {
 				if (i != j) {
 					if (!containsPair(matchingArray, gr3.get(i), gr3.get(j))) {
-						int[] toAddMatching = checkTwoPieces((AncleLength[]) AncleLengthPieceList[gr3.get(i)],
-								(AncleLength[]) AncleLengthPieceList[gr3.get(j)], gr3.get(i), gr3.get(j));
+						int[] toAddMatching = checkTwoPieces((AngleLength[]) AncleLengthPieceList[gr3.get(i)],
+								(AngleLength[]) AncleLengthPieceList[gr3.get(j)], gr3.get(i), gr3.get(j));
 						int neighbourInt = toAddMatching[1];
 	
 						if (neighbourInt != -1) {
@@ -593,9 +600,9 @@ public class PuzzleSolver {
 			adjacencyArray[i + gr1.size() + gr2.size()] = toAdd;
 
 		}
-		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
-		System.out.println("size : " + adjacencyArray.length);
-		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
+//		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
+//		System.out.println("size : " + adjacencyArray.length);
+//		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
 		return new Object[] { adjacencyArray, matchingArray };
 
 	}
@@ -615,7 +622,7 @@ public class PuzzleSolver {
 		return false;
 	}
 
-	private int[] checkTwoPieces(AncleLength[] angleLength1, AncleLength[] angleLength2, int index0, int index1) {
+	private int[] checkTwoPieces(AngleLength[] angleLength1, AngleLength[] angleLength2, int index0, int index1) {
 		// TODO Auto-generated method stub
 		ArrayList<Integer> adjacencyPieces = new ArrayList<Integer>();
 		for (int i = 0; i < angleLength1.length; i++) {

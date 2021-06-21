@@ -32,25 +32,11 @@ public class PieceCompare {
 		}
 		if (containBool) {
 			ArrayList<Object> equalList = piecesWithEqualCircumFerences(circumferences, piecesSuspectedOfDuplication);
-			for (int i = 0; i < equalList.size(); i++) {
-				System.out.print(Arrays.toString((int[]) equalList.get(i)));
-			}
-			System.out.println("");
 			equalList = checkEqualNumberOfCorners(equalList,pieceList);
-			for (int i = 0; i < equalList.size(); i++) {
-				System.out.print(Arrays.toString((int[]) equalList.get(i)));
-			}
-			System.out.println("");
 			equalList = checkForEqualPieces(equalList, pieceList);
-			for (int i = 0; i < equalList.size(); i++) {
-				System.out.print(Arrays.toString((int[]) equalList.get(i)));
-			}
 			return equalList;
 				
 			
-		} else {
-			System.out.println("Alexanders bool er false");
-
 		}
 		return null;
 
@@ -61,8 +47,8 @@ public class PieceCompare {
 			int[] pairToCheck = (int[]) equalList.get(i);
 			Point2D.Float[] piece1 = (Point2D.Float[]) pieceList[pairToCheck[0]];
 			Point2D.Float[] piece2 = (Point2D.Float[]) pieceList[pairToCheck[1]];
-			AncleLength[] angleLength1 = createAncleLengthArray(piece1);
-			AncleLength[] angleLength2 = createAncleLengthArray(piece2);
+			AngleLength[] angleLength1 = createAncleLengthArray(piece1);
+			AngleLength[] angleLength2 = createAncleLengthArray(piece2);
 			
 			
 			if(checkAngleLengthPieces(angleLength1, angleLength2)) {
@@ -76,7 +62,7 @@ public class PieceCompare {
 	}
 
 	
-	private boolean checkAngleLengthPieces(AncleLength[] angleLength1, AncleLength[] angleLength2) {
+	private boolean checkAngleLengthPieces(AngleLength[] angleLength1, AngleLength[] angleLength2) {
 		int length = angleLength1.length;
 		for(int j = 0; j < length; j++) {
 
@@ -102,7 +88,7 @@ public class PieceCompare {
 					i = length+1;
 				}
 			}
-			AncleLength[] tempArray = angleLength2.clone();
+			AngleLength[] tempArray = angleLength2.clone();
 			for(int k = 0; k < length; k++) {
 				angleLength2[k] = tempArray[((length-1)+k)%length];
 			}
@@ -111,11 +97,11 @@ public class PieceCompare {
 		return false;
 	}
 
-	public AncleLength[] createAncleLengthArray(Point2D.Float[] piece) {
+	public AngleLength[] createAncleLengthArray(Point2D.Float[] piece) {
 		int listLength = piece.length;
-		AncleLength[] angleLength = new AncleLength[listLength-1];
+		AngleLength[] angleLength = new AngleLength[listLength-1];
 		for (int i = 0; i < (listLength - 1); i++) {
-			angleLength[i] = new AncleLength(getAngleFromThreePoints(piece[i], piece[i+1], piece[(i+2)%(listLength-1)]), distance(piece[i], piece[i+1]));
+			angleLength[i] = new AngleLength(getAngleFromThreePoints(piece[i], piece[i+1], piece[(i+2)%(listLength-1)]), distance(piece[i], piece[i+1]));
 		}
 		return angleLength;
 	}
@@ -138,7 +124,6 @@ public class PieceCompare {
 	public Object removePointOnLine(Point2D.Float[] piece) {
 		for(int i = 0;i<piece.length-1;i++) {
 			if(threePointOnLine(piece[i],piece[((i+1)%(piece.length))],piece[((i+2)%(piece.length))])) {
-				System.out.println("removed" + piece[((i+1)%(piece.length))].toString());
 				Point2D.Float[] newPiece = new Point2D.Float[piece.length-1];
 				int index = 0;
 				for(int j = 0;j<newPiece.length;) {
