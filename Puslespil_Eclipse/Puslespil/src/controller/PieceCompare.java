@@ -14,13 +14,15 @@ public class PieceCompare {
 
 	}
 
-	public void pieceComparator(Object[] PieceList) {
-		float[] circumferences = new float[PieceList.length];
+	public ArrayList<Object> pieceComparator(Object[] pieceList) {
+		float[] circumferences = new float[pieceList.length];
 		ArrayList<Integer> piecesSuspectedOfDuplication = new ArrayList<Integer>();
 		boolean containBool = false;
-		for (int i = 0; i < (PieceList.length); i++) {
-			PieceList[i] = removePointOnLine((Point2D.Float[]) PieceList[i]);
-			Point2D.Float[] piece = (Point2D.Float[]) PieceList[i];
+		
+		
+		for (int i = 0; i < (pieceList.length); i++) {
+			pieceList[i] = removePointOnLine((Point2D.Float[]) pieceList[i]);
+			Point2D.Float[] piece = (Point2D.Float[]) pieceList[i];
 			containBool = (containBool || contains(circumferences, getCircumference(piece)));
 			if (contains(circumferences, getCircumference(piece))) {
 				piecesSuspectedOfDuplication.add(i);
@@ -29,27 +31,28 @@ public class PieceCompare {
 			// System.out.println(Arrays.toString(circumferences));
 		}
 		if (containBool) {
-			System.out.println("Alexanders bool er true");
 			ArrayList<Object> equalList = piecesWithEqualCircumFerences(circumferences, piecesSuspectedOfDuplication);
 			for (int i = 0; i < equalList.size(); i++) {
 				System.out.print(Arrays.toString((int[]) equalList.get(i)));
 			}
 			System.out.println("");
-			equalList = checkEqualNumberOfCorners(equalList,PieceList);
+			equalList = checkEqualNumberOfCorners(equalList,pieceList);
 			for (int i = 0; i < equalList.size(); i++) {
 				System.out.print(Arrays.toString((int[]) equalList.get(i)));
 			}
 			System.out.println("");
-			equalList = checkForEqualPieces(equalList, PieceList);
+			equalList = checkForEqualPieces(equalList, pieceList);
 			for (int i = 0; i < equalList.size(); i++) {
 				System.out.print(Arrays.toString((int[]) equalList.get(i)));
 			}
-			
+			return equalList;
+				
 			
 		} else {
 			System.out.println("Alexanders bool er false");
 
 		}
+		return null;
 
 	}
 	
@@ -132,7 +135,7 @@ public class PieceCompare {
 		return equalList;
 	}
 
-	private Object removePointOnLine(Point2D.Float[] piece) {
+	public Object removePointOnLine(Point2D.Float[] piece) {
 		for(int i = 0;i<piece.length-1;i++) {
 			if(threePointOnLine(piece[i],piece[((i+1)%(piece.length))],piece[((i+2)%(piece.length))])) {
 				System.out.println("removed" + piece[((i+1)%(piece.length))].toString());
@@ -183,11 +186,12 @@ public class PieceCompare {
 		double m = 0.0;
 		m = (point2.getY() - point1.getY()) / (point2.getX() - point1.getX());
 		n = (point3.getY() - point2.getY()) / (point3.getX() - point2.getX());
-		if (m == n) {
+		if (((double) Math.round(m * 10000d)) == ((double) Math.round(n * 10000d))) {
 			return true;
 		} else {
 			return false;
 		}
+
 	}
 
 	public ArrayList<Object> piecesWithEqualCircumFerences(float[] circumferences,
