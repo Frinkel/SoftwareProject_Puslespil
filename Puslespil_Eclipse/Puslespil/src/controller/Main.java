@@ -16,7 +16,8 @@ public class Main {
 	static Generator generator;
 	static Object[] puzzleArray;;
 	
-	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\Puzzle-2r-2c-5863-rot.JSON
+	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\PieceList03.JSON
+	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\Puzzle-1r-3c-5511-rot.JSON
 	//C:\Users\Joel\Downloads\Gr00\puzzle_02_auto.json
 	
 	// Main method
@@ -36,6 +37,7 @@ public class Main {
 			
 			if(view.mouseReleased) {
 				pieceSnapping(true, view, generator, currentPiece);
+				view.mouseReleased = false;
 			}
 			
 			// Listen for the newPuzzle call from the view, stating a new puzzle should be generated
@@ -71,12 +73,21 @@ public class Main {
 	// Read a puzzle from a path, the puzzle MUST be a JSON file
 	public static void readPuzzle(View view, String path) {
 		
+		//view.identicalPieces = false;
 		PieceReader pieceReader = new PieceReader();
 		puzzleArray = pieceReader.readPuzzle(path);
 		
 		
 		PieceCompare pC = new PieceCompare();
-		pC.pieceComparator(puzzleArray);
+		ArrayList<Object> equalList = pC.pieceComparator(puzzleArray);
+		
+		if(equalList != null && !equalList.isEmpty()) {
+			//System.out.println("Comparing");
+			view.setEqualList(equalList);
+			view.identicalPieces = true;
+		} else if(view.getEqualList() != null && !view.getEqualList().isEmpty()) {
+			view.clearEqualList();
+		}
 		
 		// Loop through puzzle array and create each Piece
 		for(int i = 0; i < puzzleArray.length; i++) {
@@ -89,6 +100,8 @@ public class Main {
 	}
 	
 	public static void generatePuzzle(View view) {
+		//view.identicalPieces = false;
+		
 		int pieceAmount, distortionPoints;
 		
 		// Get data from the sliders in the menubar
@@ -103,7 +116,9 @@ public class Main {
 		generator = new Generator(boardSize, pieceAmount, distortionPoints);
 		
 		// Get the images to be mapped onto the pieces
-		String[] paths = {"assets\\\\images\\\\puppie2.jpg", "assets\\\\images\\\\puppie1.jpg", "assets\\\\images\\\\reyna.jpg", "assets\\\\\\\\images\\\\\\\\carl.jpg"};
+		String[] paths = {"assets\\images\\puppie2.jpg", "assets\\images\\puppie1.jpg", "assets\\images\\reyna.jpg", 
+				"assets\\images\\carl.jpg", "assets\\images\\rap.jpg","assets\\images\\fox.jpg","assets\\images\\dog1.jpg",
+				"assets\\images\\dog2.jpg"};
 		ImageInitializer imi = new ImageInitializer(view, boardSize, pieceAmount, generator.getColumns(), generator.getRows());
 		ArrayList<PImage> sprites = imi.imageSplitter(imi.imageLoader(paths).get((int) (Math.round(Math.random() * (paths.length-1)))), boardSize);
 
@@ -150,15 +165,15 @@ public class Main {
 	private static Piece getCurrentPiece(View view) {
 		ArrayList<Piece> pieceList = view.getPieceList();
 		
-		//if(view.getPieceList().isEmpty() == false) {
+		try {
 			for(Piece piece : pieceList) {
-				
 				if(piece.isCurrentPiece) {
 					return piece;
 				}
-				
 			}
-		//}
+		} catch(Exception e) {
+			System.out.println("current piece bug");
+		}
 		
 		return null;
 	}
@@ -269,6 +284,98 @@ public class Main {
 		System.out.println("Is puzzle completed?: " + isComplete);
 	}
 	
+	private static void completionCheckV2(View view, Generator generator) {
+		
+		boolean isComplete = true;
+		
+		for(Piece currentPiece : view.getPieceList()) {
+			
+			// Find neighbor pieces
+			ArrayList<Piece> pieceList = view.getPieceList();
+			int columns = generator.getColumns();
+			int width 	= generator.getPieceBaseWidth();
+			int height 	= generator.getPieceBaseHeight();
+			int currentIndex = pieceList.indexOf(currentPiece);
+			float angle =  currentPiece.getAngle();
+			int top 	=  currentIndex - (columns);
+			int bottom 	=  currentIndex + (columns);
+			int right 	=  currentIndex       	+ 1;
+			int left 	=  currentIndex	     	- 1;
+			
+			Piece topNeighbor 		= null;
+			Piece bottomNeighbor 	= null;
+			Piece rightNeighbor 	= null;
+			Piece leftNeighbor		= null;
+			
+			float topDist			= 0;
+			float botDist			= 0;
+			float rightDist			= 0;
+			float leftDist			= 0;
+			
+			if(top >= 0 && top < pieceList.size()) 								{ topNeighbor    = pieceList.get(top);} 
+			if(bottom >= 0 && bottom < pieceList.size()) 						{ bottomNeighbor = pieceList.get(bottom);}
+			if(right >= 0 && right < pieceList.size() && (right)%columns != 0) 	{ rightNeighbor  = pieceList.get(right);}
+			if(left >= 0 && left < pieceList.size() && (left+1)%columns != 0) 	{ leftNeighbor	 = pieceList.get(left);}
+			
+			if(topNeighbor != null) 	{topDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, topNeighbor.getOrigin().x, topNeighbor.getOrigin().y) - height);}
+			if(bottomNeighbor != null) 	{botDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, bottomNeighbor.getOrigin().x, bottomNeighbor.getOrigin().y) - height);}
+			if(rightNeighbor != null) 	{rightDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, rightNeighbor.getOrigin().x, rightNeighbor.getOrigin().y) - width);}
+			if(leftNeighbor != null) 	{leftDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, leftNeighbor.getOrigin().x, leftNeighbor.getOrigin().y) - width);}
+			
+			int distThreshold = 20;
+			
+			if(topNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
+					topDist < distThreshold && topDist >= -5 &&  
+					((Math.round(PApplet.cos(PApplet.radians(angle + 90)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle + 90)) * topNeighbor.getOrigin().x)) - height/2) +
+					((Math.round(PApplet.sin(PApplet.radians(angle + 90)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle + 90)) * topNeighbor.getOrigin().y)) - height/2) >= 0) {
+				
+				isComplete &= true;
+				
+			} else if(topNeighbor != null) {
+				isComplete &= false;
+			}
+			
+			if(bottomNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(bottomNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(bottomNeighbor.getAngle())))&&
+					botDist < distThreshold && botDist >= -5 &&  
+					((Math.round(PApplet.cos(PApplet.radians(angle + 90)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle + 90)) * bottomNeighbor.getOrigin().x)) - height/2) +
+					((Math.round(PApplet.sin(PApplet.radians(angle + 90)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle + 90)) * bottomNeighbor.getOrigin().y)) - height/2) <= 0) {
+
+				isComplete &= true;
+
+			} else if(bottomNeighbor != null) {
+				isComplete &= false;
+			}
+			
+			if(rightNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle())))&&
+					rightDist < distThreshold && rightDist >= -5 && 
+					((Math.round(PApplet.cos(PApplet.radians(angle)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle)) * rightNeighbor.getOrigin().x)) + width/2) +
+					((Math.round(PApplet.sin(PApplet.radians(angle)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle)) * rightNeighbor.getOrigin().y)) + width/2) <= 0) {
+				
+				isComplete &= true;
+
+			} else if(rightNeighbor != null) {
+				isComplete &= false;
+			}
+			
+			if(leftNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(leftNeighbor.getAngle()))) &&
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(leftNeighbor.getAngle())))&&
+					leftDist < distThreshold && leftDist >= -5 && 
+					((Math.round(PApplet.cos(PApplet.radians(angle)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle)) * leftNeighbor.getOrigin().x)) + width/2)+
+					((Math.round(PApplet.sin(PApplet.radians(angle)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle)) * leftNeighbor.getOrigin().y)) + width/2) >= 0) {
+				
+				isComplete &= true;
+
+			} else if(leftNeighbor != null) {
+				isComplete &= false;
+			}
+		}
+		view.puzzleComplete = isComplete;
+		System.out.println("Is puzzle completed?: " + isComplete);
+	}
+	
 	// Regulates piece snapping
 	private static void pieceSnapping(boolean active, View view, Generator generator, Piece currentPiece) {
 		if(currentPiece != null && active) {
@@ -284,56 +391,109 @@ public class Main {
 			int right 	=  currentIndex       	+ 1;
 			int left 	=  currentIndex	     	- 1;
 			
-			int multiplierX 	= width*5/6;	// To get a better snapping feel
-			int multiplierY 	= height*5/6;	// To get a better snapping feel
-			
 			Piece topNeighbor 		= null;
 			Piece bottomNeighbor 	= null;
 			Piece rightNeighbor 	= null;
 			Piece leftNeighbor		= null;
+			
+			float topDist			= 0;
+			float botDist			= 0;
+			float rightDist			= 0;
+			float leftDist			= 0;
 			
 			if(top >= 0 && top < pieceList.size()) 								{ topNeighbor    = pieceList.get(top);} 
 			if(bottom >= 0 && bottom < pieceList.size()) 						{ bottomNeighbor = pieceList.get(bottom);}
 			if(right >= 0 && right < pieceList.size() && (right)%columns != 0) 	{ rightNeighbor  = pieceList.get(right);}
 			if(left >= 0 && left < pieceList.size() && (left+1)%columns != 0) 	{ leftNeighbor	 = pieceList.get(left);}
 			
-			// Control snapping
+			if(topNeighbor != null) 	{topDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, topNeighbor.getOrigin().x, topNeighbor.getOrigin().y) - height);}
+			if(bottomNeighbor != null) 	{botDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, bottomNeighbor.getOrigin().x, bottomNeighbor.getOrigin().y) - height);}
+			if(rightNeighbor != null) 	{rightDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, rightNeighbor.getOrigin().x, rightNeighbor.getOrigin().y) - width);}
+			if(leftNeighbor != null) 	{leftDist 	= (PApplet.dist(currentPiece.getOrigin().x, currentPiece.getOrigin().y, leftNeighbor.getOrigin().x, leftNeighbor.getOrigin().y) - width);}
+			
+			int distThreshold = 20;
+			
+			// New snapping method
 			if(topNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
-						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
-						topNeighbor.contains(
-						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - multiplierX), 
-						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * multiplierY)) {
-				Point2D.Float snap = new Point2D.Float(topNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 90)), topNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 90)));
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
+					topDist < distThreshold && topDist >= 0 &&  
+					((Math.round(PApplet.cos(PApplet.radians(angle + 90)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle + 90)) * topNeighbor.getOrigin().x)) - height/2) +
+					((Math.round(PApplet.sin(PApplet.radians(angle + 90)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle + 90)) * topNeighbor.getOrigin().y)) - height/2) >= 0) {
+				
+				Point2D.Float snap = new Point2D.Float(topNeighbor.getOrigin().x - (height)*PApplet.cos(PApplet.radians(angle - 90)), topNeighbor.getOrigin().y - (height)*PApplet.sin(PApplet.radians(angle - 90)));
 				currentPiece.movePiece(snap);
-				completionCheck(view, generator); // Check if puzzle is completed
+				completionCheckV2(view, generator);
 				
 			} else if(bottomNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(bottomNeighbor.getAngle()))) &&
-					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(bottomNeighbor.getAngle()))) &&
-					bottomNeighbor.contains(
-					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - multiplierX), 
-					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * multiplierY)) {
-				Point2D.Float snap = new Point2D.Float(bottomNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 270)), bottomNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 270)));
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(bottomNeighbor.getAngle())))&&
+					botDist < distThreshold && botDist >= 0 &&  
+					((Math.round(PApplet.cos(PApplet.radians(angle + 90)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle + 90)) * bottomNeighbor.getOrigin().x)) - height/2) +
+					((Math.round(PApplet.sin(PApplet.radians(angle + 90)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle + 90)) * bottomNeighbor.getOrigin().y)) - height/2) <= 0) {
+
+				Point2D.Float snap = new Point2D.Float(bottomNeighbor.getOrigin().x - (height)*PApplet.cos(PApplet.radians(angle + 90)), bottomNeighbor.getOrigin().y - (height)*PApplet.sin(PApplet.radians(angle + 90)));
 				currentPiece.movePiece(snap);
-				completionCheck(view, generator); // Check if puzzle is completed
-				
+				completionCheckV2(view, generator);
+
 			} else if(rightNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
-					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
-					rightNeighbor.contains(
-					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - multiplierX), 
-					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * multiplierY)) {
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle())))&&
+					rightDist < distThreshold && rightDist >= 0 && 
+					((Math.round(PApplet.cos(PApplet.radians(angle)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle)) * rightNeighbor.getOrigin().x)) + width/2)+
+					((Math.round(PApplet.sin(PApplet.radians(angle)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle)) * rightNeighbor.getOrigin().y)) + width/2) <= 0) {
+				
 				Point2D.Float snap = new Point2D.Float(rightNeighbor.getOrigin().x - (width)*PApplet.cos(PApplet.radians(angle)), rightNeighbor.getOrigin().y - (width)*PApplet.sin(PApplet.radians(angle)));
 				currentPiece.movePiece(snap);
-				completionCheck(view, generator); // Check if puzzle is completed
+				completionCheckV2(view, generator);
 				
 			} else if(leftNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(leftNeighbor.getAngle()))) &&
-					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(leftNeighbor.getAngle()))) &&
-					leftNeighbor.contains(
-					currentPiece.getOrigin().x - (PApplet.cos(PApplet.radians(angle)) * multiplierX), 
-					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle)) * multiplierY)) {
-				Point2D.Float snap = new Point2D.Float(leftNeighbor.getOrigin().x + (width)*PApplet.cos(PApplet.radians(angle)), leftNeighbor.getOrigin().y + (width)*PApplet.sin(PApplet.radians(angle)));
+					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(leftNeighbor.getAngle())))&&
+					leftDist < distThreshold && leftDist >= 0 && 
+					((Math.round(PApplet.cos(PApplet.radians(angle)) * currentPiece.getOrigin().x) - Math.round(PApplet.cos(PApplet.radians(angle)) * leftNeighbor.getOrigin().x)) + width/2)+
+					((Math.round(PApplet.sin(PApplet.radians(angle)) * currentPiece.getOrigin().y) - Math.round(PApplet.sin(PApplet.radians(angle)) * leftNeighbor.getOrigin().y)) + width/2) >= 0) {
+				
+				Point2D.Float snap = new Point2D.Float(leftNeighbor.getOrigin().x - (width)*PApplet.cos(PApplet.radians(angle + 180)), leftNeighbor.getOrigin().y - (width)*PApplet.sin(PApplet.radians(angle + 180)));
 				currentPiece.movePiece(snap);
-				completionCheck(view, generator); // Check if puzzle is completed
+				completionCheckV2(view, generator);
+
 			}
+			
+			// OLD METHOD
+			// Control snapping
+//			if(topNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(topNeighbor.getAngle()))) &&
+//						Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(topNeighbor.getAngle()))) &&
+//						topNeighbor.contains(
+//						currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 90)) * - multiplierY), 
+//						currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 90)) * multiplierY)) {
+//				Point2D.Float snap = new Point2D.Float(topNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 90)), topNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 90)));
+//				currentPiece.movePiece(snap);
+//				completionCheck(view, generator); // Check if puzzle is completed
+//				
+//			} else if(bottomNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(bottomNeighbor.getAngle()))) &&
+//					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(bottomNeighbor.getAngle()))) &&
+//					bottomNeighbor.contains(
+//					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 270)) * - multiplierY), 
+//					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 270)) * multiplierY)) {
+//				Point2D.Float snap = new Point2D.Float(bottomNeighbor.getOrigin().x + (height)*PApplet.cos(PApplet.radians(angle + 270)), bottomNeighbor.getOrigin().y + (height)*PApplet.sin(PApplet.radians(angle + 270)));
+//				currentPiece.movePiece(snap);
+//				completionCheck(view, generator); // Check if puzzle is completed
+//				
+//			} else if(rightNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(rightNeighbor.getAngle()))) &&
+//					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(rightNeighbor.getAngle()))) &&
+//					rightNeighbor.contains(
+//					currentPiece.getOrigin().x + (PApplet.cos(PApplet.radians(angle + 180)) * - multiplierX), 
+//					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle + 180)) * multiplierX)) {
+//				Point2D.Float snap = new Point2D.Float(rightNeighbor.getOrigin().x - (width)*PApplet.cos(PApplet.radians(angle)), rightNeighbor.getOrigin().y - (width)*PApplet.sin(PApplet.radians(angle)));
+//				currentPiece.movePiece(snap);
+//				completionCheck(view, generator); // Check if puzzle is completed
+//				
+//			} else if(leftNeighbor != null && Math.round(PApplet.sin(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.sin(PApplet.radians(leftNeighbor.getAngle()))) &&
+//					Math.round(PApplet.cos(PApplet.radians(currentPiece.getAngle()))) == Math.round(PApplet.cos(PApplet.radians(leftNeighbor.getAngle()))) &&
+//					leftNeighbor.contains(
+//					currentPiece.getOrigin().x - (PApplet.cos(PApplet.radians(angle)) * multiplierX), 
+//					currentPiece.getOrigin().y - PApplet.sin(PApplet.radians(angle)) * multiplierX)) {
+//				Point2D.Float snap = new Point2D.Float(leftNeighbor.getOrigin().x + (width)*PApplet.cos(PApplet.radians(angle)), leftNeighbor.getOrigin().y + (width)*PApplet.sin(PApplet.radians(angle)));
+//				currentPiece.movePiece(snap);
+//				completionCheck(view, generator); // Check if puzzle is completed
+//			}
 		}
 	}
 	

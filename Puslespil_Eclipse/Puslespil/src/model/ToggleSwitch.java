@@ -49,10 +49,14 @@ public class ToggleSwitch {
 			//System.out.println(state);
 			state = !state;
 			view.resetPieceList();
+			view.puzzleComplete = false;
+			if(view.getEqualList() != null) {view.clearEqualList();}
 		} else if(mouseIsOver(x+width/2, y, width/2, height) && !state) {
 			//System.out.println(state);
 			state = !state;
 			view.resetPieceList();
+			view.puzzleComplete = false;
+			if(view.getEqualList() != null) {view.clearEqualList();}
 		}
 	}
 	

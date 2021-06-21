@@ -29,12 +29,14 @@ public class View extends PApplet {
 	public boolean mouseReleased = false;
 	public boolean puzzleComplete = false;
 	
+	
 	// Piece variables
 	boolean debugView = false;
 	ArrayList<Piece> pieceList = new ArrayList<Piece>();	
 	float angle = 0;
 	Piece currentPiece;
 	ArrayList<Point2D.Float> offsetList = new ArrayList<>();
+	Point2D.Float currentPieceOffset;
 	
 	// Menu variables
 	public Menubar menubar;
@@ -50,6 +52,9 @@ public class View extends PApplet {
 	int menubarXPos = width;
 	int menubarHeight = height/2;	
 	PFont completionFont;
+	ArrayList<Object> equalList = null;
+	public boolean identicalPieces = false;
+	public ArrayList<Integer> colorList = new ArrayList<>();
 	
 	// Controls if we're writing in the input field
 	public boolean writing = false;
@@ -107,6 +112,8 @@ public class View extends PApplet {
 		// Draw the input field
 		if(inputState) {pathInput.draw();}
 		
+		identicalPieces();
+		
 	}
 
 	
@@ -141,6 +148,46 @@ public class View extends PApplet {
 		}
 	}
 
+	public void identicalPieces() {
+		
+		if(identicalPieces) {
+			System.out.println("hi");
+			
+			colorList.clear();
+			int col = color(random(0, 255),random(0, 255),random(0, 255));
+			for (int i = 0; i < equalList.size(); i++) {
+//				if(!colorList.contains(col)) {
+//					colorList.add(col);
+//				} else {
+//					i-=1;
+//				}
+				colorList.add(col - 1000000*i);
+				
+			}
+			System.out.println(colorList.toString());
+			
+			for (int i = 0; i < equalList.size(); i++) {
+				int[] intList = ((int[]) equalList.get(i));
+				//System.out.println(intList[0] + " : " + intList[1]);
+				pieceList.get(intList[0]).getShape().setFill(colorList.get(i));
+				pieceList.get(intList[1]).getShape().setFill(colorList.get(i));
+			}
+			
+			identicalPieces = false;
+		}
+		
+		
+		if(equalList != null && !equalList.isEmpty()) {
+			
+			textAlign(CENTER);
+			textFont(completionFont, 26);
+			fill(color(220,0,0));
+			text("THERE'S IDENTICAL PIECES!", menubarXPos/2, 100);
+			textFont(completionFont, 16);
+			text("Puzzle is not solveable, since there's multiple Pieces which are identical.", menubarXPos/2, 120);
+		}
+	}
+	
 	// Mouse events
 	public void mousePressed(MouseEvent event) {
 		
@@ -153,6 +200,7 @@ public class View extends PApplet {
 					currentPiece = pieceList.get(i);
 					currentPiece.isCurrentPiece = true;
 					angle = currentPiece.getAngle();
+					currentPieceOffset = new Point2D.Float((int) (mouseX - currentPiece.getOrigin().x), (mouseY - currentPiece.getOrigin().y));
 				}
 			}
 		}
@@ -186,7 +234,6 @@ public class View extends PApplet {
 			mouseReleased = true;
 			currentPiece.isCurrentPiece = false;
 			currentPiece = null;
-			mouseReleased = false;
 			angle = 0;
 		}
 		
@@ -195,7 +242,7 @@ public class View extends PApplet {
 	public void mouseDragged(MouseEvent event) {
 		// Move the currently picked up Piece
 		if(currentPiece != null && event.getButton() == LEFT) {
-			currentPiece.movePiece(new Point2D.Float(mouseX, mouseY));
+			currentPiece.movePiece(new Point2D.Float(mouseX- currentPieceOffset.x, mouseY - currentPieceOffset.y));
 		}
 		
 		// Controls if the sliders is dragged
@@ -260,6 +307,7 @@ public class View extends PApplet {
 		if(key == ENTER && pathInput.selected() && inputState) {
 			if(checkPath(pathInput.getValue())) {
 				puzzlePath = pathInput.getValue();
+				textInput = pathInput.getValue();
 				
 				// Tell Main to generate a new puzzle
 				newPuzzle = true;
@@ -334,6 +382,18 @@ public class View extends PApplet {
 	
 	public Piece getCurrentPiece() {
 		return currentPiece;
+	}
+
+	public void setEqualList(ArrayList<Object> _equalList) {
+		this.equalList = _equalList;
+	}
+	
+	public void clearEqualList() {
+		this.equalList.clear();
+	}
+	
+	public ArrayList<Object> getEqualList() {
+		return this.equalList;
 	}
 
 }
