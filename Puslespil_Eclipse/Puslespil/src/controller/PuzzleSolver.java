@@ -41,7 +41,7 @@ public class PuzzleSolver {
 		int[] finalPath = calculatePath(pieceList.length, adjacencyArray, matchingArray, (ArrayList<Integer>) groups[0], (ArrayList<Integer>) groups[1], (ArrayList<Integer>) groups[2],
 				(int) groups[3], (int) groups[4], (int) groups[5]);
 		
-//		System.out.println(Arrays.toString(finalPath));
+		System.out.println(Arrays.toString(finalPath));
 		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(finalPath, matchingArray, pieceList, pC);
 //		System.out.println(Arrays.toString(pieceAndRotationalAngle));
 		
@@ -93,6 +93,7 @@ public class PuzzleSolver {
 	}
 
 	private Point2D.Float getPosOfCenter(Point2D.Float[][] threeMatchingPoints, float angle, float prevAngle, Point2D.Float prevCenter,int direction) {
+		//System.out.println();
 		Point2D.Float[] pointsToRotate1 = new Point2D.Float[] {(threeMatchingPoints[1][0]),(threeMatchingPoints[1][1]),(threeMatchingPoints[1][2])};
 		Point2D.Float[] rotatedPoints1 = rotatePoints(pointsToRotate1,angle);
 		
@@ -592,9 +593,9 @@ public class PuzzleSolver {
 			adjacencyArray[i + gr1.size() + gr2.size()] = toAdd;
 
 		}
-//		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
-//		System.out.println("size : " + adjacencyArray.length);
-//		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
+		System.out.println("adjacency : " + Arrays.toString(adjacencyArray));
+		System.out.println("size : " + adjacencyArray.length);
+		System.out.println("matchingarray : " + Arrays.deepToString(matchingArray));
 		return new Object[] { adjacencyArray, matchingArray };
 
 	}
@@ -618,7 +619,7 @@ public class PuzzleSolver {
 		// TODO Auto-generated method stub
 		ArrayList<Integer> adjacencyPieces = new ArrayList<Integer>();
 		for (int i = 0; i < angleLength1.length; i++) {
-			for (int j = 0; j < angleLength2.length; j++) {
+			for (int j =  angleLength2.length-1; j >= 0; j--) {
 				if (((float) (((double) Math.round((angleLength1[i].getAngle() + angleLength2[j].getAngle()) * 100d))
 						/ 100) == ((float) (((double) Math.round((2 * Math.PI) * 100d)) / 100)))) {
 					if ((angleLength1[i].getLength() == angleLength2[(j + 1) % angleLength2.length].getLength()
@@ -627,7 +628,10 @@ public class PuzzleSolver {
 									.getLength() == angleLength2[(j + 1) % angleLength2.length].getLength()
 									|| angleLength1[(i + 1) % angleLength1.length].getLength() == angleLength2[j]
 											.getLength())) {
-						return new int[] { index0, index1, i, j };
+						
+							return new int[] { index0, index1, i, j };
+						
+						
 					}
 				}
 			}
