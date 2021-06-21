@@ -38,15 +38,6 @@ public class PuzzleSolver {
 		
 
 		int startingIndex = 0;
-		if((int) groups[3] == 0) {
-			if((int) groups[4] == 0) {
-				startingIndex = ((ArrayList<Integer>) groups[2]).get(0);
-			}else {
-				startingIndex = ((ArrayList<Integer>) groups[1]).get(0);
-			}
-		}else {
-			startingIndex = ((ArrayList<Integer>) groups[0]).get(0);
-		}
 		
 		PieceAndAngleDatatype[] pieceAndRotationalAngle = rotatePiecesOnPath(startingIndex, pieceList.length, matchingArray, adjacencyArray, pieceList, pC);
 		return pieceAndRotationalAngle;
