@@ -170,40 +170,6 @@ public class PuzzleSolver {
 		
 	}
 
-	private int[] calculatePath(int length, Object[] adjacencyArray, Object[] matchingArray, ArrayList<Integer> gr1,
-			ArrayList<Integer> gr2, ArrayList<Integer> gr3, int gr1Length, int gr2Length, int gr3Length) {
-		//ArrayList<Integer> alreadyCovered = new ArrayList<Integer>();
-		int startingIndex = 0;
-		if(gr1Length == 0) {
-			if(gr2Length == 0) {
-				startingIndex = gr3.get(0);
-			}else {
-				startingIndex = gr2.get(0);
-			}
-		}else {
-			startingIndex = gr1.get(0);
-		}
-		
-		int[][] adjacencyArray2= new int[adjacencyArray.length][];
-		for(int i = 0; i < adjacencyArray.length; i++) {
-			ArrayList<Integer> temp = (ArrayList<Integer>) adjacencyArray[i];
-			int[] temp2 = new int[temp.size()];
-			for(int j = 0; j < temp.size(); j++) {
-				temp2[j] = temp.get(j);
-			}
-			adjacencyArray2[i] = temp2;
-		}
-		int[] alreadyCovered = {startingIndex};
-		int[] finalPath = getPath(startingIndex, adjacencyArray2, alreadyCovered, length);
-//		System.out.println(Arrays.toString(finalPath));
-		if(finalPath == null) {
-			finalPath = new int[]{0};
-		}
-		return finalPath;
-		//return new int[] {0, 13, 10, 19, 43, 58, 73, 17, 54, 45, 59, 79, 32, 8, 20, 23, 9, 41, 60, 76, 36, 50, 62, 51, 65, 47, 12, 6, 37, 11, 42, 24, 5, 18, 56, 14, 15, 1, 21, 55, 64, 7, 66, 25, 75, 28, 68, 46, 31, 33, 71, 77, 35, 30, 70, 52, 49, 63, 29, 40, 34, 16, 38, 72, 61, 44, 2, 22, 4, 26, 53, 27, 74, 78, 69, 3, 39, 57, 48, 67};
-
-	}
-
 
 	
 	private int[] getPath(int startingIndex, int[][] adjacencyArray, int[] alreadyCovered,

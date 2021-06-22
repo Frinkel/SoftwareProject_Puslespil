@@ -23,7 +23,7 @@ public class PieceReader {
 		JSONObject jsonObject = null;
 		//Puzzle-1r-3c-2988-sol      Puzzle-1r-4c-7284-rot        Puzzle-2r-2c-5863-rot		Puzzle-3r-3c-2445-rot          Puzzle-4r-6c-3898-rot       Puzzle-8r-10c-1628-sol          Puzzle-5r-8c-4228-rot
 		try {
-			obj = parser.parse(new FileReader("assets\\Puzzle-4r-6c-8642-sol.json"));
+			obj = parser.parse(new FileReader("assets\\Puzzle-8r-10c-1628-sol.json"));
 			jsonObject = (JSONObject) obj;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
