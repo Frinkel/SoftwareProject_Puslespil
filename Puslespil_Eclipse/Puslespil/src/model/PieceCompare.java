@@ -1,12 +1,10 @@
-package controller;
+package model;
 
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.Arrays;
 import java.util.ArrayList;
-
-import model.Piece;
 
 public class PieceCompare {
 	// Alexander and Carl

@@ -5,8 +5,13 @@ import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import model.Generator;
 import model.ImageInitializer;
 import model.Piece;
+import model.PieceAndAngleDatatype;
+import model.PieceCompare;
+import model.PieceReader;
+import model.PuzzleSolver;
 import processing.core.PApplet;
 import processing.core.PImage;
 import view.View;

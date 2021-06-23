@@ -1,4 +1,4 @@
-package controller;
+package model;
 
 //CARLO
 import java.awt.geom.Point2D;
@@ -8,9 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.Arrays;   
-
-import model.Piece;
+import java.util.Arrays;
 
 public class Generator {
 	// Alexander and Carl

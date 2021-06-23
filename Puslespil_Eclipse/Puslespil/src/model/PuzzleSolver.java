@@ -1,12 +1,13 @@
-package controller;
+package model;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.Arrays;
-import java.util.ArrayList;
-import controller.PieceCompare;
 
-import model.Piece;
+import model.PieceCompare;
+
+import java.util.ArrayList;
+
 import processing.core.PApplet;
 
 public class PuzzleSolver {
