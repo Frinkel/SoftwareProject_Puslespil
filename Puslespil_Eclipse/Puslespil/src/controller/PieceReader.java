@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
 public class PieceReader {
+	// Alexander
 	double multiplier = 100;
 	
 	public PieceReader() {

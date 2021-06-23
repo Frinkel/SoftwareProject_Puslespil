@@ -9,7 +9,7 @@ import processing.core.PShape;
 import view.View;
 
 public class Slider {
-	
+	// Joel
 	View view;
 	
 	PShape rect;

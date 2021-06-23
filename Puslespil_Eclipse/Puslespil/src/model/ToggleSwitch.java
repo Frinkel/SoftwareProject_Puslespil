@@ -3,6 +3,7 @@ package model;
 import view.View;
 
 public class ToggleSwitch {
+	// Joel
 	View view;
 	
 	String text1 = "";

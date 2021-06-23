@@ -1,6 +1,5 @@
 package controller;
 
-//why dis chit not vork?
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.util.Arrays;
@@ -10,8 +9,8 @@ import controller.PieceCompare;
 import model.Piece;
 import processing.core.PApplet;
 
-//hello
 public class PuzzleSolver {
+	// Alexander and Carl
 	public PuzzleSolver() {
 
 	}

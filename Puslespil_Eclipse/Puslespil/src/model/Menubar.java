@@ -7,6 +7,7 @@ import processing.core.PFont;
 import view.View;
 
 public class Menubar {
+	// Joel
 	View view;
 	int x, y, width, height;
 	Button generate_button;

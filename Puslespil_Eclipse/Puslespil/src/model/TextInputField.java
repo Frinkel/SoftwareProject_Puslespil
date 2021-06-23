@@ -17,6 +17,7 @@ import processing.core.PFont;
 import view.View;
 
 public class TextInputField {
+	// Joel
 	String text = "Enter Path to Puzzle here!";
 	
 	View view;

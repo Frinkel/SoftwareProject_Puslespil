@@ -18,7 +18,7 @@ import processing.core.PImage;
 import processing.event.MouseEvent;
 
 public class View extends PApplet {
-	
+	// Joel
 	public View() {
 		System.out.println("View running..");
 	}

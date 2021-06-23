@@ -16,12 +16,11 @@ public class Main {
 	static Generator generator;
 	static Object[] puzzleArray;;
 	
-	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\PieceList03.JSON
-	//D:\GitHub\SoftwareProject_Puslespil\Puslespil_Eclipse\Puslespil\assets\Puzzle-1r-3c-5511-rot.JSON
-	//C:\Users\Joel\Downloads\Gr00\puzzle_02_auto.json
+	
 	
 	// Main method
 	public static void main(String[] args) {
+		// Alexander, Carl and mostly Joel
 		// Create the view
 		View view = new View();
 		

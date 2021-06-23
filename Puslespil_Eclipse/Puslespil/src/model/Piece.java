@@ -14,7 +14,7 @@ import processing.core.PVector;
 import view.View;
 
 public class Piece {
-	
+	// Joel
 	// Get a reference to the PApplet object
 	View view;
 	

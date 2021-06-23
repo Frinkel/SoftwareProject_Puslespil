@@ -3,6 +3,7 @@ package controller;
 import java.awt.geom.Point2D;
 
 public class PieceAndAngleDatatype {
+	// Carl
 	private int pieceIndex;
 	private float pieceAngle;
 	private Point2D.Float center;

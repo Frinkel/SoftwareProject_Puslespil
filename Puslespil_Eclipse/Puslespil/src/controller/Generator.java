@@ -13,6 +13,7 @@ import java.util.Arrays;
 import model.Piece;
 
 public class Generator {
+	// Alexander and Carl
 	private double boardSize = 600;
 	private int pieceAmount = 6;
 	//private Piece[][] pieceStorage;

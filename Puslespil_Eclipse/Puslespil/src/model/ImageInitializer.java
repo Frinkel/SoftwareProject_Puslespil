@@ -7,6 +7,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class ImageInitializer {
+	// Joel
 	int boardSize;
 	int pieceAmount;
 	int columns;
