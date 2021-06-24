@@ -37,6 +37,7 @@ public class View extends PApplet {
 	public boolean newPuzzle = true;
 	public boolean solvePuzzle = false;
 	public boolean solveRotation = false;
+	public boolean mouseInMenu = false;
 	public String puzzlePath = "";
 	private String textInput = "";
 	boolean showMenu = false;
@@ -180,7 +181,7 @@ public class View extends PApplet {
 
 		// Controls the pickup of a Piece
 		boolean piecelocked = false;
-		if (!pieceList.isEmpty() && showMenu == false) {
+		if (!pieceList.isEmpty() && menubar.MouseIsOverMenu() == false) {
 			for (int i = pieceList.size() - 1; i >= 0; i--) {
 				if (pieceList.get(i).isMouseOver() && !piecelocked && currentPiece == null) {
 					piecelocked = true;

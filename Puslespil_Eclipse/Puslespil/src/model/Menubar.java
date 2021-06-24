@@ -55,13 +55,13 @@ public class Menubar {
 		view.textFont(menuFont, 14);
 
 		// On hover
-		if (MouseIsOver(x, 35) && !view.inputState) {
+		if (MouseIsOverButton(x, 35) && !view.inputState) {
 			view.fill(100);
 			view.rect(x, y + 35, width, 40);
-		} else if (MouseIsOver(x, 75)) {
+		} else if (MouseIsOverButton(x, 75)) {
 			view.fill(100);
 			view.rect(x, y + 75, width, 40);
-		} else if (MouseIsOver(x, 115)) {
+		} else if (MouseIsOverButton(x, 115)) {
 			view.fill(100);
 			view.rect(x, y + 115, width, 40);
 		}
@@ -92,11 +92,19 @@ public class Menubar {
 				slider.drawSlider();
 			}
 		}
+		
 
 	}
 
-	public boolean MouseIsOver(int _x, int _y) {
+	public boolean MouseIsOverButton(int _x, int _y) {
 		if (view.mouseX > _x && view.mouseX < (_x + width) && view.mouseY > _y && view.mouseY < (_y + 40)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean MouseIsOverMenu() {
+		if (view.mouseX > x && view.mouseX < (x + width) && view.mouseY > y && view.mouseY < (y + height)) {
 			return true;
 		}
 		return false;
@@ -104,11 +112,11 @@ public class Menubar {
 
 	public int MouseOverButton(int _x, int _y) {
 
-		if (MouseIsOver(x, 35) && !view.inputState) {
+		if (MouseIsOverButton(x, 35) && !view.inputState) {
 			return 0;
-		} else if (MouseIsOver(x, 75)) {
+		} else if (MouseIsOverButton(x, 75)) {
 			return 1;
-		} else if (MouseIsOver(x, 115)) {
+		} else if (MouseIsOverButton(x, 115)) {
 			return 2;
 		}
 
